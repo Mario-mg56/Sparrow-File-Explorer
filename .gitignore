@@ -1,0 +1,46 @@
+## Build results
+bin/
+obj/
+out/
+publish/
+
+## Visual Studio / VS Code
+.vscode/
+.vs/
+*.code-workspace
+*.user
+*.suo
+*.userprefs
+
+## Rider
+.idea/
+*.sln.iml
+
+## Avalonia / XAML generated files
+*.g.cs
+*.g.i.cs
+
+## NuGet
+*.nupkg
+packages/
+*.nuget.cache
+*.snupkg
+
+## Logs
+*.log
+
+## OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+## Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+
+## dotnet publish artifacts
+publish/
