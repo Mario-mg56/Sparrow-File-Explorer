@@ -1,8 +1,9 @@
+namespace DynamicFileExplorer;
+
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-
-namespace DynamicFileExplorer;
+using DynamicFileExplorer.Views.MainWindow;
 
 public partial class App : Application
 {
@@ -13,11 +14,8 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) 
             desktop.MainWindow = new MainWindow();
-        }
-
         base.OnFrameworkInitializationCompleted();
     }
 }
