@@ -129,11 +129,19 @@ class WorkingPath
         return true;
     }
 
-    public bool SelectFile(FileItem file)
+    public bool Select(FileItem file)
     {
         if(!File.Exists(file.GetFullPath()))return false;
         SelectedItems.Clear();
         SelectedItems.Add(file);
+        CastFocusChanged();
+        return true;
+    }
+    public bool Select(FolderItem folder)
+    {
+        if(!Directory.Exists(folder.GetFullPath()))return false;
+        SelectedItems.Clear();
+        SelectedItems.Add(folder);
         CastFocusChanged();
         return true;
     }
