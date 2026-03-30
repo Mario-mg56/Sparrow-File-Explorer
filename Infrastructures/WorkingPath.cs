@@ -1,56 +1,162 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using DynamicFileExplorer.Models;
-using System.Linq;
-using System.IO.Enumeration;
-
 namespace DynamicFileExplorer.Infrastructures;
+
+using System.IO.Enumeration;
+using System.Linq;
+using DynamicFileExplorer.Models;
 
 class WorkingPath
 {
-    private string ActualPath;
+    private FolderItem WorkingFolder;
+    private List<FileSystemItem> SelectedItems;
+    public event Action<FolderItem> WorkingFolderChanged;
+    public event Action<List<FileSystemItem>> FocusChanged;
 
-    public WorkingPath(string actualPath)
+    public WorkingPath(FolderItem actualPath)
     {
-        ActualPath = actualPath;
+        WorkingFolder = actualPath;
     } 
 
-    public  List<FileSystemEntry> List() 
+    public  List<FileSystemItem> ListAll() 
     {
-        List<FileSystemEntry> files;
+        List<FileSystemItem> files = [];
+
+        foreach (var item in  Directory.GetDirectories(WorkingFolder.Path))
+        {
+            files.Add(new FolderItem(new PathFile(item)));
+        } 
+        foreach (var item in  Directory.GetFiles(WorkingFolder.Path))
+        {
+            files.Add(new FileItem(new PathFile(item)));
+        } 
+
+        return files;
+    }
+
+    public bool Delete(FileItem item)
+    {
+        try
+        {
+            File.Delete(item.Path + item.Name);
+        } catch (IOException )
+        {
+            return false;
+        }
+        return true;
+    }
+    public bool Delete(FolderItem item)
+    {
+        try
+        {
+            Directory.Delete(item.Path + item.Name,recursive:true);
+        } catch (IOException )
+        {
+            return false;
+        }
+        return true;
+    }
+
+    public bool CreateFolder(FolderItem folder)
+    {
+        try
+        {
+            Directory.CreateDirectory(folder.GetFullPath());
+            
+        } catch (IOException)
+        {
+            return false;
+        }
+        return true;
+    }
+    public bool CreateFile(FileItem file)
+    {
+        try
+        {
+            Directory.CreateDirectory(file.GetFullPath());
+            
+        } catch (IOException)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    public bool ChangeDirectory(FolderItem folder)
+    {
+        if(!Directory.Exists(folder.GetFullPath()))return false;
+        WorkingFolder = folder;
+        CastWorkingFolderChanged();
+        return true;
+    }
+    public bool ChangeDirectoryByIndex(int index)
+    {
+        FolderItem folder = (FolderItem)ListAll()[index];
+        if(!Directory.Exists(folder.GetFullPath()))return false;
+        WorkingFolder = folder;
+        CastWorkingFolderChanged();
+        return true;
+    }
+
+    public bool Open()
+    {
+        if(SelectedItems.Count()!=1)return false;
         
+        if(SelectedItems[0] is FolderItem folder)
+        {
+            ChangeDirectory(folder);
+            return true;
+        }
+        return false;
 
-
-        return Directory.GetFiles(ActualPath).ToList().Select(i => new FileItem(i)).ToList();
     }
 
-    public bool Delete(FileSystemItem item)
+    public bool SelectItems(List<FileSystemItem> items)
     {
+        foreach (var item in items)
+        {
+            if (item is FileItem file)
+            {
+                if(!File.Exists(file.GetFullPath()))return false;
+            } if (item is FolderItem folder)
+            {
+                if(!Directory.Exists(folder.GetFullPath()))return false;
+            }
+        }
+        SelectedItems = items;
+        CastFocusChanged();
         return true;
     }
 
-    public bool CreateFolder(string name)
+    public bool SelectFile(FileItem file)
     {
-        return true;
-    }
-    public bool CreateFile(string name)
-    {
-        return true;
-    }
-
-    public bool ChangeLocalDirectory(FolderItem folder)
-    {
-        return true;
-    }
-
-    public bool ChangeAbsoluteDirectory(FolderItem folder)
-    {
+        if(!File.Exists(file.GetFullPath()))return false;
+        SelectedItems.Clear();
+        SelectedItems.Add(file);
+        CastFocusChanged();
         return true;
     }
 
     public bool GoBack()
     {
+       var parentPath = new DirectoryInfo(WorkingFolder.GetFullPath()).Parent?.FullName;
+
+        if (parentPath == null)
+            return false;
+
+        WorkingFolder = new FolderItem(new PathFile(parentPath));
+        CastWorkingFolderChanged();
+
         return true;
+    }
+
+    private void CastWorkingFolderChanged()
+    {
+        WorkingFolderChanged?.Invoke(WorkingFolder);
+    }
+    private void CastFocusChanged()
+    {
+        FocusChanged?.Invoke(SelectedItems);
     }
 }
