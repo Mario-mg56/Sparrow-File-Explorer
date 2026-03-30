@@ -1,6 +1,8 @@
+namespace DynamicFileExplorer.Models;
+
 class FolderItem : FileSystemItem
 {
-    public FolderItem(string name) : base(name)
+    public FolderItem(PathFile name) : base(name)
     {
     }
 }

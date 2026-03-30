@@ -3,7 +3,6 @@ using System.IO;
 using System.Collections.Generic;
 namespace DynamicFileExplorer.Infrastructures;
 
-using System.IO.Enumeration;
 using System.Linq;
 using DynamicFileExplorer.Models;
 
@@ -148,10 +147,9 @@ class WorkingPath
 
     public bool GoBack()
     {
-       var parentPath = new DirectoryInfo(WorkingFolder.GetFullPath()).Parent?.FullName;
+        var parentPath = new DirectoryInfo(WorkingFolder.GetFullPath()).Parent?.FullName;
 
-        if (parentPath == null)
-            return false;
+        if (parentPath == null)return false;
 
         WorkingFolder = new FolderItem(new PathFile(parentPath));
         CastWorkingFolderChanged();
