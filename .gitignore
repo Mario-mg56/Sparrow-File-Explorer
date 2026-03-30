@@ -44,3 +44,7 @@ Desktop.ini
 
 ## dotnet publish artifacts
 publish/
+
+##compilatio things
+bin/
+obj/
