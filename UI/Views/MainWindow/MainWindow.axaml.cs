@@ -5,52 +5,78 @@ using Avalonia;
 using Avalonia.Controls;
 using System.Reactive.Linq;     
 using Avalonia.Media;
-using DynamicFileExplorer.Placeholders;
 using DynamicFileExplorer.UI.Components;
+using DynamicFileExplorer.ViewModels;
+using DynamicFileExplorer.Infrastructures;
+using Avalonia.Interactivity;
+using System.IO;
+using DynamicFileExplorer.Models;
+using System.Linq;
 
 public partial class MainWindow : Window
 {
     static readonly int COLS = 5;
+
+    Grid _Grid;
+    FileManagerViewModel _FileManagerViewModel;
     public MainWindow() {
         InitializeComponent();
 
-        var grid = this.FindControl<Grid>("FilesGrid");
-        if (grid == null) return;
+        _Grid = this.FindControl<Grid>("FilesGrid");
+        if (_Grid == null) return;
 
-        FileManager fm = new(17);
-        int rows = (int) Math.Ceiling(fm.files.Count/(float)COLS);
+        _FileManagerViewModel = new("/home/diego/proyectos/interfaces/DynamicFileExplorer");
+        int rows = (int) Math.Ceiling(_FileManagerViewModel.files.Count/(float)COLS);
         
-        grid.GetObservable(BoundsProperty).Subscribe(bounds => {
-            grid.RowDefinitions.Clear();
-            grid.ColumnDefinitions.Clear();
+        _Grid.GetObservable(BoundsProperty).Subscribe(bounds => {
+            _Grid.RowDefinitions.Clear();
+            _Grid.ColumnDefinitions.Clear();
 
             int cellSize =  (int) Math.Round(bounds.Width/COLS);
 
             for (int i = 0; i < rows; i++)
-                grid.RowDefinitions.Add(new RowDefinition(new GridLength(cellSize)));
+                _Grid.RowDefinitions.Add(new RowDefinition(new GridLength(cellSize)));
             for (int i = 0; i < COLS; i++) 
-                grid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
+                _Grid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
         });
-        
-        var rnd = new Random();
+
+        _FileManagerViewModel._onFilesChanged += RebuildGrid;
+        RebuildGrid();
+    }
+    
+    private void RebuildGrid()
+    {
+        _Grid.Children.Clear();
+        int rows = (int) Math.Ceiling(_FileManagerViewModel.files.Count/(float)COLS);
         int i = 0;
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < COLS; c++) {
-                // var border = new Border {
-                //     Child = new TextBlock{Text = $"{r}, {c}"},
-                //     Background = new SolidColorBrush(Color.FromRgb
-                //         ((byte)rnd.Next(0, 256), (byte)rnd.Next(0, 256), (byte)rnd.Next(0, 256)))
-                // };
-                i++;
-                if (i>=fm.files.Count) break;
-                var file = fm.files[i];
-                var border = new Border {
-                    Child = new FileView(file.name, file.icon).layout
+        _FileManagerViewModel.files.ToList().ForEach(Console.WriteLine);
+
+        for (int r = 0; r < rows; r++)
+        {
+            for (int c = 0; c < COLS; c++)
+            {
+                if (i >= _FileManagerViewModel.files.Count)
+                    return; // salir completamente
+
+                var item = _FileManagerViewModel.files[i];
+
+                FileSystemItem file = item.IsFolder ? item.Folder : item.File;
+
+                var border = new Border
+                {
+                    Child = new FileView(file, item.icon).layout
                 };
+
                 Grid.SetRow(border, r);
                 Grid.SetColumn(border, c);
-                grid.Children.Add(border);
+
+                _Grid.Children.Add(border);
+
+                i++; // incrementar DESPUÉS de usarlo
             }
         }
+        Console.WriteLine(_FileManagerViewModel.files.Count());
+        Console.WriteLine("termine de hacer rows");
     }
+
 }

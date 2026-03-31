@@ -19,4 +19,5 @@
             <TextBlock Text="RightSidebar"/>
         </Border>
     </Grid>
+
 </Window>

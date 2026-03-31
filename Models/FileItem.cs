@@ -9,9 +9,13 @@ class FileItem : FileSystemItem
     {
         Extension = System.IO.Path.GetExtension(name.Path);
     }
-
+    public FileItem(string localPath, string extension):base(localPath)
+    {
+        Extension = extension;
+    }   
     public override string GetFullPath()
     {
-        return Path+Name+Extension;
+        return Path+"/"+Name+Extension;
     }
+    
 }
