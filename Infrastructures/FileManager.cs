@@ -26,31 +26,69 @@ class FileManager
         _fileManager ??= new FileManager(actualPath);
         return _fileManager;
     }
-    public static FileManager? GetInstance()
+    public static FileManager GetInstance()
     {
         if(_fileManager==null){
-            Console.WriteLine("El file Manager debe estar inicializado para usar el sc");
-            return null;
+            Console.WriteLine("No se ha inicializado la carpeta inicializando en root");
+             _fileManager = new FileManager(new FolderItem(new PathFile("/home")));
         }
         return _fileManager;
     }
 
     public  List<FileSystemItem> ListAll() 
     {
+        return ListAll(WorkingFolder);
+    }
+    public  List<FileSystemItem> ListAll(FolderItem folder) 
+    {
         List<FileSystemItem> files = [];
 
-        foreach (var item in  Directory.GetDirectories(WorkingFolder.GetFullPath()).OrderBy(d => Path.GetFileName(d),
+        foreach (var item in  Directory.GetDirectories(folder.GetFullPath()).OrderBy(d => Path.GetFileName(d),
                              StringComparer.CurrentCultureIgnoreCase))
         {
             files.Add(new FolderItem(new PathFile(item)));
         } 
-        foreach (var item in  Directory.GetFiles(WorkingFolder.GetFullPath()).OrderBy(d => Path.GetFileName(d),
+        foreach (var item in  Directory.GetFiles(folder.GetFullPath()).OrderBy(d => Path.GetFileName(d),
                              StringComparer.CurrentCultureIgnoreCase))
         {
             files.Add(new FileItem(new PathFile(item)));
         } 
 
         return files;
+    }
+    public  List<FolderItem> ListAllDirectories(FolderItem folder) 
+    {
+        List<FolderItem> files = [];
+
+        foreach (var item in  Directory.GetDirectories(folder.GetFullPath()).OrderBy(d => Path.GetFileName(d),
+                             StringComparer.CurrentCultureIgnoreCase))
+        {
+            files.Add(new FolderItem(new PathFile(item)));
+        } 
+        return files;
+    }
+
+    /**
+    ESTO VA DESDE EL HIJO HASTA EL ROOT(incluyendolos)
+    **/
+    public List<FolderItem> GetAllFathers(FolderItem folder)
+    {
+        List<FolderItem> fathers = [];
+        fathers.Add(folder);
+        while(true)
+        {
+            var parentPath = new DirectoryInfo(folder.GetFullPath()).Parent?.FullName;
+            if (parentPath==null)break;
+            folder = new FolderItem(new PathFile(parentPath));
+            fathers.Add(folder);
+        }
+        return fathers;
+    }
+
+    public List<FolderItem> GetAllFathers()
+    {
+        
+        return GetAllFathers(WorkingFolder);
     }
 
     public bool Delete(FileItem item)
