@@ -4,41 +4,45 @@ using System;
 using Avalonia;
 using Avalonia.Controls;
 using System.Reactive.Linq;     
-using Avalonia.Media;
 using DynamicFileExplorer.UI.Components;
 using DynamicFileExplorer.ViewModels;
-using DynamicFileExplorer.Infrastructures;
 using Avalonia.Interactivity;
-using System.IO;
 using DynamicFileExplorer.Models;
 using System.Linq;
+using DynamicFileExplorer.Infrastructures;
 
 public partial class MainWindow : Window
 {
     static readonly int COLS = 5;
 
-    Grid _Grid;
+    readonly Grid grid;
+    readonly Button backButton, forwardButton;
     FileManagerViewModel _FileManagerViewModel;
     public MainWindow() {
         InitializeComponent();
 
-        _Grid = this.FindControl<Grid>("FilesGrid");
-        if (_Grid == null) return;
+        grid = this.FindControl<Grid>("FilesGrid")!;
+        backButton = this.FindControl<Button>("BackButton")!;
+        forwardButton = this.FindControl<Button>("ForwardButton")!;
 
-        _FileManagerViewModel = new("/home");
+        _FileManagerViewModel = new(AppContext.BaseDirectory);
         int rows = (int) Math.Ceiling(_FileManagerViewModel.files.Count/(float)COLS);
         
-        _Grid.GetObservable(BoundsProperty).Subscribe(bounds => {
-            _Grid.RowDefinitions.Clear();
-            _Grid.ColumnDefinitions.Clear();
+        grid.GetObservable(BoundsProperty).Subscribe(bounds => {
+            grid.RowDefinitions.Clear();
+            grid.ColumnDefinitions.Clear();
 
             int cellSize =  (int) Math.Round(bounds.Width/COLS);
 
             for (int i = 0; i < rows; i++)
-                _Grid.RowDefinitions.Add(new RowDefinition(new GridLength(cellSize)));
+                grid.RowDefinitions.Add(new RowDefinition(new GridLength(cellSize)));
             for (int i = 0; i < COLS; i++) 
-                _Grid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
+                grid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
         });
+        
+        FileManager fm =FileManager.GetInstance()!;
+
+        backButton.Click += (_, _) => fm.GoBack();
 
         _FileManagerViewModel._onFilesChanged += RebuildGrid;
         RebuildGrid();
@@ -46,7 +50,7 @@ public partial class MainWindow : Window
     
     private void RebuildGrid()
     {
-        _Grid.Children.Clear();
+        grid.Children.Clear();
         int rows = (int) Math.Ceiling(_FileManagerViewModel.files.Count/(float)COLS);
         int i = 0;
         _FileManagerViewModel.files.ToList().ForEach(Console.WriteLine);
@@ -70,7 +74,7 @@ public partial class MainWindow : Window
                 Grid.SetRow(border, r);
                 Grid.SetColumn(border, c);
 
-                _Grid.Children.Add(border);
+                grid.Children.Add(border);
 
                 i++; // incrementar DESPUÉS de usarlo
             }

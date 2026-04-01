@@ -16,10 +16,10 @@ class FileView
     public readonly TextBlock label;
     static readonly int PADDING = 10;
     public event Action? Clicked;
-    private FileSystemItem File;
+    private readonly FileSystemItem file;
     public FileView(FileSystemItem file, SolidColorBrush icon)
     {
-        File = file;
+        this.file = file;
         name = file.Name;
 
         layout = new Grid {
@@ -53,16 +53,23 @@ class FileView
             Clicked?.Invoke();
         };
 
-        Clicked+=Click;
+        Clicked += Click;
+
+        FileManager.GetInstance()!.FocusChanged += (focusedItems) => {
+            foreach (var f in focusedItems) {
+                if (f == file) {
+                    layout.Background = new SolidColorBrush(Colors.LightBlue);
+                    return;
+                }
+            }
+            layout.Background = new SolidColorBrush(Colors.Transparent);
+        };
     }
     public void Click()
     {
-        if (File is FileItem fi)
-        {
-            FileManager.GetInstance()?.Select(fi);
-        } else if(File is FolderItem fo)
-        {
-            FileManager.GetInstance()?.Select(fo);
-        }
+        FileManager fm = FileManager.GetInstance()!;
+
+        if (file is FileItem fi) fm.Select(fi);
+        else if(file is FolderItem fo) fm.Select(fo);
     }
 }

@@ -2,8 +2,6 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 namespace DynamicFileExplorer.Infrastructures;
-
-using System.Diagnostics.Tracing;
 using System.Linq;
 using DynamicFileExplorer.Models;
 
