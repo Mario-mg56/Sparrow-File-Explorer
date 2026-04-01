@@ -25,7 +25,7 @@ public partial class MainWindow : Window
         _Grid = this.FindControl<Grid>("FilesGrid");
         if (_Grid == null) return;
 
-        _FileManagerViewModel = new("/home/diego/proyectos/interfaces/DynamicFileExplorer");
+        _FileManagerViewModel = new("/home");
         int rows = (int) Math.Ceiling(_FileManagerViewModel.files.Count/(float)COLS);
         
         _Grid.GetObservable(BoundsProperty).Subscribe(bounds => {
