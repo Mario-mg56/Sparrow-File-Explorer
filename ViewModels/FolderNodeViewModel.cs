@@ -6,7 +6,7 @@ using DynamicFileExplorer.Models;
 namespace DynamicFileExplorer.ViewModels;
 
 class FolderNodeViewModel{
-    FolderItem Yo;
+    readonly FolderItem Yo;
     List<FolderNodeViewModel> Childrens = [];
 
     public Action? onHierarchyActualzied;
