@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using Avalonia.Media;
 using DynamicFileExplorer.Models;
 
@@ -8,22 +7,11 @@ namespace DynamicFileExplorer.ViewModels;
 class FileViewModel{
     public string name;
     public SolidColorBrush icon;
-    public FileItem File;
-    public FolderItem Folder;
+    public FileSystemItem file;
 
-    public bool IsFolder;
-
-    public FileViewModel(FileSystemItem file,bool isFolder)
+    public FileViewModel(FileSystemItem file)
     {
-        IsFolder = isFolder;
-        if (isFolder)
-        {
-            Folder = (FolderItem)file;
-        } else
-        {
-            File = (FileItem)file;
-            
-        }
+        this.file = file;
         name = file.Name;
         
         var rnd = new Random();

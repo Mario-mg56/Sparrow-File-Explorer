@@ -55,7 +55,7 @@ class FileView
 
         Clicked += Click;
 
-        FileManager.GetInstance()!.FocusChanged += (focusedItems) => {
+        App.Current.fileManager.FocusChanged += (focusedItems) => {
             foreach (var f in focusedItems) {
                 if (f == file) {
                     layout.Background = new SolidColorBrush(Colors.LightBlue);
@@ -67,7 +67,7 @@ class FileView
     }
     public void Click()
     {
-        FileManager fm = FileManager.GetInstance()!;
+        FileManager fm = App.Current.fileManager;
 
         if (file is FileItem fi) fm.Select(fi);
         else if(file is FolderItem fo) fm.Select(fo);

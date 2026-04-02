@@ -1,7 +1,4 @@
 using System;
-using System.Runtime.Intrinsics.X86;
-using System.Xml.Linq;
-using DynamicFileExplorer.Infrastructures;
 
 namespace DynamicFileExplorer.Models;
 
@@ -16,7 +13,7 @@ abstract class FileSystemItem
         Path = IOPathFileToPath(name);
     }
 
-    protected FileSystemItem(String path, String name)
+    protected FileSystemItem(string path, string name)
     {
         Name = name;
         Path = path;
@@ -26,9 +23,9 @@ abstract class FileSystemItem
     Este constructor es para archivos locales
     */
     
-    protected FileSystemItem(String localPath)
+    protected FileSystemItem(string localPath)
     {
-        Path = FileManager.GetInstance().WorkingFolder.GetFullPath();
+        Path = App.Current.fileManager.WorkingFolder.GetFullPath();
         Name = localPath;
     }
     private string IOPathFileToName(PathFile name)
@@ -38,17 +35,7 @@ abstract class FileSystemItem
 
     private string IOPathFileToPath(PathFile name)
     {
-        string ?tusmuertos = "chupalo";
-        try
-        {
-            tusmuertos = System.IO.Path.GetDirectoryName(name.Path);
-
-        }
-        catch (Exception)
-        {
-            Console.WriteLine("chupaloputa");
-        }
-        return tusmuertos;
+        return System.IO.Path.GetDirectoryName(name.Path) ?? throw new ArgumentException($"Invalid path: {name.Path}");
     }
 
     public virtual string GetFullPath()

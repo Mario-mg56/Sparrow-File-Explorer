@@ -9,28 +9,20 @@ class FileManager
 {
     public FolderItem WorkingFolder;
     private List<FileSystemItem> SelectedItems = [];
-    public event Action<FolderItem> ?WorkingFolderChanged;
-    public event Action<List<FileSystemItem>> ?FocusChanged;
-    private static FileManager ?_fileManager;
+    public event Action<FolderItem>? WorkingFolderChanged;
+    public event Action<List<FileSystemItem>>? FocusChanged;
+    private static FileManager? instance;
 
 
-    private FileManager(FolderItem actualPath)
+    private FileManager(FolderItem currentPath)
     {
-        WorkingFolder = actualPath;
+        WorkingFolder = currentPath;
     } 
 
-    public static FileManager GetInstance(FolderItem actualPath)
+    public static FileManager Init(FolderItem currentPath)
     {
-        _fileManager ??= new FileManager(actualPath);
-        return _fileManager;
-    }
-    public static FileManager? GetInstance()
-    {
-        if(_fileManager==null){
-            Console.WriteLine("El file Manager debe estar inicializado para usar el sc");
-            return null;
-        }
-        return _fileManager;
+        instance ??= new FileManager(currentPath);
+        return instance;
     }
 
     public  List<FileSystemItem> ListAll() 
@@ -122,7 +114,7 @@ class FileManager
         if(SelectedItems[0] is FolderItem folder)
         {
             ChangeDirectory(folder);
-            return _fileManager;
+            return instance;
         }
         return null;
 
@@ -151,13 +143,13 @@ class FileManager
         {
             
             Open();
-            return _fileManager;
+            return instance;
         }
         if(!File.Exists(file.GetFullPath()))return null;
         SelectedItems.Clear();
         SelectedItems.Add(file);
         CastFocusChanged();
-        return _fileManager;
+        return instance;
     }
     public FileManager? Select(FolderItem folder)
     {
@@ -165,13 +157,13 @@ class FileManager
         if(SelectedItems.Any() && folder == SelectedItems[0])
         {
             Open();
-            return _fileManager;
+            return instance;
         }
         if(!Directory.Exists(folder.GetFullPath()))return null;
         SelectedItems.Clear();
         SelectedItems.Add(folder);
         CastFocusChanged();
-        return _fileManager;
+        return instance;
     }
 
     public FileManager? GoBack() 
@@ -183,7 +175,7 @@ class FileManager
         WorkingFolder = new FolderItem(new PathFile(parentPath));
         CastWorkingFolderChanged();
 
-        return _fileManager;
+        return instance;
     }
 
     private void CastWorkingFolderChanged()

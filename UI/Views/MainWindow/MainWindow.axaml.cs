@@ -25,7 +25,7 @@ public partial class MainWindow : Window
         backButton = this.FindControl<Button>("BackButton")!;
         forwardButton = this.FindControl<Button>("ForwardButton")!;
 
-        _FileManagerViewModel = new(AppContext.BaseDirectory);
+        _FileManagerViewModel = new();
         int rows = (int) Math.Ceiling(_FileManagerViewModel.files.Count/(float)COLS);
         
         grid.GetObservable(BoundsProperty).Subscribe(bounds => {
@@ -40,7 +40,7 @@ public partial class MainWindow : Window
                 grid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
         });
         
-        FileManager fm =FileManager.GetInstance()!;
+        FileManager fm = App.Current.fileManager;
 
         backButton.Click += (_, _) => fm.GoBack();
 
@@ -64,7 +64,7 @@ public partial class MainWindow : Window
 
                 var item = _FileManagerViewModel.files[i];
 
-                FileSystemItem file = item.IsFolder ? item.Folder : item.File;
+                FileSystemItem file = item.file;
 
                 var border = new Border
                 {
