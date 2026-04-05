@@ -16,7 +16,7 @@ public partial class App : Application
 
     public override void Initialize()
     {
-        fileManager = FileManager.Init(new FolderItem(new PathFile(AppContext.BaseDirectory)));
+        fileManager = FileManager.Init(new DirItem(new Path(AppContext.BaseDirectory)));
         AvaloniaXamlLoader.Load(this);
     }
 

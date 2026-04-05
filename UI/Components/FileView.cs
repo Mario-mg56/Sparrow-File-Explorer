@@ -17,10 +17,10 @@ class FileView
     static readonly int PADDING = 10;
     public event Action? Clicked;
     private readonly FileSystemItem file;
-    public FileView(FileSystemItem file, SolidColorBrush icon)
+    public FileView(FileSystemItem file)
     {
         this.file = file;
-        name = file.Name;
+        name = file.path.name;
 
         layout = new Grid {
             Margin = new Thickness(PADDING)
@@ -31,7 +31,7 @@ class FileView
         layout.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
 
         iconImg = new Border {
-            Background = icon
+            Background = file.icon
         };
 
         label = new TextBlock {
@@ -48,10 +48,7 @@ class FileView
         layout.Children.Add(iconImg);
         layout.Children.Add(label);
 
-        layout.PointerPressed += (_, _) =>
-        {
-            Clicked?.Invoke();
-        };
+        layout.PointerPressed += (_, _) => Clicked?.Invoke();
 
         Clicked += Click;
 
@@ -69,7 +66,7 @@ class FileView
     {
         FileManager fm = App.Current.fileManager;
 
-        if (file is FileItem fi) fm.Select(fi);
-        else if(file is FolderItem fo) fm.Select(fo);
+        if (file is File fi) fm.Select(fi);
+        else if(file is DirItem fo) fm.Select(fo);
     }
 }

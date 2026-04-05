@@ -1,50 +1,37 @@
 using System;
+using Avalonia.Media;
 
 namespace DynamicFileExplorer.Models;
 
 abstract class FileSystemItem
 {
-    public string Name { get; set; }
-    public string Path { get; set; }
+    public SolidColorBrush icon;
 
-    protected FileSystemItem(PathFile name)
-    {
-        Name = IOPathFileToName(name);
-        Path = IOPathFileToPath(name);
-    }
+    public Path path;
 
-    protected FileSystemItem(string path, string name)
+    protected FileSystemItem(Path path)
     {
-        Name = name;
-        Path = path;
+        this.path = path;
+        icon = GenerateIconPlaceholder();
     }
 
-    /**
-    Este constructor es para archivos locales
-    */
-    
-    protected FileSystemItem(string localPath)
+    protected FileSystemItem(string path)
     {
-        Path = App.Current.fileManager.WorkingFolder.GetFullPath();
-        Name = localPath;
-    }
-    private string IOPathFileToName(PathFile name)
-    {
-        return System.IO.Path.GetFileNameWithoutExtension(name.Path);
+        this.path = new Path(path);
+        icon = GenerateIconPlaceholder();
     }
 
-    private string IOPathFileToPath(PathFile name)
-    {
-        return System.IO.Path.GetDirectoryName(name.Path) ?? throw new ArgumentException($"Invalid path: {name.Path}");
-    }
-
-    public virtual string GetFullPath()
-    {
-        return Path+"/"+Name;
-    }
+    public abstract string GetPath();
 
     public override string ToString()
     {
-        return GetFullPath();
+        return GetPath();
+    }
+
+    private static SolidColorBrush GenerateIconPlaceholder()
+    {   
+        var rnd = new Random();
+        return new SolidColorBrush(Color.FromRgb
+            ((byte)rnd.Next(0, 256), (byte)rnd.Next(0, 256), (byte)rnd.Next(0, 256)));
     }
 }

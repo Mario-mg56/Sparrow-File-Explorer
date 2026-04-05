@@ -5,9 +5,7 @@ using Avalonia;
 using Avalonia.Controls;
 using System.Reactive.Linq;     
 using DynamicFileExplorer.UI.Components;
-using DynamicFileExplorer.ViewModels;
 using Avalonia.Interactivity;
-using DynamicFileExplorer.Models;
 using System.Linq;
 using DynamicFileExplorer.Infrastructures;
 
@@ -17,7 +15,7 @@ public partial class MainWindow : Window
 
     readonly Grid grid;
     readonly Button backButton, forwardButton;
-    FileManagerViewModel _FileManagerViewModel;
+    readonly FileManager fileManager;
     public MainWindow() {
         InitializeComponent();
 
@@ -25,8 +23,8 @@ public partial class MainWindow : Window
         backButton = this.FindControl<Button>("BackButton")!;
         forwardButton = this.FindControl<Button>("ForwardButton")!;
 
-        _FileManagerViewModel = new();
-        int rows = (int) Math.Ceiling(_FileManagerViewModel.files.Count/(float)COLS);
+        fileManager = App.Current.fileManager;
+        int rows = (int) Math.Ceiling(fileManager.files.Count/(float)COLS);
         
         grid.GetObservable(BoundsProperty).Subscribe(bounds => {
             grid.RowDefinitions.Clear();
@@ -44,31 +42,29 @@ public partial class MainWindow : Window
 
         backButton.Click += (_, _) => fm.GoBack();
 
-        _FileManagerViewModel._onFilesChanged += RebuildGrid;
+        fileManager.WorkingDirChanged += (_) => RebuildGrid();
         RebuildGrid();
     }
     
     private void RebuildGrid()
     {
         grid.Children.Clear();
-        int rows = (int) Math.Ceiling(_FileManagerViewModel.files.Count/(float)COLS);
+        int rows = (int) Math.Ceiling(fileManager.files.Count/(float)COLS);
         int i = 0;
-        _FileManagerViewModel.files.ToList().ForEach(Console.WriteLine);
+        fileManager.files.ToList().ForEach(Console.WriteLine);
 
         for (int r = 0; r < rows; r++)
         {
             for (int c = 0; c < COLS; c++)
             {
-                if (i >= _FileManagerViewModel.files.Count)
-                    return; // salir completamente
+                if (i >= fileManager.files.Count)
+                    return;
 
-                var item = _FileManagerViewModel.files[i];
-
-                FileSystemItem file = item.file;
+                var file = fileManager.files[i];
 
                 var border = new Border
                 {
-                    Child = new FileView(file, item.icon).layout
+                    Child = new FileView(file).layout
                 };
 
                 Grid.SetRow(border, r);
@@ -76,11 +72,9 @@ public partial class MainWindow : Window
 
                 grid.Children.Add(border);
 
-                i++; // incrementar DESPUÉS de usarlo
+                i++;
             }
         }
-        Console.WriteLine(_FileManagerViewModel.files.Count());
-        Console.WriteLine("termine de hacer rows");
     }
 
 }

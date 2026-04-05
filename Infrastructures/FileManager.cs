@@ -1,64 +1,74 @@
+namespace DynamicFileExplorer.Infrastructures;
+
 using System;
 using System.IO;
+using static System.IO.Path;
 using System.Collections.Generic;
-namespace DynamicFileExplorer.Infrastructures;
+using System.Collections.ObjectModel;
 using System.Linq;
 using DynamicFileExplorer.Models;
 
 class FileManager
 {
-    public FolderItem WorkingFolder;
-    private List<FileSystemItem> SelectedItems = [];
-    public event Action<FolderItem>? WorkingFolderChanged;
-    public event Action<List<FileSystemItem>>? FocusChanged;
     private static FileManager? instance;
+    public DirItem WorkingDir;
+    public ObservableCollection<FileSystemItem> files = [];
+    private List<FileSystemItem> SelectedItems = [];
+    public event Action<DirItem>? WorkingDirChanged;
+    public event Action<List<FileSystemItem>>? FocusChanged;
 
-
-    private FileManager(FolderItem currentPath)
+    private FileManager(DirItem currentPath)
     {
-        WorkingFolder = currentPath;
+        WorkingDirChanged += (_) => LoadFiles();
+        if (!ChangeDirectory(currentPath)) throw new ArgumentException("Invalid directory");
+        WorkingDir = currentPath;
+        
     } 
 
-    public static FileManager Init(FolderItem currentPath)
+    public static FileManager Init(DirItem currentPath)
     {
         instance ??= new FileManager(currentPath);
         return instance;
+    }
+
+    private void LoadFiles()
+    {
+        files.Clear();
+        ListAll().ForEach(f => files.Add(f));
+        files.ToList().ForEach(Console.WriteLine);
     }
 
     public  List<FileSystemItem> ListAll() 
     {
         List<FileSystemItem> files = [];
 
-        foreach (var item in  Directory.GetDirectories(WorkingFolder.GetFullPath()).OrderBy(d => Path.GetFileName(d),
-                             StringComparer.CurrentCultureIgnoreCase))
-        {
-            files.Add(new FolderItem(new PathFile(item)));
-        } 
-        foreach (var item in  Directory.GetFiles(WorkingFolder.GetFullPath()).OrderBy(d => Path.GetFileName(d),
-                             StringComparer.CurrentCultureIgnoreCase))
-        {
-            files.Add(new FileItem(new PathFile(item)));
-        } 
+        foreach (var path in Directory.GetDirectories(WorkingDir.GetPath()).OrderBy(d => GetFileName(d),
+         StringComparer.CurrentCultureIgnoreCase))
+            files.Add(new DirItem(new Models.Path(path)));
+
+        foreach (var path in Directory.GetFiles(WorkingDir.GetPath()).OrderBy(d => GetFileName(d),
+         StringComparer.CurrentCultureIgnoreCase))
+            files.Add(new Models.File(new Models.Path(path)));
 
         return files;
     }
 
-    public bool Delete(FileItem item)
+    public bool Delete(Models.File item)
     {
         try
         {
-            File.Delete(item.Path + item.Name);
+            System.IO.File.Delete(item.path + item.path.name);
         } catch (IOException )
         {
             return false;
         }
         return true;
     }
-    public bool Delete(FolderItem item)
+    public bool Delete(DirItem item)
     {
         try
         {
-            Directory.Delete(item.GetFullPath(),recursive:true);
+            Directory.Delete(item.GetPath(),recursive:true);
         } catch (IOException )
         {
             return false;
@@ -66,11 +76,11 @@ class FileManager
         return true;
     }
 
-    public bool CreateFolder(FolderItem folder)
+    public bool CreateDir(DirItem dir)
     {
         try
         {
-            Directory.CreateDirectory(folder.GetFullPath());
+            Directory.CreateDirectory(dir.GetPath());
             
         } catch (IOException)
         {
@@ -78,11 +88,11 @@ class FileManager
         }
         return true;
     }
-    public bool CreateFile(FileItem file)
+    public bool CreateFile(Models.File file)
     {
         try
         {
-            File.Create(file.GetFullPath());
+            System.IO.File.Create(file.GetPath());
             
         } catch (IOException)
         {
@@ -91,29 +101,26 @@ class FileManager
         return true;
     }
 
-    public bool ChangeDirectory(FolderItem folder)
+    public bool ChangeDirectory(DirItem dir)
     {
-        if(!Directory.Exists(folder.GetFullPath()))return false;
-        WorkingFolder = folder;
-        CastWorkingFolderChanged();
+        Console.WriteLine(dir);
+        if(!Directory.Exists(dir.GetPath())) return false;
+        WorkingDir = dir;
+        CastWorkingDirChanged();
         return true;
     }
     public bool ChangeDirectoryByIndex(int index)
     {
-        FolderItem folder = (FolderItem)ListAll()[index];
-        if(!Directory.Exists(folder.GetFullPath()))return false;
-        WorkingFolder = folder;
-        CastWorkingFolderChanged();
-        return true;
+        return ChangeDirectory((DirItem)ListAll()[index]);
     }
 
     public FileManager? Open()
     {
-        if(SelectedItems.Count()!=1)return null;
+        if(SelectedItems.Count()!=1) return null;   
         
-        if(SelectedItems[0] is FolderItem folder)
+        if(SelectedItems[0] is DirItem dir)
         {
-            ChangeDirectory(folder);
+            ChangeDirectory(dir);
             return instance;
         }
         return null;
@@ -124,12 +131,12 @@ class FileManager
     {
         foreach (var item in items)
         {
-            if (item is FileItem file)
+            if (item is Models.File file)
             {
-                if(!File.Exists(file.GetFullPath()))return false;
-            } if (item is FolderItem folder)
+                if(!System.IO.File.Exists(file.GetPath()))return false;
+            } if (item is DirItem dir)
             {
-                if(!Directory.Exists(folder.GetFullPath()))return false;
+                if(!Directory.Exists(dir.GetPath()))return false;
             }
         }
         SelectedItems = items;
@@ -137,50 +144,51 @@ class FileManager
         return true;
     }
 
-    public FileManager? Select(FileItem file)
+    public FileManager? Select(Models.File file)
     {
         if(SelectedItems.Any() && file == SelectedItems[0])
         {
-            
             Open();
             return instance;
         }
-        if(!File.Exists(file.GetFullPath()))return null;
+        if(!System.IO.File.Exists(file.GetPath()))return null;
         SelectedItems.Clear();
         SelectedItems.Add(file);
         CastFocusChanged();
         return instance;
     }
-    public FileManager? Select(FolderItem folder)
+    public FileManager? Select(DirItem dir)
     {
-        Console.WriteLine("se ha selecionado" + folder.Name);
-        if(SelectedItems.Any() && folder == SelectedItems[0])
+        Console.WriteLine("se ha selecionado" + dir.path.name);
+        if(SelectedItems.Any() && dir == SelectedItems[0])
         {
             Open();
             return instance;
         }
-        if(!Directory.Exists(folder.GetFullPath()))return null;
+        if(!Directory.Exists(dir.GetPath()))return null;
         SelectedItems.Clear();
-        SelectedItems.Add(folder);
+        SelectedItems.Add(dir);
         CastFocusChanged();
         return instance;
     }
 
     public FileManager? GoBack() 
     {
-        var parentPath = new DirectoryInfo(WorkingFolder.GetFullPath()).Parent?.FullName;
+        var parentPath = new DirectoryInfo(WorkingDir.GetPath()).Parent?.FullName;
 
         if (parentPath == null)return null;
 
-        WorkingFolder = new FolderItem(new PathFile(parentPath));
-        CastWorkingFolderChanged();
+        WorkingDir = new DirItem(new Models.Path(parentPath));
+        CastWorkingDirChanged();
 
         return instance;
     }
 
-    private void CastWorkingFolderChanged()
+    private void CastWorkingDirChanged()
     {
-        WorkingFolderChanged?.Invoke(WorkingFolder);
+        Console.WriteLine("WD changed to " + WorkingDir.GetPath());
+        LoadFiles();
+        WorkingDirChanged?.Invoke(WorkingDir);
     }
     private void CastFocusChanged()
     {
@@ -191,9 +199,4 @@ class FileManager
     {
         ListAll().ForEach(Console.WriteLine);
     }
-    // public static void Init()
-    // {   FileManager fm = FileManager.GetInstance(new FolderItem(new PathFile("/home/diego/proyectos/interfaces/DynamicFileExplorer")));
-    //     fm.Select(new FolderItem("bin")).Open().Select(new FolderItem("Debug")).Open();
-    //     fm.PrintList();
-    // }
 }
