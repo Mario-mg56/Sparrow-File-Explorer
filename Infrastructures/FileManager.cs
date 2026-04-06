@@ -12,6 +12,7 @@ class FileManager
 {
     private static FileManager? instance;
     public DirItem WorkingDir;
+    private List<FileSystemItem> searchWorkingDir = [];
     public ObservableCollection<FileSystemItem> files = [];
     private List<FileSystemItem> SelectedItems = [];
     public event Action<DirItem>? WorkingDirChanged;
@@ -39,7 +40,7 @@ class FileManager
 
     public DirItem? GetRoot()
     {
-        String? path = GetPathRoot(Environment.CurrentDirectory);
+        string? path = GetPathRoot(Environment.CurrentDirectory);
         if (path==null) return null;
         return new DirItem(path);
     }
@@ -47,15 +48,18 @@ class FileManager
     public  List<FileSystemItem> ListAll() 
     {
         List<FileSystemItem> files = [];
+        if(searchWorkingDir.Count==0){
+            foreach (var path in Directory.GetDirectories(WorkingDir.GetPath()).OrderBy(d => GetFileName(d),
+            StringComparer.CurrentCultureIgnoreCase))
+                files.Add(new DirItem(new Models.Path(path)));
 
-        foreach (var path in Directory.GetDirectories(WorkingDir.GetPath()).OrderBy(d => GetFileName(d),
-         StringComparer.CurrentCultureIgnoreCase))
-            files.Add(new DirItem(new Models.Path(path)));
-
-        foreach (var path in Directory.GetFiles(WorkingDir.GetPath()).OrderBy(d => GetFileName(d),
-         StringComparer.CurrentCultureIgnoreCase))
+            foreach (var path in Directory.GetFiles(WorkingDir.GetPath()).OrderBy(d => GetFileName(d),
+            StringComparer.CurrentCultureIgnoreCase))
             files.Add(new Models.File(new Models.Path(path)));
-
+        } else
+        {
+            searchWorkingDir.ForEach(files.Add);
+        }
         return files;
     }
     public List<DirItem> ListAllDirectories(DirItem dir)
@@ -229,6 +233,59 @@ class FileManager
     {
         FocusChanged?.Invoke(SelectedItems);
     }
+
+    public void SearchWorkingDir(string word)
+    {
+        
+
+        searchWorkingDir.Clear();
+
+        var stack = new Stack<string>();
+        stack.Push(WorkingDir.path.path);
+
+        while (stack.Count > 0)
+        {
+            var dir = stack.Pop();
+
+            try
+            {
+            // Archivos
+                foreach (var file in Directory.EnumerateFiles(dir))
+                {
+                    Console.WriteLine(file);
+                    if (file.Contains(word))
+                    {
+                        searchWorkingDir.Add(
+                            new Models.File(new Models.Path(file))
+                        );
+                    }
+                }
+
+                // Subdirectorios
+                foreach (var subDir in Directory.EnumerateDirectories(dir))
+                {
+                    if (subDir.Contains(word))
+                    {
+                        searchWorkingDir.Add(
+                            new DirItem(new Models.Path(subDir))
+                        );
+                    }
+                    stack.Push(subDir);
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // Ignorar carpetas sin permisos (/root, /proc…)
+            }
+            catch (IOException)
+            {
+                // Ignorar errores raros
+            }
+        }
+
+        CastWorkingDirChanged();
+    }
+
 
     public void PrintList()
     {
