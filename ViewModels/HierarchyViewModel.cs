@@ -1,41 +1,47 @@
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using DynamicFileExplorer.Infrastructures;
+using DynamicFileExplorer;
 using DynamicFileExplorer.Models;
 using DynamicFileExplorer.ViewModels;
 
-class HierarchyViewModel
+namespace DynamicFileExplorer.ViewModels;
+public class HierarchyViewModel
 {
-    FolderNodeViewModel? Root;
+    public ObservableCollection<FolderNodeViewModel> Roots { get; } = new();
 
     public HierarchyViewModel()
     {
-        List<FolderItem> fathersAndSon = FileManager.GetInstance().GetAllFathers();
-        fathersAndSon.Reverse();
-        FolderNodeViewModel? actualNode = null;
-        foreach (FolderItem folder in fathersAndSon)
-        {
-            if (actualNode == null)
-            {
-                Root = new FolderNodeViewModel(folder);
-                actualNode = Root;
-            } else
-            {
-                FolderNodeViewModel tempNode = new (folder);
-                actualNode.AddChildren(tempNode);
-                actualNode = tempNode;
-            }
-            
-        }
+        Roots.Add(new FolderNodeViewModel(App.Current.fileManager.GetRoot()));
+        Roots[0].IsExpanded = true;
     }
 
-    public void ExpandNode(FolderNodeViewModel folder)
+    public static void PrintTree(FolderNodeViewModel node, string indent = "", bool isLast = true)
     {
-        List<FolderNodeViewModel> nodes = FileManager.GetInstance()
-                            .ListAllDirectories(folder.GetNode())
-                            .Select(i=>new FolderNodeViewModel(i))
-                            .ToList();
-        folder.AddChildrens(nodes);
+        // ├── o └── según si es el último hijo
+        Console.Write(indent);
+
+        if (isLast)
+        {
+            Console.Write("└── ");
+            indent += "    ";
+        }
+        else
+        {
+            Console.Write("├── ");
+            indent += "│   ";
+        }
+
+        Console.WriteLine(node.Name);
+
+        var children = node.Children.ToList();
+
+        for (int i = 0; i < children.Count; i++)
+        {
+            bool last = i == children.Count - 1;
+            PrintTree(children[i], indent, last);
+        }
     }
 
 }

@@ -14,7 +14,9 @@
             </StackPanel>
         </Border>
         <Border Grid.Row="1" Grid.Column="0" Background="Red">
-            <TextBlock Text="LeftSidebar"/>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <Grid x:Name="HierarchyHost"/>
+            </ScrollViewer>
         </Border>
         <Border Grid.Row="1" Grid.Column="1" Background="Blue">
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">

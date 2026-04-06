@@ -1,6 +1,8 @@
+using System.IO;
+
 namespace DynamicFileExplorer.Models;
 
-class DirItem : FileSystemItem
+public class DirItem : FileSystemItem
 {
     public DirItem(Path path) : base(path)
     {
@@ -8,6 +10,11 @@ class DirItem : FileSystemItem
 
     public DirItem(string path) : base(path)
     {
+    }
+
+    public DirItem(DirectoryInfo info) : base (info.FullName)
+    {
+        
     }
 
     public override string GetPath() => path.path;

@@ -3,7 +3,7 @@ using Avalonia.Media;
 
 namespace DynamicFileExplorer.Models;
 
-abstract class FileSystemItem
+public abstract class FileSystemItem
 {
     public SolidColorBrush icon;
 

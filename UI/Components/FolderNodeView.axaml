@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:DynamicFileExplorer.ViewModels"
+             x:Class="DynamicFileExplorer.UI.Components.FolderNodeView"
+             x:DataType="vm:FolderNodeViewModel">
+
+    <Border Background="#2E2E2E"
+            CornerRadius="6"
+            Padding="8"
+           >
+
+        <Grid ColumnDefinitions="Auto,*" VerticalAlignment="Center">
+
+            <!-- Icono -->
+            <Border Grid.Column="0"
+                    Width="20"
+                    Height="20"
+                    Background="{Binding Icon}"
+                    CornerRadius="3"
+                    Margin="0,0,8,0"/>
+
+            <!-- Texto -->
+            <TextBlock Grid.Column="1"
+                    Text="{Binding Name}"
+                    VerticalAlignment="Center"
+                    Foreground="White"/>
+        </Grid>
+    </Border>
+</UserControl>

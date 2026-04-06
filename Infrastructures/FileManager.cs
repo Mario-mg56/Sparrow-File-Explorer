@@ -34,8 +34,12 @@ class FileManager
     private void LoadFiles()
     {
         files.Clear();
-        ListAll().ForEach(f => files.Add(f));
-        files.ToList().ForEach(Console.WriteLine);
+        ListAll().ForEach(files.Add);
+    }
+
+    public DirItem GetRoot()
+    {
+        return new DirItem(System.IO.Path.GetPathRoot(Environment.CurrentDirectory));
     }
 
     public  List<FileSystemItem> ListAll() 
@@ -51,6 +55,35 @@ class FileManager
             files.Add(new Models.File(new Models.Path(path)));
 
         return files;
+    }
+    public List<DirItem> ListAllDirectories(DirItem dir)
+    {
+         List<DirItem> files = [];
+
+        foreach (var path in Directory.GetDirectories(dir.GetPath()).OrderBy(d => GetFileName(d),
+         StringComparer.CurrentCultureIgnoreCase))
+            files.Add(new DirItem(new Models.Path(path)));
+
+        return files;
+    }
+
+    public List<DirItem> GetAllFathers()
+    {
+        List<DirItem> fathersAndSon = [];
+        DirItem dir = WorkingDir;
+        fathersAndSon.Add(dir);
+
+        while (dir != null)
+        {
+            // lógica
+
+            var parent = Directory.GetParent(dir.GetPath());
+            if (parent == null) break;
+
+            dir = new DirItem(parent);
+            fathersAndSon.Add(dir);
+        }
+        return fathersAndSon;
     }
 
     public bool Delete(Models.File item)
