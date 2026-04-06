@@ -37,9 +37,11 @@ class FileManager
         ListAll().ForEach(files.Add);
     }
 
-    public DirItem GetRoot()
+    public DirItem? GetRoot()
     {
-        return new DirItem(System.IO.Path.GetPathRoot(Environment.CurrentDirectory));
+        String? path = GetPathRoot(Environment.CurrentDirectory);
+        if (path==null) return null;
+        return new DirItem(path);
     }
 
     public  List<FileSystemItem> ListAll() 

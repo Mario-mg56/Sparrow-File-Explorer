@@ -33,8 +33,8 @@ public partial class MainWindow : Window
         backButton.Click += (_, _) => fileManager.GoBack();
 
         var host = this.FindControl<Grid>("HierarchyHost");
-
-        host.Children.Add(new HierarchyView());
+        host?.Children.Add(new HierarchyView());
+       
     }
     
 }

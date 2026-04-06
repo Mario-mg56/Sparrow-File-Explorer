@@ -13,8 +13,11 @@ public class HierarchyViewModel
 
     public HierarchyViewModel()
     {
-        Roots.Add(new FolderNodeViewModel(App.Current.fileManager.GetRoot()));
-        Roots[0].IsExpanded = true;
+        var rootDir = (App.Current?.fileManager?.GetRoot()) ?? throw new Exception("GetRoot() devolvió null");
+        var rootVm = new FolderNodeViewModel(rootDir);
+        rootVm.IsExpanded = true;
+
+        Roots.Add(rootVm);
     }
 
     public static void PrintTree(FolderNodeViewModel node, string indent = "", bool isLast = true)
