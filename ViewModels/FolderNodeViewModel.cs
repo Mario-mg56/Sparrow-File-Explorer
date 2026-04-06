@@ -6,22 +6,22 @@ using DynamicFileExplorer.Models;
 namespace DynamicFileExplorer.ViewModels;
 
 class FolderNodeViewModel{
-    readonly FolderItem Yo;
+    readonly DirItem Yo;
     List<FolderNodeViewModel> Childrens = [];
 
     public Action? onHierarchyActualzied;
-    public FolderNodeViewModel(FolderItem yo)
+    public FolderNodeViewModel(DirItem yo)
     {
         Yo = yo;
 
     }
-    public FolderNodeViewModel(FolderItem yo, List<FolderNodeViewModel> childrens)
+    public FolderNodeViewModel(DirItem yo, List<FolderNodeViewModel> childrens)
     {
         Yo = yo;
         Childrens = childrens;
     }
 
-    public void AddChildren(FolderItem item)
+    public void AddChildren(DirItem item)
     {
         Childrens.Add(new FolderNodeViewModel(item));
         onHierarchyActualzied?.Invoke();
@@ -42,7 +42,7 @@ class FolderNodeViewModel{
         return Childrens;
     }
 
-    public FolderItem GetNode()
+    public DirItem GetNode()
     {
         return Yo;
     }

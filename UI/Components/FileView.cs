@@ -16,11 +16,11 @@ class FileView
     public readonly TextBlock label;
     static readonly int PADDING = 10;
     public event Action? Clicked;
-    private FileSystemItem File;
-    public FileView(FileSystemItem file, SolidColorBrush icon)
+    private readonly FileSystemItem file;
+    public FileView(FileSystemItem file)
     {
-        File = file;
-        name = file.Name;
+        this.file = file;
+        name = file.path.name;
 
         layout = new Grid {
             Margin = new Thickness(PADDING)
@@ -31,7 +31,7 @@ class FileView
         layout.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
 
         iconImg = new Border {
-            Background = icon
+            Background = file.icon
         };
 
         label = new TextBlock {
@@ -48,21 +48,25 @@ class FileView
         layout.Children.Add(iconImg);
         layout.Children.Add(label);
 
-        layout.PointerPressed += (_, _) =>
-        {
-            Clicked?.Invoke();
-        };
+        layout.PointerPressed += (_, _) => Clicked?.Invoke();
 
-        Clicked+=Click;
+        Clicked += Click;
+
+        App.Current.fileManager.FocusChanged += (focusedItems) => {
+            foreach (var f in focusedItems) {
+                if (f == file) {
+                    layout.Background = new SolidColorBrush(Colors.LightBlue);
+                    return;
+                }
+            }
+            layout.Background = new SolidColorBrush(Colors.Transparent);
+        };
     }
     public void Click()
     {
-        if (File is FileItem fi)
-        {
-            FileManager.GetInstance()?.Select(fi);
-        } else if(File is FolderItem fo)
-        {
-            FileManager.GetInstance()?.Select(fo);
-        }
+        FileManager fm = App.Current.fileManager;
+
+        if (file is File fi) fm.Select(fi);
+        else if(file is DirItem fo) fm.Select(fo);
     }
 }

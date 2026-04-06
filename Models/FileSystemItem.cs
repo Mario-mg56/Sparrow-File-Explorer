@@ -1,63 +1,37 @@
 using System;
-using System.Runtime.Intrinsics.X86;
-using System.Xml.Linq;
-using DynamicFileExplorer.Infrastructures;
+using Avalonia.Media;
 
 namespace DynamicFileExplorer.Models;
 
 abstract class FileSystemItem
 {
-    public string Name { get; set; }
-    public string Path { get; set; }
+    public SolidColorBrush icon;
 
-    protected FileSystemItem(PathFile name)
+    public Path path;
+
+    protected FileSystemItem(Path path)
     {
-        Name = IOPathFileToName(name);
-        Path = IOPathFileToPath(name);
+        this.path = path;
+        icon = GenerateIconPlaceholder();
     }
 
-    protected FileSystemItem(String path, String name)
+    protected FileSystemItem(string path)
     {
-        Name = name;
-        Path = path;
+        this.path = new Path(path);
+        icon = GenerateIconPlaceholder();
     }
 
-    /**
-    Este constructor es para archivos locales
-    */
-    
-    protected FileSystemItem(String localPath)
-    {
-        Path = FileManager.GetInstance().WorkingFolder.GetFullPath();
-        Name = localPath;
-    }
-    private string IOPathFileToName(PathFile name)
-    {
-        return System.IO.Path.GetFileNameWithoutExtension(name.Path);
-    }
-
-    private string IOPathFileToPath(PathFile name)
-    {
-        string ?tusmuertos = "chupalo";
-        try
-        {
-            tusmuertos = System.IO.Path.GetDirectoryName(name.Path);
-
-        }
-        catch (Exception)
-        {
-            Console.WriteLine("chupaloputa");
-        }
-        return tusmuertos;
-    }
-
-    public virtual string GetFullPath()
-    {
-        return Path+"/"+Name;
-    }
+    public abstract string GetPath();
 
     public override string ToString()
     {
-        return GetFullPath();
+        return GetPath();
+    }
+
+    private static SolidColorBrush GenerateIconPlaceholder()
+    {   
+        var rnd = new Random();
+        return new SolidColorBrush(Color.FromRgb
+            ((byte)rnd.Next(0, 256), (byte)rnd.Next(0, 256), (byte)rnd.Next(0, 256)));
     }
 }
