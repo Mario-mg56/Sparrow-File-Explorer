@@ -5,11 +5,11 @@
              x:Class="DynamicFileExplorer.UI.Components.HierarchyView"
              x:DataType="vm:HierarchyViewModel">
 
-    <TreeView ItemsSource="{Binding Roots}">
+    <TreeView ItemsSource="{Binding Roots}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
 
     <TreeView.Styles>
         <Style Selector="TreeViewItem /template/ ToggleButton">
-            <Setter Property="IsVisible" Value="False"/>
+            <Setter Property="IsVisible" Value="True"/>
         </Style>
     </TreeView.Styles>
 

@@ -3,12 +3,25 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using DynamicFileExplorer;
+using DynamicFileExplorer.Infrastructures;
 using DynamicFileExplorer.Models;
 using DynamicFileExplorer.ViewModels;
 
 namespace DynamicFileExplorer.ViewModels;
 public class HierarchyViewModel
 {
+    private FolderNodeViewModel _SelectedItem ;
+
+    public FolderNodeViewModel SelectedItem
+    {
+        get => _SelectedItem;
+        set
+        {
+            _SelectedItem = value;
+            Console.WriteLine(value);
+            App.Current.fileManager.ChangeDirectory(value.GetNode());
+        }
+    }
     public ObservableCollection<FolderNodeViewModel> Roots { get; } = new();
 
     public HierarchyViewModel()
