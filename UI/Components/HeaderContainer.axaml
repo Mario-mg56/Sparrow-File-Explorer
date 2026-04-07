@@ -1,0 +1,14 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:components="clr-namespace:DynamicFileExplorer.UI.Components"
+             x:Class="DynamicFileExplorer.UI.Components.HeaderContainer">
+
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10" Margin="10">
+        <components:SearchContainerView/>
+        <TextBlock Text="Header" VerticalAlignment="Center"/>
+        <Button Name="BackButton" Content="Back"/>
+        <Button Name="ForwardButton" Content="Forward"/>
+        <Button Name="BackwardButton" Content="Backward"/>
+    </StackPanel>
+
+</UserControl>

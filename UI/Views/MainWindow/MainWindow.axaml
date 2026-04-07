@@ -1,22 +1,18 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:components="clr-namespace:DynamicFileExplorer.UI.Components"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="DynamicFileExplorer.UI.Views.MainWindow.MainWindow"
         Title="DynamicFileExplorer">
     <Grid RowDefinitions="1*, 9*" ColumnDefinitions="1*, 4*, 1*">
         <Border Grid.Row="0" Grid.ColumnSpan="3" Background="Green">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10" Margin="10">
-                <TextBlock Text="Header" VerticalAlignment="Center"/>
-                <Button Name="BackButton" Content="Back"/>
-                <Button Name="ForwardButton" Content="Forward"/>
-            </StackPanel>
+            
+                <components:HeaderContainer/>
         </Border>
         <Border Grid.Row="1" Grid.Column="0" Background="Red">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <Grid x:Name="HierarchyHost"/>
-            </ScrollViewer>
+                <components:HierarchyView/>
         </Border>
         <Border Grid.Row="1" Grid.Column="1" Background="Blue">
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">

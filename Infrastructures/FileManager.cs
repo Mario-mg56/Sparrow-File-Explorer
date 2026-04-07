@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using DynamicFileExplorer.Models;
+using System.Threading.Tasks;
 
 class FileManager
 {
@@ -15,6 +16,8 @@ class FileManager
     private List<FileSystemItem> searchWorkingDir = [];
     public ObservableCollection<FileSystemItem> files = [];
     private List<FileSystemItem> SelectedItems = [];
+
+    private HistoryManager historyManager = new();
     public event Action<DirItem>? WorkingDirChanged;
     public event Action<List<FileSystemItem>>? FocusChanged;
 
@@ -31,6 +34,9 @@ class FileManager
         instance ??= new FileManager(currentPath);
         return instance;
     }
+
+    public void GoBackward() => historyManager.GoBackward();
+    public void GoForward() => historyManager.GoForward();
 
     private void LoadFiles()
     {
@@ -144,9 +150,22 @@ class FileManager
     {
         Console.WriteLine(dir);
         if(!Directory.Exists(dir.GetPath())) return false;
-        WorkingDir = dir;
-        CastWorkingDirChanged();
+
+        historyManager.stackHaciaAlante(()=>ChangeDirectoryEffect(dir),"Cambiando directorio a " + dir.GetPath());
+
+        ChangeDirectoryEffect(dir);
         return true;
+    }
+
+    private void ChangeDirectoryEffect(DirItem dir)
+    {
+        WorkingDir = dir;
+        if (searchWorkingDir.Count() != 0)
+        {
+            Console.WriteLine("limpiando Directorio");
+            searchWorkingDir.Clear();
+        }
+        CastWorkingDirChanged();
     }
     public bool ChangeDirectoryByIndex(int index)
     {
@@ -217,15 +236,20 @@ class FileManager
 
         if (parentPath == null)return null;
 
-        WorkingDir = new DirItem(new Models.Path(parentPath));
-        CastWorkingDirChanged();
+        ChangeDirectory(new DirItem(parentPath));
 
         return instance;
+    }
+    public void CleanSearch()
+    {
+        historyManager.stackHaciaAlante(CleanSearch, "limpiando historial fe la ultima busqueda");
+        searchWorkingDir.Clear();
+        CastWorkingDirChanged();
     }
 
     private void CastWorkingDirChanged()
     {
-        Console.WriteLine("WD changed to " + WorkingDir.GetPath());
+        // Console.WriteLine("WD changed to " + WorkingDir.GetPath());
         LoadFiles();
         WorkingDirChanged?.Invoke(WorkingDir);
     }
@@ -234,58 +258,49 @@ class FileManager
         FocusChanged?.Invoke(SelectedItems);
     }
 
-    public void SearchWorkingDir(string word)
+    public async Task SearchWorkingDir(string word)
     {
-        
-
-        searchWorkingDir.Clear();
-
+        List<FileSystemItem> resultados = [];
+       
         var stack = new Stack<string>();
-        stack.Push(WorkingDir.path.path);
-
+        stack.Push(WorkingDir.GetPath());
         while (stack.Count > 0)
         {
             var dir = stack.Pop();
 
             try
             {
-            // Archivos
                 foreach (var file in Directory.EnumerateFiles(dir))
                 {
-                    Console.WriteLine(file);
-                    if (file.Contains(word))
-                    {
-                        searchWorkingDir.Add(
-                            new Models.File(new Models.Path(file))
-                        );
+                    if (GetFileName(file).Contains(word))
+                        {
+                        resultados.Add(new Models.File(new Models.Path(file)));
                     }
                 }
 
-                // Subdirectorios
                 foreach (var subDir in Directory.EnumerateDirectories(dir))
                 {
-                    if (subDir.Contains(word))
+                    if (GetFileName(subDir).Contains(word))
                     {
-                        searchWorkingDir.Add(
-                            new DirItem(new Models.Path(subDir))
-                        );
+                        resultados.Add(new DirItem(new Models.Path(subDir)));
                     }
+
                     stack.Push(subDir);
                 }
             }
-            catch (UnauthorizedAccessException)
-            {
-                // Ignorar carpetas sin permisos (/root, /proc…)
-            }
-            catch (IOException)
-            {
-                // Ignorar errores raros
-            }
+            catch { }
         }
+        Console.WriteLine("Se ha buscado la palabra"+ word + "resultados: " +resultados.Count());
+        historyManager.stackHaciaAlante(()=>ActualizeSearchWorkingDirList(resultados), "cambiando el directorio a una busqueda ");
+        ActualizeSearchWorkingDirList(resultados);
+}
 
+    public void ActualizeSearchWorkingDirList(List<FileSystemItem> lista)
+    {
+        searchWorkingDir.Clear();
+        lista.ForEach(searchWorkingDir.Add);
         CastWorkingDirChanged();
     }
-
 
     public void PrintList()
     {
