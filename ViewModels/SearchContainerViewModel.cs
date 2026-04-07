@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Windows.Input;
 using DynamicFileExplorer.Infrastructures;
+using DynamicFileExplorer.Models;
 
 namespace DynamicFileExplorer.ViewModels
 {
@@ -52,15 +55,24 @@ namespace DynamicFileExplorer.ViewModels
 
                     fm.CleanSearch();
                     BuscarText = "Buscar";
+                    fm.WorkingDirChanged -=  LimpiarSearch;
                     return;
                 }
 
                 // 👉 Nueva búsqueda
                 lastSearch = SearchText;
                 BuscarText = "Limpiar";
-
+                
                 await fm.SearchWorkingDir(SearchText);
+                fm.WorkingDirChanged +=  LimpiarSearch;
             });
+
+        }
+
+        private void LimpiarSearch(DirItem dir)
+        {
+            BuscarText = "buscar";
+            SearchText = string.Empty;
         }
 
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
@@ -69,3 +81,4 @@ namespace DynamicFileExplorer.ViewModels
         }
     }
 }
+

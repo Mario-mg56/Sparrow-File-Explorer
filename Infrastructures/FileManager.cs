@@ -9,20 +9,21 @@ using System.Linq;
 using DynamicFileExplorer.Models;
 using System.Threading.Tasks;
 
-class FileManager
+public class FileManager
 {
     private static FileManager? instance;
     public DirItem WorkingDir;
-    private List<FileSystemItem> searchWorkingDir = [];
     public ObservableCollection<FileSystemItem> files = [];
     private List<FileSystemItem> SelectedItems = [];
 
     private HistoryManager historyManager = new();
     public event Action<DirItem>? WorkingDirChanged;
     public event Action<List<FileSystemItem>>? FocusChanged;
+    private SearchManager searchManager;
 
     private FileManager(DirItem currentPath)
     {
+        searchManager = new(this);
         WorkingDirChanged += (_) => LoadFiles();
         if (!ChangeDirectory(currentPath)) throw new ArgumentException("Invalid directory");
         WorkingDir = currentPath;
@@ -37,6 +38,17 @@ class FileManager
 
     public void GoBackward() => historyManager.GoBackward();
     public void GoForward() => historyManager.GoForward();
+    
+    public void Execute(Action action, string message)
+    {
+        historyManager.stackHaciaAlante(action, message);
+        action(); // ejecutar UNA sola vez
+    }
+
+    public void CleanSearch() => searchManager.CleanSearch();
+    public Task SearchWorkingDir(string word) {
+        return searchManager.SearchWorkingDir(word);
+    }
 
     private void LoadFiles()
     {
@@ -54,7 +66,7 @@ class FileManager
     public  List<FileSystemItem> ListAll() 
     {
         List<FileSystemItem> files = [];
-        if(searchWorkingDir.Count==0){
+        if(searchManager.isEmpty()){
             foreach (var path in Directory.GetDirectories(WorkingDir.GetPath()).OrderBy(d => GetFileName(d),
             StringComparer.CurrentCultureIgnoreCase))
                 files.Add(new DirItem(new Models.Path(path)));
@@ -64,7 +76,7 @@ class FileManager
             files.Add(new Models.File(new Models.Path(path)));
         } else
         {
-            searchWorkingDir.ForEach(files.Add);
+            searchManager.searchWorkingDir.ForEach(files.Add);
         }
         return files;
     }
@@ -160,11 +172,7 @@ class FileManager
     private void ChangeDirectoryEffect(DirItem dir)
     {
         WorkingDir = dir;
-        if (searchWorkingDir.Count() != 0)
-        {
-            Console.WriteLine("limpiando Directorio");
-            searchWorkingDir.Clear();
-        }
+        searchManager.Clear();
         CastWorkingDirChanged();
     }
     public bool ChangeDirectoryByIndex(int index)
@@ -240,14 +248,8 @@ class FileManager
 
         return instance;
     }
-    public void CleanSearch()
-    {
-        historyManager.stackHaciaAlante(CleanSearch, "limpiando historial fe la ultima busqueda");
-        searchWorkingDir.Clear();
-        CastWorkingDirChanged();
-    }
-
-    private void CastWorkingDirChanged()
+    
+    public void CastWorkingDirChanged()
     {
         // Console.WriteLine("WD changed to " + WorkingDir.GetPath());
         LoadFiles();
@@ -258,49 +260,7 @@ class FileManager
         FocusChanged?.Invoke(SelectedItems);
     }
 
-    public async Task SearchWorkingDir(string word)
-    {
-        List<FileSystemItem> resultados = [];
-       
-        var stack = new Stack<string>();
-        stack.Push(WorkingDir.GetPath());
-        while (stack.Count > 0)
-        {
-            var dir = stack.Pop();
-
-            try
-            {
-                foreach (var file in Directory.EnumerateFiles(dir))
-                {
-                    if (GetFileName(file).Contains(word))
-                        {
-                        resultados.Add(new Models.File(new Models.Path(file)));
-                    }
-                }
-
-                foreach (var subDir in Directory.EnumerateDirectories(dir))
-                {
-                    if (GetFileName(subDir).Contains(word))
-                    {
-                        resultados.Add(new DirItem(new Models.Path(subDir)));
-                    }
-
-                    stack.Push(subDir);
-                }
-            }
-            catch { }
-        }
-        Console.WriteLine("Se ha buscado la palabra"+ word + "resultados: " +resultados.Count());
-        historyManager.stackHaciaAlante(()=>ActualizeSearchWorkingDirList(resultados), "cambiando el directorio a una busqueda ");
-        ActualizeSearchWorkingDirList(resultados);
-}
-
-    public void ActualizeSearchWorkingDirList(List<FileSystemItem> lista)
-    {
-        searchWorkingDir.Clear();
-        lista.ForEach(searchWorkingDir.Add);
-        CastWorkingDirChanged();
-    }
+    
 
     public void PrintList()
     {

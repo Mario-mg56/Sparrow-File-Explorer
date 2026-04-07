@@ -1,6 +1,6 @@
 namespace DynamicFileExplorer.Models;
 
-class File : FileSystemItem
+public class File : FileSystemItem
 {
     readonly string extension;
     public File(Path path) : base(path)
