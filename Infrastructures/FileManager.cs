@@ -76,7 +76,7 @@ public class FileManager
             files.Add(new Models.File(new Models.Path(path)));
         } else
         {
-            searchManager.searchWorkingDir.ForEach(files.Add);
+            searchManager.GetResults().ToList().ForEach(files.Add);
         }
         return files;
     }

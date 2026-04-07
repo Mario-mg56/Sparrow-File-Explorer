@@ -10,7 +10,7 @@ namespace DynamicFileExplorer.Infrastructures;
 public class SearchManager(FileManager fm)
 {
     public List<FileSystemItem> searchWorkingDir{get;} = [];
-
+    public IReadOnlyList<FileSystemItem> GetResults() => searchWorkingDir;
     public FileManager fm = fm;
     public void CleanSearch()
     {
