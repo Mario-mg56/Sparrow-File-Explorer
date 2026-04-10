@@ -66,7 +66,7 @@ public class FileManager
     public  List<FileSystemItem> ListAll() 
     {
         List<FileSystemItem> files = [];
-        if(searchManager.isEmpty()){
+        if(searchManager.IsEmpty()){
             foreach (var path in Directory.GetDirectories(WorkingDir.GetPath()).OrderBy(d => GetFileName(d),
             StringComparer.CurrentCultureIgnoreCase))
                 files.Add(new DirItem(new Models.Path(path)));

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using DynamicFileExplorer.Infrastructures;
 using DynamicFileExplorer.Models;
 
 namespace DynamicFileExplorer.Infrastructures;
@@ -26,7 +25,7 @@ public class SearchManager(FileManager fm)
     {
         searchWorkingDir.Clear();
     }
-    public bool isEmpty()
+    public bool IsEmpty()
     {
         return searchWorkingDir.Count()==0;
     }

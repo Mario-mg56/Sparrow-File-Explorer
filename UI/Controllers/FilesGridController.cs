@@ -5,18 +5,18 @@ using System.Reactive.Linq;
 using DynamicFileExplorer.UI.Components;
 using Avalonia.Interactivity;
 using Avalonia;
-using System.Linq;
-class ContentPaneview(Grid grid, FileManager fileManager, DirectProperty<Visual,Rect> BoundsProperty)
+using DynamicFileExplorer;
+
+class FilesGridController(Grid grid)
 {
-    DirectProperty<Visual,Rect> BoundsProperty = BoundsProperty;
     static readonly int COLS = 5;
-    Grid grid = grid;
-    FileManager fileManager = fileManager;
-    public void Render()
+    readonly Grid grid = grid;
+    readonly FileManager fileManager = App.Current.fileManager;
+    public void Mount()
     {
         int rows = (int) Math.Ceiling(fileManager.files.Count/(float)COLS);
         
-        grid.GetObservable(BoundsProperty).Subscribe(bounds => {
+        grid.GetObservable(Window.BoundsProperty).Subscribe(bounds => {
             grid.RowDefinitions.Clear();
             grid.ColumnDefinitions.Clear();
 
@@ -27,8 +27,6 @@ class ContentPaneview(Grid grid, FileManager fileManager, DirectProperty<Visual,
             for (int i = 0; i < COLS; i++) 
                 grid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
         });
-        
-
 
         fileManager.WorkingDirChanged += (_) => RebuildGrid();
         RebuildGrid();
@@ -49,8 +47,7 @@ class ContentPaneview(Grid grid, FileManager fileManager, DirectProperty<Visual,
 
                 var file = fileManager.files[i];
 
-                var border = new Border
-                {
+                var border = new Border {
                     Child = new FileView(file).layout
                 };
 

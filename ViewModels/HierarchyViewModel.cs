@@ -1,11 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using DynamicFileExplorer;
-using DynamicFileExplorer.Infrastructures;
-using DynamicFileExplorer.Models;
-using DynamicFileExplorer.ViewModels;
 
 namespace DynamicFileExplorer.ViewModels;
 public class HierarchyViewModel
