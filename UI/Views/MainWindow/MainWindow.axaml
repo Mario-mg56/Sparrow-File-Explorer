@@ -2,14 +2,31 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:components="clr-namespace:DynamicFileExplorer.UI.Components"
+        xmlns:vm="clr-namespace:DynamicFileExplorer.ViewModels"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="DynamicFileExplorer.UI.Views.MainWindow.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
         Title="DynamicFileExplorer">
-    <Grid RowDefinitions="1*, 9*" ColumnDefinitions="1*, 4*, 1*">
-        <Border Grid.Row="0" Grid.ColumnSpan="3" Background="Green">
-            
-                <components:HeaderContainer/>
+    <Grid  ColumnDefinitions="1*, 4*, 1*" Name="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="{Binding HeaderHeight}"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" Grid.ColumnSpan="3" Background="Green" >
+            <Grid RowDefinitions="*, 5" x:Name="HeaderBorder"
+            PointerMoved="HeaderBorder_PointerMoved">
+                
+                <!-- Header arriba -->
+                <components:HeaderContainer Grid.Row="0"/>
+
+                <Button Grid.Row="1"
+                        HorizontalAlignment="Stretch" Cursor="SizeNorthSouth"
+                        PointerPressed="OnPressed"
+                        PointerReleased="OnReleased"   
+                        />
+                        
+            </Grid>
         </Border>
         <Border Grid.Row="1" Grid.Column="0" Background="Red">
                 <components:HierarchyView/>
