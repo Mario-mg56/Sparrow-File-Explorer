@@ -29,4 +29,8 @@ public class RelayCommand : ICommand
         else if (_executeAsync != null)
             await _executeAsync();
     }
+    public void RaiseCanExecuteChanged()
+    {
+        CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+    }
 }
