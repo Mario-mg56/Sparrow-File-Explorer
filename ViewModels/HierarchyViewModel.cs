@@ -22,7 +22,7 @@ public class HierarchyViewModel
             App.Current.fileManager.ChangeDirectory(value.GetNode());
         }
     }
-    public ObservableCollection<FolderNodeViewModel> Roots { get; } = new();
+    public ObservableCollection<FolderNodeViewModel> Roots { get; } = [];
 
     public HierarchyViewModel()
     {

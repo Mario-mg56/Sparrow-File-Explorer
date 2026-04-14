@@ -6,29 +6,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="DynamicFileExplorer.UI.Views.MainWindow.MainWindow"
-        x:DataType="vm:MainWindowViewModel"
         Title="DynamicFileExplorer">
     <Grid  ColumnDefinitions="1*, 4*, 1*" Name="MainGrid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="{Binding HeaderHeight}"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="9*"/>
         </Grid.RowDefinitions>
-        <Border Grid.Row="0" Grid.ColumnSpan="3" Background="Green" >
-            <Grid RowDefinitions="*, 5" x:Name="HeaderBorder"
-            PointerMoved="HeaderBorder_PointerMoved">
-                
-                <!-- Header arriba -->
-                <components:HeaderContainer Grid.Row="0"/>
-
-                <Button Grid.Row="1"
-                        HorizontalAlignment="Stretch" Cursor="SizeNorthSouth"
-                        PointerPressed="OnPressed"
-                        PointerReleased="OnReleased"   
-                        />
-                        
-            </Grid>
+        <Border Grid.Row="0" Grid.ColumnSpan="3" Background="Green" Name="HeaderContainer">
+                <components:HeaderContainer />
         </Border>
-        <Border Grid.Row="1" Grid.Column="0" Background="Red">
+        <Border Grid.Row="1" Grid.Column="0" Background="Red"  Name="HierarchyContainer">
                 <components:HierarchyView/>
         </Border>
         <Border Grid.Row="1" Grid.Column="1" Background="Blue">
@@ -36,7 +23,7 @@
                 <Grid Name="FilesGrid"/>
             </ScrollViewer>
         </Border>
-        <Border Grid.Row="1" Grid.Column="2" Background="Red">
+        <Border Grid.Row="1" Grid.Column="2" Background="Red"  Name="InspectorContainer">
             <TextBlock Text="RightSidebar"/>
         </Border>
     </Grid>

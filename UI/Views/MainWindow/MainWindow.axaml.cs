@@ -1,55 +1,41 @@
 namespace DynamicFileExplorer.UI.Views.MainWindow;
 
 using System;
-using Avalonia;
 using Avalonia.Controls;
-using System.Reactive.Linq;
-using DynamicFileExplorer.UI.Components;
-using Avalonia.Interactivity;
-using System.Linq;
 using DynamicFileExplorer.Infrastructures;
-using System.ComponentModel;
-using DynamicFileExplorer.ViewModels;
-using System.Numerics;
-using Avalonia.Input;
+using DynamicFileExplorer.UI.Components;
 
 public partial class MainWindow : Window
 {
 
     readonly FileManager fileManager;
 
-    private bool isDraggin;
     public MainWindow()
     {
         InitializeComponent(); // SIEMPRE PRIMERO
-        DataContext = new MainWindowViewModel();
         var grid = this.FindControl<Grid>("FilesGrid")
             ?? throw new Exception("No se encontró FilesGrid");
-
+        var headerBorder = this.FindControl<Border>("HeaderContainer")
+            ?? throw new Exception("No se encontró HeaderContainer");
+        var hierarchyContainer = this.FindControl<Border>("HierarchyContainer")
+            ?? throw new Exception("No se encontró HeaderContainer");
+        var inspectorContainer = this.FindControl<Border>("InspectorContainer")
+            ?? throw new Exception("No se encontró HeaderContainer");
+        var mainGrid = this.FindControl<Grid>("MainGrid")
+            ?? throw new Exception("No se encontró MainGrid");
+        RowDefinition headerDefinition = mainGrid.RowDefinitions[0];
+        ColumnDefinition hierarchyDefinition = mainGrid.ColumnDefinitions[0];
+        ColumnDefinition inspectorDefinition = mainGrid.ColumnDefinitions[2];
+        new ResizableContainerVertical(headerBorder,headerDefinition,false);
+        new ResizableContainerHorizontal(hierarchyContainer,hierarchyDefinition,false);
+        new ResizableContainerHorizontal(inspectorContainer,inspectorDefinition,true);
         fileManager = App.Current.fileManager;
 
-        var vm = (MainWindowViewModel)DataContext!;
-        vm.SetHeaderHeight(60);
         new ContentPaneview(grid, fileManager, BoundsProperty).Render();
     }
 
 
-    private void HeaderBorder_PointerMoved(object? sender, PointerEventArgs e)
-    {
-        if (!isDraggin) return;
-        var pos = e.GetPosition(this);
-
-        var vm = (MainWindowViewModel)DataContext!;
-        vm.SetHeaderHeight(pos.Y);
-    }
-    private void OnPressed(object? sender, PointerPressedEventArgs e) 
-    {
-        isDraggin = true;
-    }
-    private void OnReleased(object? sender, PointerReleasedEventArgs e)
-    {
-        isDraggin = false;
-    }
+       
 
 
 }

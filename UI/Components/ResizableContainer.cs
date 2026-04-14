@@ -1,62 +1,46 @@
 using System;
-using Avalonia;
+using System.ComponentModel;
+using System.Drawing;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using Avalonia.Controls;
 using Avalonia.Input;
 
 namespace DynamicFileExplorer.UI.Components;
-
-public class ResizableContainer : ContentControl
+public abstract class ResizableContainer
 {
-    private bool _isDragging;
-    private double _startY;
-    private double _startHeight;
+    protected Border border;
+    protected bool isDraggin;
 
-    public static readonly StyledProperty<double> HeaderHeightProperty =
-        AvaloniaProperty.Register<ResizableContainer, double>(nameof(HeaderHeight), 150);
-
-    public double HeaderHeight
+    public ResizableContainer(Border border)
     {
-        get => GetValue(HeaderHeightProperty);
-        set => SetValue(HeaderHeightProperty, value);
+        this.border = border;
+        
+    }
+    public virtual void RebuildBorder(Border border)
+    {
+        
     }
 
-    // public override void ApplyTemplate()
-    // {
-    //     base.ApplyTemplate();
 
-    //     this.PointerPressed += OnPressed;
-    //     this.PointerReleased += OnReleased;
-    //     this.PointerMoved += OnMoved;
-    // }
-
-    private void OnPressed(object? sender, PointerPressedEventArgs e)
+     protected void HeaderBorder_PointerMoved(object? sender, PointerEventArgs e)
     {
-        var p = e.GetPosition(this);
-
-        // Solo zona inferior (resize bar)
-        if (p.Y >= Bounds.Height - 10)
-        {
-            _isDragging = true;
-            _startY = e.GetPosition(null).Y;
-            _startHeight = HeaderHeight;
-
-            e.Pointer.Capture(this);
-        }
+        if (!isDraggin) return;
+        var pos = e.GetPosition(border);
+        SetSize(pos);
+    }
+    protected void OnPressed(object? sender, PointerPressedEventArgs e) 
+    {
+        isDraggin = true;
+    }
+    protected void OnReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        isDraggin = false;
     }
 
-    private void OnReleased(object? sender, PointerReleasedEventArgs e)
+
+    public virtual void SetSize(Avalonia.Point pixels)
     {
-        _isDragging = false;
-        e.Pointer.Capture(null);
-    }
-
-    private void OnMoved(object? sender, PointerEventArgs e)
-    {
-        if (!_isDragging) return;
-
-        var currentY = e.GetPosition(null).Y;
-        var delta = currentY - _startY;
-
-        HeaderHeight = Math.Max(50, _startHeight + delta);
+        
     }
 }
