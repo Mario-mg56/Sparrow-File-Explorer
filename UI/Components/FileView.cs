@@ -1,4 +1,3 @@
-using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
@@ -8,27 +7,24 @@ using DynamicFileExplorer.Models;
 
 namespace DynamicFileExplorer.UI.Components;
 
-class FileView
+class FileView : Grid
 {
     public string name;
-    public readonly Grid layout;
     public readonly Border iconImg;
     public readonly TextBlock label;
     static readonly int PADDING = 10;
-    public event Action? Clicked;
     private readonly FileSystemItem file;
     public FileView(FileSystemItem file)
     {
         this.file = file;
         name = file.path.name;
 
-        layout = new Grid {
-            Margin = new Thickness(PADDING)
-        };
+        Margin = new Thickness(PADDING);
+        Background = new SolidColorBrush(Colors.Transparent); //Para que reciba eventos de mouse aunque no tenga fondo
 
-        layout.RowDefinitions.Add(new RowDefinition(new GridLength(3, GridUnitType.Star)));
-        layout.RowDefinitions.Add(new RowDefinition(new GridLength(1, GridUnitType.Star)));
-        layout.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
+        RowDefinitions.Add(new RowDefinition(new GridLength(3, GridUnitType.Star)));
+        RowDefinitions.Add(new RowDefinition(new GridLength(1, GridUnitType.Star)));
+        ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
 
         iconImg = new Border {
             Background = file.icon
@@ -40,29 +36,29 @@ class FileView
             HorizontalAlignment = HorizontalAlignment.Center
         };
 
-        Grid.SetRow(iconImg, 0);
-        Grid.SetColumn(iconImg, 0);
-        Grid.SetRow(label, 1);
-        Grid.SetColumn(label, 0);
+        SetRow(iconImg, 0);
+        SetColumn(iconImg, 0);
+        SetRow(label, 1);
+        SetColumn(label, 0);
 
-        layout.Children.Add(iconImg);
-        layout.Children.Add(label);
+        Children.Add(iconImg);
+        Children.Add(label);
 
-        layout.PointerPressed += (_, _) => Clicked?.Invoke();
-
-        Clicked += Click;
+        PointerPressed += (_, e) => {
+            if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) OnLeftClick();
+        };
 
         App.Current.fileManager.FocusChanged += (focusedItems) => {
             foreach (var f in focusedItems) {
                 if (f == file) {
-                    layout.Background = new SolidColorBrush(Colors.LightBlue);
+                    Background = new SolidColorBrush(Colors.LightBlue);
                     return;
                 }
             }
-            layout.Background = new SolidColorBrush(Colors.Transparent);
+            Background = new SolidColorBrush(Colors.Transparent);
         };
     }
-    public void Click()
+    private void OnLeftClick()
     {
         FileManager fm = App.Current.fileManager;
 

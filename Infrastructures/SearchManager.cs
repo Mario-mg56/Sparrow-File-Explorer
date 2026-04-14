@@ -71,4 +71,9 @@ public class SearchManager(FileManager fm)
         lista.ForEach(searchWorkingDir.Add);
         fm.CastWorkingDirChanged();
     }
+
+    internal bool isEmpty()
+    {
+        throw new NotImplementedException();
+    }
 }

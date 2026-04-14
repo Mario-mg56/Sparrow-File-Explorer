@@ -1,11 +1,22 @@
+namespace DynamicFileExplorer.Infrastructures;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace DynamicFileExplorer.Infrastructures;
-public class RelayCommand(Func<Task> execute) : ICommand
+public class RelayCommand : ICommand
 {
-    private readonly Func<Task> _execute = execute;
+    private readonly Action? _executeSync;
+    private readonly Func<Task>? _executeAsync;
+
+    public RelayCommand(Action execute)
+    {
+        _executeSync = execute;
+    }
+
+    public RelayCommand(Func<Task> execute)
+    {
+        _executeAsync = execute;
+    }
 
     public event EventHandler? CanExecuteChanged;
 
@@ -13,6 +24,13 @@ public class RelayCommand(Func<Task> execute) : ICommand
 
     public async void Execute(object? parameter)
     {
-        await _execute();
+        if (_executeSync != null)
+            _executeSync();
+        else if (_executeAsync != null)
+            await _executeAsync();
+    }
+    public void RaiseCanExecuteChanged()
+    {
+        CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 }

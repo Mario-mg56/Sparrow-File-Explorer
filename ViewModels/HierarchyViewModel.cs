@@ -5,19 +5,27 @@ using System.Linq;
 namespace DynamicFileExplorer.ViewModels;
 public class HierarchyViewModel
 {
-    private FolderNodeViewModel _SelectedItem ;
+    private FolderNodeViewModel? _selectedItem;
 
-    public FolderNodeViewModel SelectedItem
+public FolderNodeViewModel? SelectedItem
+{
+    get => _selectedItem;
+    set
     {
-        get => _SelectedItem;
-        set
+        if (_selectedItem == value)
+            return;
+
+        _selectedItem = value;
+
+        Console.WriteLine(value);
+
+        if (value != null)
         {
-            _SelectedItem = value;
-            Console.WriteLine(value);
-            App.Current.fileManager.ChangeDirectory(value.GetNode());
+            _ = App.Current.fileManager.ChangeDirectory(value.GetNode());
         }
     }
-    public ObservableCollection<FolderNodeViewModel> Roots { get; } = new();
+}
+    public ObservableCollection<FolderNodeViewModel> Roots { get; } = [];
 
     public HierarchyViewModel()
     {

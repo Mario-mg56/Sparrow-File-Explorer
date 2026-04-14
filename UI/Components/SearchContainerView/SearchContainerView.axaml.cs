@@ -5,7 +5,7 @@ namespace DynamicFileExplorer.UI.Components;
 
 public partial class SearchContainerView : UserControl
 {
-        public SearchContainerView()
+    public SearchContainerView()
     {
         InitializeComponent();
         
