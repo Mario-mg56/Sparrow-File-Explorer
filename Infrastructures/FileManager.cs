@@ -15,7 +15,7 @@ public class FileManager
     public DirItem WorkingDir;
     public ObservableCollection<FileSystemItem> files = [];
     private List<FileSystemItem> SelectedItems = [];
-
+    private bool isHideItemsHide = true;
     private HistoryManager historyManager = new();
     public event Action<DirItem>? WorkingDirChanged;
     public event Action<List<FileSystemItem>>? FocusChanged;
@@ -67,11 +67,14 @@ public class FileManager
     {
         List<FileSystemItem> files = [];
         if(searchManager.isEmpty()){
-            foreach (var path in Directory.GetDirectories(WorkingDir.GetPath()).OrderBy(d => GetFileName(d),
-            StringComparer.CurrentCultureIgnoreCase))
+            foreach (var path in Directory.GetDirectories(WorkingDir.GetPath())
+            .Where(IsNotHidden)
+            .OrderBy(GetFileName,StringComparer.CurrentCultureIgnoreCase))
                 files.Add(new DirItem(new Models.Path(path)));
 
-            foreach (var path in Directory.GetFiles(WorkingDir.GetPath()).OrderBy(d => GetFileName(d),
+            foreach (var path in Directory.GetFiles(WorkingDir.GetPath())
+            .Where(IsNotHidden)
+            .OrderBy(GetFileName,
             StringComparer.CurrentCultureIgnoreCase))
             files.Add(new Models.File(new Models.Path(path)));
         } else
@@ -79,6 +82,24 @@ public class FileManager
             searchManager.GetResults().ToList().ForEach(files.Add);
         }
         return files;
+    }
+
+    public bool IsNotHidden(string path)
+    {
+        if (!isHideItemsHide)return true;
+        string? name = GetFileName(path);
+
+        if (string.IsNullOrEmpty(name))
+            return false;
+
+        if (name.StartsWith('.'))
+            return false;
+
+        var attr = System.IO.File.GetAttributes(path);
+        if ((attr & FileAttributes.Hidden) != 0)
+        return false;
+
+        return true;
     }
     public List<DirItem> ListAllDirectories(DirItem dir)
     {
@@ -259,8 +280,14 @@ public class FileManager
     {
         FocusChanged?.Invoke(SelectedItems);
     }
-
-    
+   
+    public void ChangeHideItems(bool? state)
+    {
+        if (!state.HasValue)
+            return;
+        isHideItemsHide = state.Value;
+        CastWorkingDirChanged();
+    }
 
     public void PrintList()
     {
