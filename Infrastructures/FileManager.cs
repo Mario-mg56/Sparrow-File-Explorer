@@ -15,7 +15,7 @@ public class FileManager
     public DirItem WorkingDir;
     public ObservableCollection<FileSystemItem> files = [];
     private List<FileSystemItem> SelectedItems = [];
-    private bool isHideItemsHide = true;
+    private bool isHideItemsHide = App.Config.DefaultIsHideItems;
 
     private HistoryManager historyManager = new();
     public event Action<DirItem>? WorkingDirChanged;
@@ -68,7 +68,9 @@ public class FileManager
     {
         List<FileSystemItem> files = [];
         if(searchManager.IsEmpty()){
-            foreach (var path in Directory.GetDirectories(WorkingDir.GetPath()).OrderBy(d => GetFileName(d),
+            foreach (var path in Directory.GetDirectories(WorkingDir.GetPath())
+            .Where(IsNotHidden)
+            .OrderBy(d => GetFileName(d),
             StringComparer.CurrentCultureIgnoreCase))
                 files.Add(new DirItem(new Models.Path(path)));
 
@@ -105,7 +107,7 @@ public class FileManager
     {
          List<DirItem> files = [];
 
-        foreach (var path in Directory.GetDirectories(dir.GetPath()).OrderBy(d => GetFileName(d),
+        foreach (var path in Directory.GetDirectories(dir.GetPath()).Where(IsNotHidden).OrderBy(d => GetFileName(d),
          StringComparer.CurrentCultureIgnoreCase))
             files.Add(new DirItem(new Models.Path(path)));
 

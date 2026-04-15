@@ -16,11 +16,17 @@ public partial class App : Application
     public static new App Current => (Application.Current as App)!;
     internal FileManager fileManager = null!;
     internal UIManager UIManager = null!;
+    internal static SettingsService Settings = null!;
+    internal static new Styles Styles = null!;
+    internal static Config Config = null!;
+    public MainWindow MainWindow { get; private set; } = null!;
+
     public override void Initialize()
     {
+        
+        Console.WriteLine(Settings.CurrentStyle.BackgroundImage);
         fileManager = FileManager.Init(new DirItem(new Path(AppContext.BaseDirectory)));
         UIManager = UIManager.Init();
-        
         AvaloniaXamlLoader.Load(this);
     }
 
@@ -30,6 +36,7 @@ public partial class App : Application
         {
             MainWindow mw = new();
             desktop.MainWindow = mw;
+            MainWindow= mw;
             UIManager.LoadMainWindow(mw);
         }
         base.OnFrameworkInitializationCompleted();

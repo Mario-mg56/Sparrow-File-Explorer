@@ -1,3 +1,5 @@
+using System;
+
 namespace DynamicFileExplorer.Models;
 
 public class File : FileSystemItem
@@ -13,5 +15,14 @@ public class File : FileSystemItem
     }   
 
     public override string GetPath() => System.IO.Path.Combine(path.path, extension);
+
+
+    public string NameWithoutExtension()
+    {
+        if (string.IsNullOrEmpty(extension))
+        return path.name;
+
+        return path.name.Replace(extension, "");
+    }
     
 }

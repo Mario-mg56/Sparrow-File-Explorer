@@ -22,7 +22,7 @@ public partial class HeaderContainer : UserControl
             ?? throw new Exception("No se encontró ForwardButton");
         hideItemsCheckBox = this.FindControl<CheckBox>("UnHideItems")
             ?? throw new Exception("No se encontró ForwardButton");
-
+        hideItemsCheckBox.IsChecked = App.Config.DefaultIsHideItems;
         hideItemsCheckBox.IsCheckedChanged += (_,_) => fileManager.ChangeHideItems(hideItemsCheckBox.IsChecked);
         forwardButton.Click += (_, _) => fileManager.GoForward();
         backwardButton.Click += (_, _) => fileManager.GoBackward();

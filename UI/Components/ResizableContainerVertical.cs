@@ -1,16 +1,15 @@
-using System;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Runtime.CompilerServices;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Media;
+using Avalonia.Styling;
 
 namespace DynamicFileExplorer.UI.Components;
 public class ResizableContainerVertical:ResizableContainer
 {
 
     private RowDefinition definition;
+    private Styles Styles = App.Styles;
     private bool invert;
     public ResizableContainerVertical(Border border, RowDefinition definition,bool invert):base(border)
     {
@@ -21,6 +20,8 @@ public class ResizableContainerVertical:ResizableContainer
     }
     public override void RebuildBorder(Border border)
     {
+        border.BorderBrush = new SolidColorBrush(Color.Parse(Styles.SecondaryColor));
+        border.BorderThickness = new Thickness(0, invert?2:0, 0, invert?0:2);
         // 1. Sacar el contenido actual del Border
         if (border.Child is not Control oldRoot)
             return;
@@ -44,9 +45,10 @@ public class ResizableContainerVertical:ResizableContainer
         // 5. Crear botón
         var button = new Button
         {
-            Background = Avalonia.Media.Brushes.Transparent,
+            Background = Brushes.Transparent,
             HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
-            Cursor = new Cursor(StandardCursorType.SizeNorthSouth)
+            Cursor = new Cursor(StandardCursorType.SizeNorthSouth),
+            BorderBrush = Brushes.Transparent,
         };
 
         button.PointerPressed += OnPressed;
