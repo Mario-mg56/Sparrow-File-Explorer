@@ -7,21 +7,17 @@ using System.Reactive.Linq;
 using Avalonia.Interactivity;
 using Avalonia;
 using Avalonia.Media;
+using DynamicFileExplorer.Models;
 
 class FilesGrid : Grid
 {
-    static readonly int COLS = 5;
-    readonly ContextMenu contextMenu = new  ([
-        new (name: "Item 1", itemAction: (i) => Console.WriteLine(i.name + " selected")),
-        new (name: "Item 2"),
-        new (name: "Item 3")
-    ]) {Background = Brushes.White};
-    readonly FileManager fileManager = App.Current.fileManager;
+    public static readonly int COLS = 5;
+    public readonly ContextMenu<DirItem> contextMenu;
+    private readonly FileManager fileManager = App.Current.fileManager;
 
     public FilesGrid()
     {
         int rows = (int) Math.Ceiling(fileManager.files.Count/(float)COLS);
-
         
         Background = new SolidColorBrush(Colors.Transparent); //Para que reciba eventos de mouse aunque no tenga fondo
         
@@ -38,9 +34,16 @@ class FilesGrid : Grid
                 ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
         });
 
-        App.Current.UIManager.AddContextMenu(this, contextMenu);
+        contextMenu = new (this, fileManager.WorkingDir, [
+            new (name: "Item 1", itemAction: (i, wd, _) => Console.WriteLine("wd " + wd)),
+            new (name: "Item 2", itemAction: (i, _, _) => Console.WriteLine(i.name + " selected")),
+            new (name: "Item 3", itemAction: (i, _, _) => Console.WriteLine(i.name + " selected"))
+        ]) {Background = Brushes.White};
 
-        fileManager.WorkingDirChanged += (_) => RebuildGrid();
+        fileManager.WorkingDirChanged += (_) => {
+            contextMenu.SetAttachedItem(fileManager.WorkingDir);
+            RebuildGrid();
+        };
         RebuildGrid();
     }
     

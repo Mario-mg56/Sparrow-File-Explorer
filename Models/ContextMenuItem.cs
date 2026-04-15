@@ -1,15 +1,16 @@
 using System;
-using System.Collections.Generic;
+using Avalonia.Controls;
 using Avalonia.Media;
 
 namespace DynamicFileExplorer.Models;
-public class ContextMenuItem(SolidColorBrush? icon = null, string? name = null, Action<ContextMenuItem>? itemAction = null)
+public class ContextMenuItem(SolidColorBrush? icon = null, string? name = null, Action<ContextMenuItem, Control?>? itemAction = null)
 {
+    public Control? AttachedLayout { get; internal set; }
     public readonly SolidColorBrush? icon = icon ?? GenerateIconPlaceholder();
     public readonly string name = name ?? "";
-    public Action<ContextMenuItem>? itemAction = itemAction;
+    public Action<ContextMenuItem, Control?>? itemAction = itemAction;
 
-    public void Execute() => itemAction?.Invoke(this);
+    public virtual void Execute() => itemAction?.Invoke(this, AttachedLayout);
     
     private static SolidColorBrush GenerateIconPlaceholder()
     {   
@@ -19,8 +20,13 @@ public class ContextMenuItem(SolidColorBrush? icon = null, string? name = null, 
     }
 }
 
-public class ContextSubMenu(List<ContextMenuItem>? items = null,
-     SolidColorBrush? icon = null, string? name = null) : ContextMenuItem(icon, name)
+public class ContextMenuItem<T> (SolidColorBrush? icon = null, string? name = null, Action<ContextMenuItem<T>, T?, Control?>? itemAction = null)
+ : ContextMenuItem(icon, name, null)
 {
-    public readonly List<ContextMenuItem> items = items ?? [];
+    public T? AttachedItem { get; internal set; }
+    public new Action<ContextMenuItem<T>, T?, Control?>? itemAction = itemAction;
+
+    public override void Execute() => itemAction?.Invoke(this, AttachedItem, AttachedLayout);
 }
+
+
