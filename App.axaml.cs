@@ -17,6 +17,8 @@ public partial class App : Application
     internal FileManager fileManager = null!;
     internal UIManager UIManager = null!;
     internal static SettingsService Settings = null!;
+    internal static new CacheData Cache = null!;
+    internal static new CacheService cacheService = null!;
     internal static new Styles Styles = null!;
     internal static Config Config = null!;
     public MainWindow MainWindow { get; private set; } = null!;
@@ -24,8 +26,10 @@ public partial class App : Application
     public override void Initialize()
     {
         
-        Console.WriteLine(Settings.CurrentStyle.BackgroundImage);
         fileManager = FileManager.Init(new DirItem(new Path(AppContext.BaseDirectory)));
+        cacheService = new CacheService().Load();
+        Cache = cacheService.Cache;
+        cacheService.ImportLastDir();
         UIManager = UIManager.Init();
         AvaloniaXamlLoader.Load(this);
     }
