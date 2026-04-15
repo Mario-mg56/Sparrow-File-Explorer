@@ -2,6 +2,7 @@ namespace DynamicFileExplorer.UI.Views.MainWindow;
 
 using Avalonia.Controls;
 using DynamicFileExplorer.UI.Components;
+using DynamicFileExplorer.ViewModels;
 
 public partial class MainWindow : Window
 {
@@ -9,6 +10,7 @@ public partial class MainWindow : Window
 
     public MainWindow()
     {
+        DataContext = new MainViewModel();
         InitializeComponent(); // SIEMPRE PRIMERO
         var headerBorder = this.FindControl<Border>("HeaderContainer")!;
         var hierarchyContainer = this.FindControl<Border>("HierarchyContainer")!;

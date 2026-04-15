@@ -1,10 +1,25 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:helpers="using:DynamicFileExplorer.UI.Helpers"
              x:Class="DynamicFileExplorer.App"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+<Application.Styles>
 
-    <Application.Styles>
+    <FluentTheme />
+
+    <Style Selector="TextBlock">
+        <Setter Property="FontFamily" Value="Inter"/>
+    </Style>
+
+    <Style Selector="Button">
+        <Setter Property="FontFamily" Value="Inter"/>
+    </Style>
+
+    <Style Selector="TextBox">
+        <Setter Property="FontFamily" Value="{x:Static helpers:AppResources.Font}"/>
+    </Style>
         <FluentTheme />
-    </Application.Styles>
+
+</Application.Styles>
 </Application>

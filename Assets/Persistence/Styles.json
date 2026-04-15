@@ -1,0 +1,21 @@
+{
+    "LightTheme":{
+        "PrimaryColor":"",
+        "SecondaryColor":"#000000",
+        "TextColor":"",
+        "FontStyle":"JetBrains Mono Nerd Font",
+        "BackgroundImage":"avares://DynamicFileExplorer/Assets/Images/BackgroundImage.jpg",
+        "DirImageIcon":"avares://DynamicFileExplorer/Assets/Images/DirImageIcon.png",
+        "FileImageIcon":"avares://DynamicFileExplorer/Assets/Images/FileImageIcon.png"
+    },
+    "DarkTheme":{
+        "PrimaryColor":"",
+        "SecondaryColor":"#000000",
+        "TextColor":"",
+        "FontStyle":"JetBrains Mono Nerd Font",
+        "BackgroundImage":"avares://DynamicFileExplorer/Assets/Images/BackgroundImage.jpg",
+        "DirImageIcon":"avares://DynamicFileExplorer/Assets/Images/DirImageIcon.png",
+        "FileImageIcon":"avares://DynamicFileExplorer/Assets/Images/FileImageIcon.png"
+    }
+    
+}

@@ -9,7 +9,7 @@
         <Button Name="BackButton" Content="Back"/>
         <Button Name="ForwardButton" Content="Forward"/>
         <Button Name="BackwardButton" Content="Backward"/>
-        <CheckBox Name="UnHideItems" IsChecked="True">Hide items</CheckBox>
+        <CheckBox Name="UnHideItems" >Hide items</CheckBox>
     </StackPanel>
 
 </UserControl>

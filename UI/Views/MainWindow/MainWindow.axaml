@@ -1,29 +1,36 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="using:DynamicFileExplorer"
         xmlns:components="clr-namespace:DynamicFileExplorer.UI.Components"
         xmlns:vm="clr-namespace:DynamicFileExplorer.ViewModels"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:DataType="vm:MainViewModel"
         x:Class="DynamicFileExplorer.UI.Views.MainWindow.MainWindow"
         Title="DynamicFileExplorer">
-    <Grid  ColumnDefinitions="1*, 4*, 1*" Name="MainGrid">
+
+        <Window.Background>
+        <ImageBrush Source="{Binding BackgroundImage}" Opacity="{Binding BackgroundImageOpacity}"
+                    Stretch="UniformToFill"/>
+    </Window.Background>
+        <Grid  ColumnDefinitions="1*, 4*, 1*" Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="9*"/>
         </Grid.RowDefinitions>
-        <Border Grid.Row="0" Grid.ColumnSpan="3" Background="Green" Name="HeaderContainer">
+        <Border Grid.Row="0" Grid.ColumnSpan="3" Background="Transparent" Name="HeaderContainer">
                 <components:HeaderContainer />
         </Border>
-        <Border Grid.Row="1" Grid.Column="0" Background="Red"  Name="HierarchyContainer">
+        <Border Grid.Row="1" Grid.Column="0" Background="Transparent"  Name="HierarchyContainer">
                 <components:HierarchyView/>
         </Border>
-        <Border Grid.Row="1" Grid.Column="1" Background="Blue">
+        <Border Grid.Row="1" Grid.Column="1" Background="Transparent">
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <components:FilesGrid/>
             </ScrollViewer>
         </Border>
-        <Border Grid.Row="1" Grid.Column="2" Background="Red"  Name="InspectorContainer">
+        <Border Grid.Row="1" Grid.Column="2" Background="Transparent"  Name="InspectorContainer">
             <TextBlock Text="RightSidebar"/>
         </Border>
         <Canvas

@@ -1,10 +1,7 @@
-using System;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Runtime.CompilerServices;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Media;
 
 namespace DynamicFileExplorer.UI.Components;
 public class ResizableContainerHorizontal:ResizableContainer
@@ -12,6 +9,7 @@ public class ResizableContainerHorizontal:ResizableContainer
 
     private ColumnDefinition definition;
     readonly bool invert;
+    private Styles Styles = App.Styles;
     public ResizableContainerHorizontal(Border border, ColumnDefinition definition, bool invert):base(border)
     {
         this.invert = invert;
@@ -21,6 +19,10 @@ public class ResizableContainerHorizontal:ResizableContainer
     }
     public override void RebuildBorder(Border border)
     {
+
+        border.BorderBrush = new SolidColorBrush(Color.Parse(Styles.SecondaryColor));
+        border.BorderThickness = new Thickness(invert?2:0, 0, invert?0:2, 0);
+
         // 1. Sacar el contenido actual del Border
         if (border.Child is not Control oldRoot)
             return;
