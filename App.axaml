@@ -9,15 +9,18 @@
     <FluentTheme />
 
     <Style Selector="TextBlock">
-        <Setter Property="FontFamily" Value="Inter"/>
+        <Setter Property="FontFamily" Value="{x:Static helpers:AppResources.Font}"/>
+        <Setter Property="Foreground" Value="{x:Static helpers:AppResources.TextColor}"/>
     </Style>
 
     <Style Selector="Button">
-        <Setter Property="FontFamily" Value="Inter"/>
+        <Setter Property="FontFamily" Value="{x:Static helpers:AppResources.Font}" />
+        <Setter Property="Foreground" Value="{x:Static helpers:AppResources.TextColor}"/>
     </Style>
 
     <Style Selector="TextBox">
-        <Setter Property="FontFamily" Value="{x:Static helpers:AppResources.Font}"/>
+        <Setter Property="FontFamily" Value="{x:Static helpers:AppResources.Font}" />
+        <Setter Property="Foreground" Value="{x:Static helpers:AppResources.TextColor}"/>
     </Style>
         <FluentTheme />
 

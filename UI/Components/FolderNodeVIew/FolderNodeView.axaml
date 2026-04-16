@@ -23,7 +23,7 @@
             <TextBlock Grid.Column="1"
                     Text="{Binding Name}"
                     VerticalAlignment="Center"
-                    Foreground="White"/>
+                    />
         </Grid>
     </Border>
 </UserControl>

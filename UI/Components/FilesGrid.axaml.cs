@@ -11,7 +11,7 @@ using DynamicFileExplorer.Models;
 
 class FilesGrid : Grid
 {
-    public static readonly int COLS = 5;
+    public static readonly int COLS = 7;
     public readonly ContextMenu<DirItem> contextMenu;
     private readonly FileManager fileManager = App.Current.fileManager;
 
