@@ -12,6 +12,7 @@ public partial class HierarchyView : UserControl
     {
         DataContext = new HierarchyViewModel();
         InitializeComponent();
+        App.Current.UIManager.OnTabsResized+=ResizeTexts;
 
         this.AttachedToVisualTree += (_, __) =>
         {
@@ -19,6 +20,15 @@ public partial class HierarchyView : UserControl
         };
            }
 
+
+
+     public void ResizeTexts(Border border)
+        {
+            if(Parent?.Parent != border)return;
+            double? widthPercent = App.Current.UIManager.GetRelativeWidth(border);
+            if (widthPercent is null) return;
+            FolderNodeViewModel.ChangeVisibility(widthPercent < 0.25? false: true);
+        }
      private void OnItemExpanded(object? sender, RoutedEventArgs e)
     {
         if (e.Source is TreeViewItem item)

@@ -4,20 +4,35 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Avalonia.Controls;
 using Avalonia.Media;
+using DynamicFileExplorer.Infrastructures;
 using DynamicFileExplorer.Models;
 
 namespace DynamicFileExplorer.ViewModels;
 
-public class FolderNodeViewModel
+public class FolderNodeViewModel : INotifyPropertyChanged
 {
     
     private readonly DirItem Node;
 
     public SolidColorBrush Icon => Node.icon;
-    public string Name => Node.path.name;
+    public string Name => Node.GetPath().Equals(FileManager.GetRoot()?.GetPath())? "root":Node.path.name;
 
     private bool _isExpanded;
+    private bool _isVisible;
+
+    public bool IsVisible
+    {
+        get => _isVisible;
+        set
+        {
+            OnPropertyChanged();
+            _isVisible = value;
+        }
+    }
+
+    public static event Action<bool>? VisibilityChanged;
 
     public bool IsExpanded
     {
@@ -37,10 +52,17 @@ public class FolderNodeViewModel
 
     public FolderNodeViewModel(DirItem node)
     {
+        VisibilityChanged += (v)=>IsVisible=v;
         Node = node;
         Children.Add(null!);
     }
 
+    public static void ChangeVisibility(bool v)
+    {
+        VisibilityChanged?.Invoke(v);
+    }
+
+    
     public void ExpandNode()
     {
 
@@ -74,5 +96,12 @@ public class FolderNodeViewModel
     public DirItem GetNode()
     {
         return Node;
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected void OnPropertyChanged([CallerMemberName] string? name = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

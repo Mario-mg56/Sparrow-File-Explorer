@@ -11,10 +11,6 @@ class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        App.Settings = new SettingsService();
-        App.Settings.Load();
-        App.Styles = App.Settings.CurrentStyle;
-        App.Config = App.Settings.Config;
 
         BuildAvaloniaApp()
         .StartWithClassicDesktopLifetime(args);

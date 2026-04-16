@@ -1,6 +1,8 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Avalonia.Controls;
+using DynamicFileExplorer.Infrastructures;
 
 namespace DynamicFileExplorer.ViewModels;
 public class HierarchyViewModel
@@ -29,12 +31,14 @@ public FolderNodeViewModel? SelectedItem
 
     public HierarchyViewModel()
     {
-        var rootDir = (App.Current?.fileManager?.GetRoot()) ?? throw new Exception("GetRoot() devolvió null");
+        var rootDir = FileManager.GetRoot() ?? throw new Exception("GetRoot() devolvió null");
         var rootVm = new FolderNodeViewModel(rootDir);
         rootVm.IsExpanded = true;
 
         Roots.Add(rootVm);
     }
+
+   
 
     public static void PrintTree(FolderNodeViewModel node, string indent = "", bool isLast = true)
     {

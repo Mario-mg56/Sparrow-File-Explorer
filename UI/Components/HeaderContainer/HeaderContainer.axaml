@@ -2,14 +2,52 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:components="clr-namespace:DynamicFileExplorer.UI.Components"
              x:Class="DynamicFileExplorer.UI.Components.HeaderContainer">
+    <Grid  ColumnDefinitions="100,*,Auto" HorizontalAlignment="Stretch"
+        Margin="10">
+        <Grid.Styles>
 
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10" Margin="10">
-        <components:SearchContainerView/>
-        <TextBlock Text="Header" VerticalAlignment="Center"/>
-        <Button Name="BackButton" Content="Back"/>
-        <Button Name="ForwardButton" Content="Forward"/>
-        <Button Name="BackwardButton" Content="Backward"/>
-        <CheckBox Name="UnHideItems" >Hide items</CheckBox>
-    </StackPanel>
+            <Style Selector="Border.TransparentBorder">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderBrush" Value="Black"/>
+                <Setter Property="BorderThickness" Value="2"/>
+                <Setter Property="CornerRadius" Value="15"/>
+            </Style>
+            <Style Selector="Border.BlackBackground">
+                <Setter Property="Background" Value="#80000000"/>
+                <Setter Property="CornerRadius" Value="15"/>
+            </Style>
+
+        </Grid.Styles>
+        <Border Grid.Column="0" Classes="Transparent" ></Border>
+        <Border Grid.Column="1"  Classes="TransparentBorder" HorizontalAlignment="Center"  Width="200"><components:SearchContainerView/></Border>
+        <Border Grid.Column="2"  Classes="BlackBackground" HorizontalAlignment="Right">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+                    <Button Name="BackButton" Background="Transparent">
+                        <Button.Content>
+                            <Grid>
+                                <TextBlock Text="◀"
+                                        Foreground="White"/>
+                            </Grid>
+                        </Button.Content>
+                    </Button>
+                    <Button Name="ForwardButton"  Background="Transparent">
+                        <Button.Content>
+                                <TextBlock Text="▶"
+                                        Foreground="White"/>
+                        </Button.Content>
+                    </Button>
+                    <Button Name="BackwardButton"  Background="Transparent">
+                        <Button.Content>
+                                <!-- texto real -->
+                                <TextBlock Text="Back"
+                                        Foreground="White"/>
+                        </Button.Content>
+                    </Button>
+                    
+                    <CheckBox Name="UnHideItems" IsVisible="False"></CheckBox> 
+            </StackPanel>
+        </Border>
+    </Grid>
+    
 
 </UserControl>

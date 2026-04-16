@@ -4,7 +4,7 @@
              x:Class="DynamicFileExplorer.UI.Components.FolderNodeView"
              x:DataType="vm:FolderNodeViewModel">
 
-    <Border Background="#2E2E2E"
+    <Border Background="Transparent"
             CornerRadius="6"
             Padding="8"
            >
@@ -12,7 +12,7 @@
         <Grid ColumnDefinitions="Auto,*" VerticalAlignment="Center">
 
             <!-- Icono -->
-            <Border Grid.Column="0"
+            <Border IsVisible="{Binding IsVisible}" Grid.Column="0"
                     Width="20"
                     Height="20"
                     Background="{Binding Icon}"

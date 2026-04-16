@@ -28,6 +28,7 @@ public abstract class ResizableContainer
         if (!isDraggin) return;
         var pos = e.GetPosition(border);
         SetSize(pos);
+        App.Current.UIManager.CallResizeTabs(border);
     }
     protected void OnPressed(object? sender, PointerPressedEventArgs e) 
     {

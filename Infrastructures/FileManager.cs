@@ -57,7 +57,7 @@ public class FileManager
         ListAll().ForEach(files.Add);
     }
 
-    public DirItem? GetRoot()
+    public static DirItem? GetRoot()
     {
         string? path = GetPathRoot(Environment.CurrentDirectory);
         if (path==null) return null;

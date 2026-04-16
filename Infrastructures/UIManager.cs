@@ -10,6 +10,7 @@ class UIManager
     private static UIManager? instance;
     public MainWindow? MainWindow { get; private set; }
     public event Action<MainWindow>? OnMainWindowLoaded;
+    public event Action<Border>? OnTabsResized;
 
     public UIManager()
     {
@@ -26,6 +27,17 @@ class UIManager
     {
         MainWindow = mainWindow;
         OnMainWindowLoaded?.Invoke(mainWindow);
+    }
+    public void CallResizeTabs(Border border)
+    {
+        OnTabsResized?.Invoke(border);
+    }
+
+    public double? GetRelativeWidth(Border border)
+    {
+        
+        if (MainWindow is null)return null;
+        return border.Bounds.Width/MainWindow.Bounds.Width;
     }
 
     public void AddContextMenu(Control control, ContextMenu menu)

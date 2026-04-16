@@ -40,8 +40,8 @@ class FilesGrid : Grid
             new (name: "Item 3", itemAction: (i, _, _) => Console.WriteLine(i.name + " selected"))
         ]) {Background = Brushes.White};
 
-        fileManager.WorkingDirChanged += (_) => {
-            contextMenu.SetAttachedItem(fileManager.WorkingDir);
+        fileManager.WorkingDirChanged += (dir) => {
+            contextMenu.SetAttachedItem(dir);
             RebuildGrid();
         };
         RebuildGrid();
