@@ -14,7 +14,7 @@
         <ImageBrush Source="{Binding BackgroundImage}" Opacity="{Binding BackgroundImageOpacity}"
                     Stretch="UniformToFill"/>
     </Window.Background>
-        <Grid  ColumnDefinitions="1*, 4*, 1*" Name="MainGrid">
+    <Grid  ColumnDefinitions="1*, 4*, 1*" Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="9*"/>
