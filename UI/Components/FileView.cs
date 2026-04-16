@@ -1,9 +1,7 @@
-using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
-using Avalonia.Media.Imaging;
 using DynamicFileExplorer.Infrastructures;
 using DynamicFileExplorer.Models;
 using DynamicFileExplorer.ViewModels;
@@ -16,16 +14,11 @@ class FileView : Grid
     public readonly Image iconImg;
     public readonly TextBlock label;
     static readonly int PADDING = 10;
-    public readonly ContextMenu<FileSystemItem> contextMenu;
     private readonly FileSystemItem file;
     public FileView(FileSystemItem file)
     {
         this.file = file;
-        contextMenu = new (this, file, [
-            new (name: "Borrar", itemAction: (i, wd, _) => Console.WriteLine("wd " + wd)),
-            new (name: "Cambiar Nombre", itemAction: (i, _, _) => Console.WriteLine(i.name + " selected")),
-            new (name: "Abrir", itemAction: (i, _, _) => Console.WriteLine(i.name + " selected"))
-        ]) {Background = Brushes.White};
+
         name = file is File f? App.Config.DefaultIsExtensionNameIncluded? f.path.name:f.NameWithoutExtension():file.path.name;
         Margin = new Thickness(PADDING);
         Background = new SolidColorBrush(Colors.Transparent); //Para que reciba eventos de mouse aunque no tenga fondo

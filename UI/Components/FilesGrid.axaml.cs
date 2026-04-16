@@ -8,13 +8,16 @@ using Avalonia.Interactivity;
 using Avalonia;
 using Avalonia.Media;
 using DynamicFileExplorer.Models;
+using System.Collections.Generic;
 
 class FilesGrid : Grid
 {
     public static readonly int COLS = 5;
     public int Rows => (int) Math.Ceiling(fileManager.files.Count/(float)COLS);
     public readonly ContextMenu<DirItem> contextMenu;
+    public readonly ContextMenu<FileSystemItem> fileContextMenu;
     private readonly FileManager fileManager = App.Current.fileManager;
+    private readonly List<ContextMenu<FileSystemItem>.ContextAttachement> attachements = [];
 
     public FilesGrid()
     {
@@ -24,17 +27,24 @@ class FilesGrid : Grid
 
         this.GetObservable(BoundsProperty).Subscribe(OnResize);
 
-        contextMenu = new (this, fileManager.WorkingDir, [
+        contextMenu = new (items:[
             new (name: "Item 1", itemAction: (i, wd, _) => Console.WriteLine("wd " + wd)),
             new (name: "Item 2", itemAction: (i, _, _) => Console.WriteLine(i.name + " selected")),
             new (name: "Item 3", itemAction: (i, _, _) => Console.WriteLine(i.name + " selected"))
         ]) {Background = Brushes.White};
 
+        fileContextMenu = new ([
+            new (name: "Open", itemAction: (i, file, _) => Console.WriteLine("wd " + file)),
+            new (name: "Delete", itemAction: (i, _, _) => Console.WriteLine(i.name + " selected")),
+            new (name: "Rename", itemAction: (i, _, _) => Console.WriteLine(i.name + " selected"))
+        ]) {Background = Brushes.White};
+
         fileManager.WorkingDirChanged += (dir) => {
-            contextMenu.SetAttachedItem(dir);
             RebuildGrid();
+            ReloadContextAttachements();
         };
         RebuildGrid();
+        ReloadContextAttachements();
     }
     
     private void RebuildGrid()
@@ -42,15 +52,19 @@ class FilesGrid : Grid
         Children.Clear();
         OnResize(Bounds);
         int rows = (int) Math.Ceiling(fileManager.files.Count/(float)COLS);
+        attachements.Clear();
 
         for (int i = 0, r = 0; r < rows; r++) {
             for (int c = 0; c < COLS && i < fileManager.files.Count; c++, i++) {
                 var file = fileManager.files[i];
-                var border = new Border {Child = new FileView(file)};
+                var fv = new FileView(file);
+                var border = new Border {Child = fv};
 
                 SetRow(border, r);
                 SetColumn(border, c);
                 Children.Add(border);
+
+                attachements.Add(new ContextMenu<FileSystemItem>.ContextAttachement(fv, fileManager.files[i]));
             }
         }
     }
@@ -67,6 +81,12 @@ class FilesGrid : Grid
             RowDefinitions.Add(new RowDefinition(new GridLength(cellSize)));
         for (int i = 0; i < COLS; i++) 
             ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
+    }
+
+    private void ReloadContextAttachements()
+    {
+        contextMenu.SetAttachements([new ContextMenu<DirItem>.ContextAttachement(this, fileManager.WorkingDir)]);
+        fileContextMenu.SetAttachements(attachements);
     }
 
 }

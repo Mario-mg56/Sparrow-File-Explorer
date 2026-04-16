@@ -2,6 +2,7 @@ namespace DynamicFileExplorer.UI.Components;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using DynamicFileExplorer.Models;
@@ -9,37 +10,45 @@ using DynamicFileExplorer.UI.Views.MainWindow;
 
 public class ContextMenu : FlexLayout
 {
-    public int X { get; private set; }
-    public int Y { get; private set; }
+    public int X { get; protected set; }
+    public int Y { get; protected set; }
+    public List<Control> AttachedLayouts { get; protected set; }
     public readonly List<ContextMenuItem> items;
     public event Action<ContextMenu>? OnShowMenu;
-    public ContextMenu(Control attachedLayout, List<ContextMenuItem>? items = null) {
-        this.items = items ?? [];
+    protected EventHandler<Avalonia.Input.PointerReleasedEventArgs>? OnReleaseAttachedLayoutHandler;
+    public ContextMenu(List<ContextMenuItem> items, List<Control>? attachedLayouts = null) : base(){
+        this.items = items;
+        AttachedLayouts = attachedLayouts ?? [];
         IsVisible = false;
         Padding = new Thickness(0, 0, 0, ContextMenuItemView.MARGIN_TOP);
-        this.items.ForEach(i => {
-            i.AttachedLayout = attachedLayout;
-            Children.Add(new ContextMenuItemView(i));
+
+        this.items.ForEach(i =>  Children.Add(new ContextMenuItemView(i)));
+        App.Current.UIManager.AddOnMainWindowLoadedListener(mw => {
+            mw.PointerPressed += (_, _) => Hide();
+            mw.overlay.Children.Add(this);
+            OnReleaseAttachedLayoutHandler = (sender, e) => {
+                if (e.InitialPressMouseButton == Avalonia.Input.MouseButton.Right)
+                    OnReleaseAttachedLayout(mw, sender as Control, e);
+            };
         });
-        App.Current.UIManager.OnMainWindowLoaded += (mw) => SetUpContextMenu(mw, attachedLayout);
     }
 
-    private void SetUpContextMenu(MainWindow mw, Control attachedLayout)
+    public void SetAttachedLayouts(List<Control> attachedLayouts)
     {
-        mw.PointerPressed += (_, _) => Hide();
-        attachedLayout.PointerReleased += (sender, e) => {
-            if (e.InitialPressMouseButton == Avalonia.Input.MouseButton.Right)
-            {
-                var pos = e.GetPosition(mw);
-                SetPosition(
-                    (int) (pos.X > mw.Bounds.Width/2 ? pos.X - Bounds.Width : pos.X),
-                    (int) (pos.Y > mw.Bounds.Height/2 ? pos.Y - Bounds.Height : pos.Y)
-                );
-                Show();
-            }
-        };
+        AttachedLayouts.ForEach(al => al.PointerReleased -= OnReleaseAttachedLayoutHandler);
+        attachedLayouts.ForEach(al => al.PointerReleased += OnReleaseAttachedLayoutHandler);
 
-        mw.overlay.Children.Add(this);
+        AttachedLayouts = attachedLayouts;
+    }
+
+    protected virtual void OnReleaseAttachedLayout(MainWindow mw, Control? sender, Avalonia.Input.PointerReleasedEventArgs e) {
+        var pos = e.GetPosition(mw);
+        SetPosition(
+            (int) (pos.X > mw.Bounds.Width/2 ? pos.X - Bounds.Width : pos.X),
+            (int) (pos.Y > mw.Bounds.Height/2 ? pos.Y - Bounds.Height : pos.Y)
+        );
+        Show();
+        items.ForEach(i =>  i.AttachedLayout = sender);
     }
 
     public virtual void Show() {
@@ -58,17 +67,39 @@ public class ContextMenu : FlexLayout
 
 public class ContextMenu<T> : ContextMenu
 {
-    public new readonly List<ContextMenuItem<T>> items;
-
-    public ContextMenu(Control attachedLayout, T attachedItem, List<ContextMenuItem<T>>? items = null) : base(attachedLayout)
+    public List<ContextAttachement>? Attachements { get; private set; }
+    public ContextMenu(List<ContextMenuItem<T>> items, List<ContextAttachement>? attachements = null) : base([.. items.Cast<ContextMenuItem>()], ConvertAttachments(attachements))
     {
-        this.items = items ?? [];
-        this.items.ForEach(i => {
-            i.AttachedLayout = attachedLayout;
-            i.AttachedItem = attachedItem;
-            Children.Add(new ContextMenuItemView(i));
+        Attachements = attachements ?? [];
+    }
+
+    public struct ContextAttachement(Control attachedLayout, T? attachedItem)
+    {
+        public Control AttachedLayout = attachedLayout;
+        public T? AttachedItem = attachedItem;
+    }
+
+    public void SetAttachements(List<ContextAttachement>? attachements)
+    {
+        SetAttachedLayouts(ConvertAttachments(attachements));
+        Attachements = attachements ?? [];
+    }
+
+    protected override void OnReleaseAttachedLayout(MainWindow mw, Control? sender, Avalonia.Input.PointerReleasedEventArgs e)
+    {
+        base.OnReleaseAttachedLayout(mw, sender, e);
+        var attachement = Attachements?.Find(a => a.AttachedLayout == sender);
+        if (attachement == null) {Console.WriteLine("Attachement not found"); return;}
+        items.OfType<ContextMenuItem<T>>().ToList().ForEach(i => {
+            i.AttachedLayout = sender;
+            i.AttachedItem = attachement.Value.AttachedItem;
         });
     }
 
-    public void SetAttachedItem(T newItem) => items.ForEach(i => i.AttachedItem = newItem);
+    private static List<Control> ConvertAttachments(List<ContextAttachement>? items) {
+        if (items == null) return [];
+        List<Control> convertedItems = [];
+        items.ForEach(i => convertedItems.Add(i.AttachedLayout));
+        return convertedItems;
+    }
 }
