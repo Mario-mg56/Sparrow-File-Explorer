@@ -24,19 +24,39 @@ class FilesGrid : Grid
         
         Background = new SolidColorBrush(Colors.Transparent); //Para que reciba eventos de mouse aunque no tenga fondo
         
+ 
+ 
 
         this.GetObservable(BoundsProperty).Subscribe(OnResize);
 
         contextMenu = new (items:[
-            new (name: "Item 1", itemAction: (i, wd, _) => Console.WriteLine("wd " + wd)),
-            new (name: "Item 2", itemAction: (i, _, _) => Console.WriteLine(i.name + " selected")),
+            new (name: "Crear Carpeta", itemAction: (i, wd, _) => {
+                var input = TextInputPopUp.getInstance();    
+                input.Show();   
+                input.Show();   
+                input.Show();   
+                input.title = "";
+                input.Resolve = (s)=> fileManager.CreateDir(wd,s);
+            }),
+            new (name: "Crear Archivo", itemAction: (i, wd, _) => {
+                var input = TextInputPopUp.getInstance();    
+                input.Show();   
+                input.title = "";
+                input.Resolve = (s)=> fileManager.CreateFile(wd,s);
+            }),
             new (name: "Item 3", itemAction: (i, _, _) => Console.WriteLine(i.name + " selected"))
         ]) {Background = Brushes.White};
 
         fileContextMenu = new ([
             new (name: "Open", itemAction: (i, file, _) => Console.WriteLine("wd " + file)),
-            new (name: "Delete", itemAction: (i, _, _) => Console.WriteLine(i.name + " selected")),
-            new (name: "Rename", itemAction: (i, _, _) => Console.WriteLine(i.name + " selected"))
+            new (name: "Delete", itemAction: (i, file, _) => fileManager.Delete(file)),
+            new (name: "Rename", itemAction: (i, file, _) => {
+            var input = TextInputPopUp.getInstance();    
+            input.Show();
+            input.title = file?.path.name;
+            input.Resolve = (s)=> fileManager.Rename(file,s);
+            }
+            )
         ]) {Background = Brushes.White};
 
         fileManager.WorkingDirChanged += (dir) => {
@@ -45,6 +65,7 @@ class FilesGrid : Grid
         };
         RebuildGrid();
         ReloadContextAttachements();
+
     }
     
     private void RebuildGrid()

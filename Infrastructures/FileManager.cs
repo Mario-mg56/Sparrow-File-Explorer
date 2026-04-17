@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using DynamicFileExplorer.Models;
 using System.Threading.Tasks;
+using File = Models.File;
 
 public class FileManager
 {
@@ -132,23 +133,35 @@ public class FileManager
         }
         return fathersAndSon;
     }
-
-    public bool Delete(Models.File item)
+    public void Delete(FileSystemItem item)
+    {
+        if(item is Models.File f)
+        {
+             Delete(f);
+        } else if (item is DirItem d)
+        {
+             Delete(d);
+            
+        }
+        CastWorkingDirChanged();
+    }
+    public bool Delete(File item)
     {
         try
         {
-            System.IO.File.Delete(item.path + item.path.name);
+            System.IO.File.Delete(item.path.path);
         } catch (IOException )
         {
             return false;
         }
+        CastWorkingDirChanged();
         return true;
     }
     public bool Delete(DirItem item)
     {
         try
         {
-            Directory.Delete(item.GetPath(),recursive:true);
+            Directory.Delete(item.path.path,recursive:true);
         } catch (IOException )
         {
             return false;
@@ -156,28 +169,36 @@ public class FileManager
         return true;
     }
 
-    public bool CreateDir(DirItem dir)
+    public void Rename(FileSystemItem file,string newName)
+    {
+        System.IO.File.Move(file.path.path, Combine(file.path.PathWithoutName(),newName));
+        CastWorkingDirChanged();
+    }
+
+    public bool CreateDir(DirItem dir,string name)
     {
         try
         {
-            Directory.CreateDirectory(dir.GetPath());
+            Directory.CreateDirectory(Combine(dir.path.path,name));
             
         } catch (IOException)
         {
             return false;
         }
+        CastWorkingDirChanged();
         return true;
     }
-    public bool CreateFile(Models.File file)
+    public bool CreateFile(DirItem dir,string nameWithExtension)
     {
         try
         {
-            System.IO.File.Create(file.GetPath());
+            System.IO.File.Create(Combine(dir.path.path,nameWithExtension));
             
         } catch (IOException)
         {
             return false;
         }
+        CastWorkingDirChanged();
         return true;
     }
 

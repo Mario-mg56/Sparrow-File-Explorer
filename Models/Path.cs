@@ -14,6 +14,10 @@ public readonly struct Path
         this.path = path;
         name = GetFileName(path);
     }
+    public string PathWithoutName()
+    {
+        return path.Replace(name,"");
+    }
 
     public override string ToString() => path;
 
