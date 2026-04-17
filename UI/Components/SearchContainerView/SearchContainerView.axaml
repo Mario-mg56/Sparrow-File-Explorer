@@ -13,9 +13,8 @@
 
         <!-- INPUT -->
         <TextBox Grid.Column="0"
-                Foreground="White"
                  Text="{Binding SearchText, Mode=TwoWay}"
-                 PlaceholderText="Buscar archivos..."
+                 Watermark="Buscar archivos..."
                  Background="Transparent"
                  BorderThickness="0"
                  VerticalAlignment="Center"
@@ -32,7 +31,6 @@
 
         <!-- BOTÓN DENTRO DEL INPUT -->
         <Button Grid.Column="1"
-                Foreground="White"
                 Content="{Binding BuscarText}"
                 Command="{Binding SearchCommand}"
                 Background="Transparent"

@@ -2,7 +2,7 @@
     "LightTheme":{
         "PrimaryColor":"",
         "SecondaryColor":"#000000",
-        "TextColor":"",
+        "TextColor":"White",
         "FontStyle":"JetBrains Mono Nerd Font",
         "BackgroundImage":"avares://DynamicFileExplorer/Assets/Images/BackgroundImage.jpg",
         "DirImageIcon":"avares://DynamicFileExplorer/Assets/Images/DirImageIcon.png",
@@ -11,7 +11,7 @@
     "DarkTheme":{
         "PrimaryColor":"",
         "SecondaryColor":"#000000",
-        "TextColor":"",
+        "TextColor":"White",
         "FontStyle":"JetBrains Mono Nerd Font",
         "BackgroundImage":"avares://DynamicFileExplorer/Assets/Images/BackgroundImage.jpg",
         "DirImageIcon":"avares://DynamicFileExplorer/Assets/Images/DirImageIcon.png",

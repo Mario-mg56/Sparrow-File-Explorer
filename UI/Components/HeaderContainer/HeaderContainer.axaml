@@ -22,7 +22,7 @@
         <Border Grid.Column="1"  Classes="TransparentBorder" HorizontalAlignment="Center"  Width="200"><components:SearchContainerView/></Border>
         <Border Grid.Column="2"  Classes="BlackBackground" HorizontalAlignment="Right">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
-                    <Button Name="BackButton" Background="Transparent">
+                    <Button Name="ForwardButton" Background="Transparent">
                         <Button.Content>
                             <Grid>
                                 <TextBlock Text="◀"
@@ -30,13 +30,13 @@
                             </Grid>
                         </Button.Content>
                     </Button>
-                    <Button Name="ForwardButton"  Background="Transparent">
+                    <Button Name="BackwardButton"  Background="Transparent">
                         <Button.Content>
                                 <TextBlock Text="▶"
                                         Foreground="White"/>
                         </Button.Content>
                     </Button>
-                    <Button Name="BackwardButton"  Background="Transparent">
+                    <Button Name="BackButton"  Background="Transparent">
                         <Button.Content>
                                 <!-- texto real -->
                                 <TextBlock Text="Back"
