@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using DynamicFileExplorer.Infrastructures;
 using DynamicFileExplorer.Models;
 namespace DynamicFileExplorer.Infrastructures;
 public class CacheService : JsonStorageService
@@ -14,7 +13,7 @@ public class CacheService : JsonStorageService
                 "DynamicFileExplorer"
             );
 
-            Directory.CreateDirectory(dir); // 🔥 crea si no existe
+            Directory.CreateDirectory(dir);
 
             return System.IO.Path.Combine(dir, "cache.json");
         }
