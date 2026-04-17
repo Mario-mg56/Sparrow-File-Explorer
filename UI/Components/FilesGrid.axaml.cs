@@ -21,7 +21,6 @@ class FilesGrid : Grid
 
     public FilesGrid()
     {
-        
         Background = new SolidColorBrush(Colors.Transparent); //Para que reciba eventos de mouse aunque no tenga fondo
         
 
