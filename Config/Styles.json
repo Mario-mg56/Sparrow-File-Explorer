@@ -7,7 +7,7 @@
         "BackgroundImage":"avares://DynamicFileExplorer/Assets/Images/BackgroundImage.jpg",
         "DirImageIcon":"avares://DynamicFileExplorer/Assets/Images/DirImageIcon.png",
         "FileImageIcon":"avares://DynamicFileExplorer/Assets/Images/FileImageIcon.png",
-        "IconSize" : 4
+        "IconSize" : 200
     },
     "DarkTheme":{
         "PrimaryColor":"",
@@ -17,7 +17,7 @@
         "BackgroundImage":"avares://DynamicFileExplorer/Assets/Images/BackgroundImage.jpg",
         "DirImageIcon":"avares://DynamicFileExplorer/Assets/Images/DirImageIcon.png",
         "FileImageIcon":"avares://DynamicFileExplorer/Assets/Images/FileImageIcon.png",
-        "IconSize" : 4
+        "IconSize" : 200
     }
     
 }

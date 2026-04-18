@@ -69,7 +69,7 @@ public class ContextMenu : FlexLayout
 
 public class ContextMenu<T> : ContextMenu
 {
-    public List<ContextAttachement>? Attachements { get; private set; }
+    public List<ContextAttachement> Attachements { get; private set; }
     public ContextMenu(List<ContextMenuItem<T>> items, List<ContextAttachement>? attachements = null) : base([.. items.Cast<ContextMenuItem>()], ConvertAttachments(attachements))
     {
         Attachements = attachements ?? [];
