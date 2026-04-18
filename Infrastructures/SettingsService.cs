@@ -8,21 +8,21 @@ using DynamicFileExplorer.Infrastructures;
 
 public class SettingsService : JsonStorageService
 {
-    private static string PersistencePath{get;} = "../../../Assets/Persistence/";
+    private static string PersistencePath{get;} = "../../../Config";
     public string StylePath {get;}= Path.GetFullPath(Path.Combine(
-    AppContext.BaseDirectory, PersistencePath,"Styles.json"
+        AppContext.BaseDirectory, PersistencePath,"Styles.json"
     ));
 
     public Dictionary<string, Styles> AllStyles { get; private set; } = new();
     public Styles CurrentStyle { get; private set; } = new();
     public string ConfigPath {get;}= Path.GetFullPath(Path.Combine(
-    AppContext.BaseDirectory, PersistencePath,"Config.json"
+        AppContext.BaseDirectory, PersistencePath,"Config.json"
     ));
 
     public Config Config { get; private set; } = new();
 
     public string KeyBindingsPath {get;}= Path.GetFullPath(Path.Combine(
-    AppContext.BaseDirectory, PersistencePath,"KeyBindings.json"
+        AppContext.BaseDirectory, PersistencePath,"KeyBindings.json"
     ));
 
     public KeyBindings KeyBindings { get; private set; } = new();

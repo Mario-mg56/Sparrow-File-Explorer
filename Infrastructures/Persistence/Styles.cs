@@ -10,5 +10,5 @@ public class Styles
 
     public string DirImageIcon { get; set; } = "";
     public string FileImageIcon { get; set; } = "";
-
+    public int IconSize { get; set; } = 0; 
 }
