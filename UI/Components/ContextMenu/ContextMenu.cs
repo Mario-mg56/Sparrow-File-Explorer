@@ -29,8 +29,9 @@ public class ContextMenu : FlexLayout
         });
         OnReleaseAttachedLayoutHandler = (sender, e) => {
             App.Current.UIManager.AddOnMainWindowLoadedListener(mw => {
-                if (e.InitialPressMouseButton == Avalonia.Input.MouseButton.Right)
-                    OnReleaseAttachedLayout(mw, sender as Control, e);
+                if (e.InitialPressMouseButton != Avalonia.Input.MouseButton.Right) return;
+                OnReleaseAttachedLayout(mw, sender as Control, e);
+                e.Handled = true;
             });
         };
     }
