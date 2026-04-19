@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Threading;
@@ -16,8 +19,10 @@ public class FileViewController
     public bool Dragging {get; private set;} = false;
     public ShadowItem shadowFile;
     public event Action<FileView>? StartDragging, StopDragging;
+    public event Action<List<FileSystemItem>>? FilesDropped;
+    public readonly DispatcherTimer draggingTimer = new()
+         {Interval = TimeSpan.FromMilliseconds(DRAGGING_TIME_TRIGGER)};
     public static readonly int PADDING = 10, DRAGGING_TIME_TRIGGER = 200;
-    public static readonly DispatcherTimer draggingTimer = new() {Interval = TimeSpan.FromMilliseconds(DRAGGING_TIME_TRIGGER)};
     public static readonly SolidColorBrush SELECTED_COLOR = new(Colors.LightBlue), TRANSPARENT = new(Colors.Transparent);
 
     public FileViewController(FileSystemItem file, FileView view)
@@ -25,24 +30,29 @@ public class FileViewController
         this.file = file;
         this.view = view;
 
-        shadowFile = new ShadowItem(new FileView(file, true));
+        shadowFile = new ShadowItem(new FileView(file, true)) {
+            Width = FileView.ICON_SIZE, Height = FileView.ICON_SIZE
+        };
 
         view.PointerPressed += OnLeftClick;
 
         draggingTimer.Tick += (_, _) =>
         {
-            draggingTimer.Stop();
             Dragging = true;
-            OnStartDragging();
+            App.Current.UIManager.AddOnMainWindowLoadedListener(mw => mw.PointerMoved += OnDrag);
             StartDragging?.Invoke(view);
+            draggingTimer.Stop();
         };
         
         view.PointerReleased += (_, e) => {
             if (e.InitialPressMouseButton == MouseButton.Left) {
                 draggingTimer.Stop();
+                App.Current.UIManager.AddOnMainWindowLoadedListener(mw => mw.PointerMoved -= OnDrag);
+                shadowFile.IsVisible = false;
+                App.Current.UIManager.FilesLayoutController!
+                    .PointingFile?.controller.DropFiles(App.Current.fileManager.SelectedItems);
                 Dragging = false;
-                OnStopDragging();
-                StartDragging?.Invoke(view);
+                StopDragging?.Invoke(view);
             }
         };
 
@@ -67,22 +77,17 @@ public class FileViewController
         }
     }
 
-    private void OnStartDragging()
-    {
-        App.Current.UIManager.AddOnMainWindowLoadedListener(mw => mw.PointerMoved += OnDrag);
-        shadowFile.IsVisible = true;
-    }
-
     private void OnDrag(object? sender, PointerEventArgs e)
     {
         var pos = e.GetPosition(sender as MainWindow);
-        shadowFile.SetPosition((int) pos.X, (int) pos.Y);
+        shadowFile.SetPosition((int) pos.X - FileView.ICON_SIZE/2, (int) pos.Y - FileView.ICON_SIZE/2);
+        shadowFile.IsVisible = true;
     }
 
-    private void OnStopDragging()
+    public void DropFiles(List<FileSystemItem> droppedFiles)
     {
-        App.Current.UIManager.AddOnMainWindowLoadedListener(mw => mw.PointerMoved -= OnDrag);
-        shadowFile.IsVisible = false;
+        Console.WriteLine(droppedFiles  + " dropped in " + view.name);
+        FilesDropped?.Invoke(droppedFiles);
     }
 
     public void SetSelected(bool selected){

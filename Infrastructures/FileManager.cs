@@ -15,7 +15,7 @@ public class FileManager
     private static FileManager? instance;
     public DirItem WorkingDir;
     public ObservableCollection<FileSystemItem> files = [];
-    private List<FileSystemItem> SelectedItems = [];
+    public List<FileSystemItem> SelectedItems {get; private set;} = [];
     private bool isHideItemsHide = App.Config.DefaultIsHideItems;
 
     private HistoryManager historyManager = new();

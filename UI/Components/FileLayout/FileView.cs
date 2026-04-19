@@ -15,10 +15,12 @@ public class FileView : Grid
     public string name;
     public readonly Image iconImg;
     public readonly TextBlock label;
-    public static readonly int PADDING = 10, DRAGGING_TIME_TRIGGER = 20;
-    public static readonly DispatcherTimer draggingTimer = new() {Interval = TimeSpan.FromMilliseconds(DRAGGING_TIME_TRIGGER)};
+    public static readonly int PADDING = 10, DRAGGING_TIME_TRIGGER = 20, ICON_SIZE = App.Styles.IconSize;
+    public static readonly DispatcherTimer draggingTimer = new()
+     {Interval = TimeSpan.FromMilliseconds(DRAGGING_TIME_TRIGGER)};
 
-    public static readonly SolidColorBrush SELECTED_COLOR = new(Colors.LightBlue), TRANSPARENT = new(Colors.Transparent);
+    public static readonly SolidColorBrush SELECTED_COLOR = new(Colors.LightBlue),
+         TRANSPARENT = new(Colors.Transparent);
 
     public FileView(FileSystemItem file, bool uncontrolled = false)
     {

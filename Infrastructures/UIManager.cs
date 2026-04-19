@@ -1,5 +1,6 @@
 using System;
 using Avalonia.Controls;
+using DynamicFileExplorer.UI.Components;
 using DynamicFileExplorer.UI.Views.MainWindow;
 
 namespace DynamicFileExplorer.Infrastructures;
@@ -8,6 +9,7 @@ class UIManager
 {
     private static UIManager? instance;
     public MainWindow? MainWindow { get; private set; }
+    public FileLayoutController? FilesLayoutController { get; set; }
     public event Action<MainWindow>? OnMainWindowLoaded;
     public event Action<Border>? OnTabsResized;
 

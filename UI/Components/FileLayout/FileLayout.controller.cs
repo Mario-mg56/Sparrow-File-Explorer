@@ -11,13 +11,15 @@ namespace DynamicFileExplorer.UI.Components;
 public class FileLayoutController
 {
     private readonly List<ContextMenu<FileSystemItem>.ContextAttachement> attachements = [];
-    private readonly Control fileLayout;
+    public readonly Control fileLayout;
     public FileView? PointingFile {get; private set;}
     public readonly ContextMenu<DirItem> contextMenu;
     public event Action<FileView?>? OnChangePointingFile;
     private readonly FileManager fileManager = App.Current.fileManager;
     public FileLayoutController(Control fileLayout)
     {
+        App.Current.UIManager.FilesLayoutController = this;
+        
         this.fileLayout = fileLayout;
         contextMenu = new (items:[
             new (name: "Crear Carpeta", itemAction: (i, wd, _) => {

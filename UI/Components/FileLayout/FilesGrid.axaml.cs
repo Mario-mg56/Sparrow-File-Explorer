@@ -18,7 +18,7 @@ public class FilesGrid : Grid, IFileLayout
 
     public FilesGrid()
     {
-        IconSize = App.Styles.IconSize;
+        IconSize = FileView.ICON_SIZE;
         Background = new SolidColorBrush(Colors.Transparent); //Para que reciba eventos de mouse aunque no tenga fondo
         fileLayoutController = new FileLayoutController(this);
 

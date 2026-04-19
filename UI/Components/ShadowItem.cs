@@ -9,8 +9,9 @@ public class ShadowItem : Border
     public ShadowItem(Control item)
     {
         Child = item;
+        IsHitTestVisible = false;
         IsVisible = false;
-        Background = new SolidColorBrush(Color.FromArgb((byte) (255*ALPHA), Colors.LightBlue.R, Colors.LightBlue.G, Colors.LightBlue.B));
+        Opacity = ALPHA;
         App.Current.UIManager.AddOnMainWindowLoadedListener(mw => 
             mw.overlay.Children.Add(this)
         );
