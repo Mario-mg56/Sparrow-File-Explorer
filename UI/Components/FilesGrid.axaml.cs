@@ -9,6 +9,7 @@ using Avalonia;
 using Avalonia.Media;
 using DynamicFileExplorer.Models;
 using System.Collections.Generic;
+using DynamicFileExplorer.ViewModels;
 
 class FilesGrid : Grid
 {
@@ -53,6 +54,12 @@ class FilesGrid : Grid
                 input.Show();
                 input.title = file?.path.name ?? "";
                 input.Resolve = (s)=> fileManager.Rename(file!, s);
+            }),
+            new (name: "Set as background image", itemAction: (_, file, _) => {
+                if (file != null) {
+                    App.cacheService.UpdateBgImage(file.GetPath());
+                    App.Current.UIManager.AddOnMainWindowLoadedListener(mw => (mw.DataContext as MainViewModel)!.RefreshBackground());
+                }
             })
         ]) {Background = Brushes.White};
 

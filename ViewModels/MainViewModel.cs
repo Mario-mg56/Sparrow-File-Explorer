@@ -1,22 +1,24 @@
 using System;
+using System.ComponentModel;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using DynamicFileExplorer;
 namespace DynamicFileExplorer.ViewModels;
-public class MainViewModel
+public class MainViewModel : INotifyPropertyChanged
 {
     public SettingsService SettingsService { get; } = App.Settings;
 
     public Styles Styles => SettingsService.CurrentStyle;
     public IImage BackgroundImage
     {
-        get
-        {
-            return LoadImage(Styles.BackgroundImage);
-        }
+        // get => LoadImage(Styles.BackgroundImage);
+        get => new Bitmap(App.Cache.BgImage);
     }
     public double BackgroundImageOpacity{get;} = 0.6;
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    public void RefreshBackground() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BackgroundImage)));
 
     public static Bitmap LoadImage(string? image)
     {

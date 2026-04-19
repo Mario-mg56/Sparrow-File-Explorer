@@ -10,7 +10,7 @@ public class CacheService : JsonStorageService
         {
             var dir = System.IO.Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "DynamicFileExplorer"
+                "SparrowFileExplorer"
             );
 
             Directory.CreateDirectory(dir);
@@ -38,6 +38,12 @@ public class CacheService : JsonStorageService
         Cache.LastDir = LastDir.GetPath();
         Save();
 
+    }
+
+    public void UpdateBgImage(string bgImage)
+    {
+        Cache.BgImage = bgImage;
+        Save();
     }
 
     public void ImportLastDir()

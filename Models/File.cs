@@ -14,7 +14,7 @@ public class File : FileSystemItem
         this.extension = extension;
     }   
 
-    public override string GetPath() => System.IO.Path.Combine(path.path, extension);
+    public override string GetPath() => path.path;
 
 
     public string NameWithoutExtension()
