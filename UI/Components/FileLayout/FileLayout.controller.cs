@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using DynamicFileExplorer.Infrastructures;
 using DynamicFileExplorer.Models;
+using DynamicFileExplorer.Util;
 using static DynamicFileExplorer.Util.Util;
 
 namespace DynamicFileExplorer.UI.Components;
@@ -42,7 +43,12 @@ public class FileLayoutController
         App.Current.UIManager.AddOnMainWindowLoadedListener(mw => 
             mw.PointerMoved += (_, e) => SetPointingFile(BubbleSearchView<FileView>(mw, e))
         );
-        
+
+        var dc = new DragController(fileLayout)
+         {StartDraggingCondition = (_, e) =>
+             BubbleSearchView<FileView>(fileLayout, e) == null}; //No cuenta si arrastra un file
+        dc.StartDragging += (d, _, e) => Console.WriteLine("Start" + e.GetPosition(d));
+        dc.StopDragging += (d, _, e) => Console.WriteLine("Stop" + e.GetPosition(d));
         // fileLayout.PointerPressed += (_, e) => {
         //     BubbleSearchView<FileView>(fileLayout, e); //TODO: Si no hay ninguno settear los selected items a 0
         // };
@@ -75,5 +81,10 @@ public class FileLayoutController
         });
         PointingFile?.Background = FileView.SELECTED_COLOR;
         OnChangePointingFile?.Invoke(PointingFile);
+    }
+
+    private void OnLeftClick()
+    {
+        
     }
 }
