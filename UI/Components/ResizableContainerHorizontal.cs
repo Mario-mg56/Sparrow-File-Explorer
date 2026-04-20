@@ -33,7 +33,7 @@ public class ResizableContainerHorizontal:ResizableContainer
         // 3. Crear nuevo Grid
         var grid = new Grid
         {
-            ColumnDefinitions = new ColumnDefinitions("*, 5"),
+            ColumnDefinitions = new ColumnDefinitions(invert?"5, *":"*, 5"),
             Name = "HeaderBorder"
         };
 

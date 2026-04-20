@@ -1,13 +1,18 @@
 using System;
+using System.IO;
 using Avalonia.Controls;
+using DynamicFileExplorer.Models;
 using DynamicFileExplorer.UI.Components;
+using DynamicFileExplorer.UI.Components.Inspector;
 using DynamicFileExplorer.UI.Views.MainWindow;
+using DynamicFileExplorer.ViewModels;
 
 namespace DynamicFileExplorer.Infrastructures;
 
 class UIManager
 {
     private static UIManager? instance;
+    public MainViewModel? MainViewModel { get; private set; }
     public MainWindow? MainWindow { get; private set; }
     public FileLayoutController? FilesLayoutController { get; set; }
     public event Action<MainWindow>? OnMainWindowLoaded;
@@ -30,9 +35,21 @@ class UIManager
         else OnMainWindowLoaded += listener;
     }
 
+
+    public void LoadFileInfo(FileSystemItem? file)
+    {
+        MainViewModel?.inspectorVisibility = file != null;
+        InspectorViewModel.instance.file = file;
+    }
+
+    public void DeselectFIleInfo()
+    {
+        LoadFileInfo(null);
+    }
     public void LoadMainWindow(MainWindow mainWindow)
     {
         MainWindow = mainWindow;
+        MainViewModel = (MainViewModel)MainWindow.DataContext;
         OnMainWindowLoaded?.Invoke(mainWindow);
     }
 

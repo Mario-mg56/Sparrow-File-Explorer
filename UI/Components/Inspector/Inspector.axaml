@@ -1,0 +1,48 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:DynamicFileExplorer.UI.Components.Inspector"
+             xmlns:components="clr-namespace:DynamicFileExplorer.UI.Components"
+             x:Class="DynamicFileExplorer.UI.Components.InspectorView"
+            xmlns:blur="clr-namespace:DynamicFileExplorer.UI.Helpers"
+             x:DataType="vm:InspectorViewModel">
+<Grid>
+    <blur:BackdropBlurControl x:Name="BlurBackground"/>
+    <Border Padding="12"
+            Background="Transparent"
+            CornerRadius="8">
+
+        <StackPanel Orientation="Vertical"
+                    Spacing="8">
+
+            
+            <Image IsVisible="{Binding imageVisibility}" Source="{Binding imageSource}"></Image>
+            <TextBlock Text="{Binding fileName}"
+            TextWrapping="Wrap"
+            FontSize="22"
+            FontWeight="Bold"
+                       Foreground="White"/>
+
+            <TextBlock Text="{Binding tipo, StringFormat='Tipo: {0}'}"
+            TextWrapping="Wrap"
+                       Foreground="White"/>
+
+            <TextBlock Text="{Binding tamanio, StringFormat='Tamaño: {0}'}"
+            IsVisible="{Binding visibleTamanio}"
+            TextWrapping="Wrap"
+                       Foreground="White"/>
+
+            <TextBlock Text="{Binding ruta, StringFormat='Ruta: {0}'}"
+            TextWrapping="Wrap"
+                       Foreground="White"/>
+
+            <TextBlock Text="{Binding lastModification, StringFormat='Última modificación: {0}'}"
+            TextWrapping="Wrap"
+                       Foreground="White"/>
+
+        </StackPanel>
+
+    </Border>
+    </Grid>
+    
+
+</UserControl>

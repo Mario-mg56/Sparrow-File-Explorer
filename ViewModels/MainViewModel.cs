@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
@@ -29,4 +30,16 @@ public class MainViewModel : INotifyPropertyChanged
         return new Bitmap(assets);      
     }
 
+    public bool inspectorVisibility
+    {
+        set
+        {
+            field = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(inspectorVisibility)));
+            inspectorWidth = value? new GridLength(2,GridUnitType.Star):new GridLength(0,GridUnitType.Star);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(inspectorWidth)));
+        }
+        get;} = false;
+
+    public GridLength inspectorWidth{get;set;} = new GridLength(0,GridUnitType.Star);
 }

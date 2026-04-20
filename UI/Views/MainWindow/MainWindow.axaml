@@ -14,7 +14,12 @@
         <ImageBrush Source="{Binding BackgroundImage}" Opacity="{Binding BackgroundImageOpacity}"
                     Stretch="UniformToFill"/>
     </Window.Background>
-    <Grid  ColumnDefinitions="1*, 4*, 1*" Name="MainGrid">
+    <Grid Name="MainGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="4*"></ColumnDefinition>
+            <ColumnDefinition Width="{Binding inspectorWidth}"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="9*"/>
@@ -30,8 +35,9 @@
                 <components:FilesGrid/>
             </ScrollViewer>
         </Border>
-        <Border Grid.Row="1" Grid.Column="2" Background="Transparent"  Name="InspectorContainer">
-            <TextBlock Text="RightSidebar"/>
+        <Border Grid.Row="1" Grid.Column="2" Background="Transparent"  Name="InspectorContainer" IsVisible="{Binding inspectorVisibility}">
+                <components:InspectorView/>
+                
         </Border>
         <Canvas
             Name="Overlay"

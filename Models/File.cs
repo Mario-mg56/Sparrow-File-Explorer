@@ -4,7 +4,7 @@ namespace DynamicFileExplorer.Models;
 
 public class File : FileSystemItem
 {
-    readonly string extension;
+    public readonly string extension;
     public File(Path path) : base(path)
     {
         extension = System.IO.Path.GetExtension(path.path);

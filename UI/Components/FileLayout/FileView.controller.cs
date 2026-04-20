@@ -68,6 +68,7 @@ public class FileViewController
         if (e.GetCurrentPoint(view).Properties.IsLeftButtonPressed)
         {
             FileManager fm = App.Current.fileManager;
+            App.Current.UIManager.LoadFileInfo(file);
             if (file is File fi) fm.Select(fi);
             else if(file is DirItem fo) fm.Select(fo);
             draggingTimer.Start();
@@ -100,6 +101,27 @@ public class FileViewController
                 .ToList()
                 .ForEach(d => App.Current.fileManager.Move(d, folder.path));
         }
+    }
+    private void OnFilesDroppedFile(List<FileSystemItem> items)
+    {
+        var input = TextInputPopUp.getInstance();    
+        input.Show();   
+        input.title = "Nueva carpeta";
+        input.Resolve = (s)=> {
+            DirItem newDir = App.Current.fileManager.CreateDir(workingDir,s);
+            if(newDir==null)return;
+            if (file is DirItem folder)
+            {
+                items.OfType<File>()
+                    .ToList()
+                    .ForEach(f => App.Current.fileManager.Move(f, newDir.path));
+
+                items.OfType<DirItem>()
+                    .ToList()
+                    .ForEach(d => App.Current.fileManager.Move(d, newDir.path));
+            }
+        };
+
     }
 
     private void OnDrag(object? sender, PointerEventArgs e)

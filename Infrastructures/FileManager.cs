@@ -186,18 +186,19 @@ public class FileManager
     }
 
 
-    public bool CreateDir(DirItem dir,string name)
+    public DirItem? CreateDir(DirItem dir,string name)
     {
+        DirectoryInfo? result = null;
         try
         {
-            Directory.CreateDirectory(Combine(dir.path.path,name));
+            result = Directory.CreateDirectory(Combine(dir.path.path,name));
             
         } catch (IOException)
         {
-            return false;
+            return null;
         }
         CastWorkingDirChanged();
-        return true;
+        return new DirItem(result.FullName);
     }
     public bool CreateFile(DirItem dir,string nameWithExtension)
     {
