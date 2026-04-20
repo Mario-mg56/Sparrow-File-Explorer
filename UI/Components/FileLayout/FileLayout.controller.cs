@@ -37,7 +37,7 @@ public class FileLayoutController
                 input.Resolve = (s)=> fileManager.CreateFile(wd!, s);
             }),
             new (name: "Item 3", itemAction: (i, _, _) => Console.WriteLine(i.name + " selected"))
-        ], attachements: [new ContextMenu<DirItem>.ContextAttachement(fileLayout, fileManager.WorkingDir)]) {Background = Brushes.White};
+        ], attachements: [new ContextMenu<DirItem>.ContextAttachement(fileLayout, fileManager.WorkingDir)]) ;
 
         App.Current.UIManager.AddOnMainWindowLoadedListener(mw => 
             mw.PointerMoved += (_, e) => SetPointingFile(BubbleSearchView<FileView>(mw, e))

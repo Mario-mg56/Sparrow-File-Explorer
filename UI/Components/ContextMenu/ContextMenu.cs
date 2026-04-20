@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Media;
 using DynamicFileExplorer.Models;
+using DynamicFileExplorer.UI.Helpers;
 using DynamicFileExplorer.UI.Views.MainWindow;
 
 public class ContextMenu : FlexLayout
@@ -15,14 +17,34 @@ public class ContextMenu : FlexLayout
     public List<Control> AttachedLayouts { get; protected set; }
     public readonly List<ContextMenuItem> items;
     public event Action<ContextMenu>? OnShowMenu;
+    protected BackdropBlurControl blurBackgroundEffect;
     protected EventHandler<Avalonia.Input.PointerReleasedEventArgs>? OnReleaseAttachedLayoutHandler;
     public ContextMenu(List<ContextMenuItem> items, List<Control>? attachedLayouts = null) : base(){
         this.items = items;
         AttachedLayouts = attachedLayouts ?? [];
         IsVisible = false;
         Padding = new Thickness(0, 0, 0, ContextMenuItemView.MARGIN_TOP);
-
         this.items.ForEach(i =>  Children.Add(new ContextMenuItemView(i)));
+
+
+        blurBackgroundEffect = new BackdropBlurControl
+        {
+        };
+
+        var root = new Grid();
+
+        Child = null; // liberar panel del Border anterior
+
+        root.Children.Add(blurBackgroundEffect);
+        root.Children.Add(panel);
+
+        Child = root;
+        Background = null;
+        CornerRadius = new CornerRadius(12);
+        ClipToBounds = true;
+        Padding = new Thickness(8);
+
+
         App.Current.UIManager.AddOnMainWindowLoadedListener(mw => {
             mw.PointerPressed += (_, _) => Hide();
             mw.overlay.Children.Add(this);
@@ -56,6 +78,7 @@ public class ContextMenu : FlexLayout
 
     public virtual void Show() {
         IsVisible = true;
+        blurBackgroundEffect.RefreshBlur();
         OnShowMenu?.Invoke(this);
     }
     public void Hide() => IsVisible = false;

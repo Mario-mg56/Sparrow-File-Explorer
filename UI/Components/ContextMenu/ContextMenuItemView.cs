@@ -22,8 +22,7 @@ public class ContextMenuItemView : StackPanel
         Margin = new Thickness(MARGIN_X, MARGIN_TOP, MARGIN_X, 0);
 
         TextBlock label = new() {
-            Text = item.name,
-            Foreground = foreground
+            Text = item.name
         };
         Border iconImg = new() {
             Width = ICON_SIZE,

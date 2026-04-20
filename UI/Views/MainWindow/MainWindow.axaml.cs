@@ -1,6 +1,7 @@
 namespace DynamicFileExplorer.UI.Views.MainWindow;
 
 using Avalonia.Controls;
+using Avalonia.Media;
 using DynamicFileExplorer.UI.Components;
 using DynamicFileExplorer.ViewModels;
 
@@ -23,6 +24,7 @@ public partial class MainWindow : Window
         new ResizableContainerVertical(headerBorder, headerDefinition, false);
         new ResizableContainerHorizontal(hierarchyContainer, hierarchyDefinition, false);
         new ResizableContainerHorizontal(inspectorContainer, inspectorDefinition, true);
+        
     }
 
 

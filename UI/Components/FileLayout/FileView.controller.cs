@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -19,10 +20,11 @@ public class FileViewController
     public bool Dragging {get; private set;} = false;
     public ShadowItem shadowFile;
     public event Action<FileView>? StartDragging, StopDragging;
+    private DirItem workingDir;
     public event Action<List<FileSystemItem>>? FilesDropped;
     public readonly DispatcherTimer draggingTimer = new()
          {Interval = TimeSpan.FromMilliseconds(DRAGGING_TIME_TRIGGER)};
-    public static readonly int PADDING = 10, DRAGGING_TIME_TRIGGER = 200;
+    public static readonly int PADDING = 10, DRAGGING_TIME_TRIGGER = 100;
     public static readonly SolidColorBrush SELECTED_COLOR = new(Colors.LightBlue), TRANSPARENT = new(Colors.Transparent);
 
     public FileViewController(FileSystemItem file, FileView view)
@@ -39,21 +41,15 @@ public class FileViewController
         draggingTimer.Tick += (_, _) =>
         {
             Dragging = true;
+            workingDir = App.Current.fileManager.WorkingDir;
             App.Current.UIManager.AddOnMainWindowLoadedListener(mw => mw.PointerMoved += OnDrag);
             StartDragging?.Invoke(view);
             draggingTimer.Stop();
         };
         
         view.PointerReleased += (_, e) => {
-            if (e.InitialPressMouseButton == MouseButton.Left) {
-                draggingTimer.Stop();
-                App.Current.UIManager.AddOnMainWindowLoadedListener(mw => mw.PointerMoved -= OnDrag);
-                shadowFile.IsVisible = false;
-                App.Current.UIManager.FilesLayoutController!
-                    .PointingFile?.controller.DropFiles(App.Current.fileManager.SelectedItems);
-                Dragging = false;
-                StopDragging?.Invoke(view);
-            }
+            if (e.InitialPressMouseButton == MouseButton.Left) stopDrag();
+                
         };
 
         App.Current.fileManager.FocusChanged += (focusedItems) => {
@@ -65,6 +61,7 @@ public class FileViewController
             }
             SetSelected(false);
         };
+        FilesDropped +=OnFilesDroppedDir;
     }
     private void OnLeftClick(object? sender, PointerPressedEventArgs e)
     {
@@ -77,11 +74,43 @@ public class FileViewController
         }
     }
 
+
+    private void stopDrag()
+    {
+        Console.WriteLine("eo");
+        draggingTimer.Stop();
+        App.Current.UIManager.AddOnMainWindowLoadedListener(mw => mw.PointerMoved -= OnDrag);
+        shadowFile.IsVisible = false;
+        App.Current.UIManager.FilesLayoutController!
+            .PointingFile?.controller.DropFiles(App.Current.fileManager.SelectedItems);
+        Dragging = false;
+        StopDragging?.Invoke(view);
+
+    }
+
+    private void OnFilesDroppedDir(List<FileSystemItem> items)
+    {
+        if (file is DirItem folder)
+        {
+            items.OfType<File>()
+                .ToList()
+                .ForEach(f => App.Current.fileManager.Move(f, folder.path));
+
+            items.OfType<DirItem>()
+                .ToList()
+                .ForEach(d => App.Current.fileManager.Move(d, folder.path));
+        }
+    }
+
     private void OnDrag(object? sender, PointerEventArgs e)
     {
         var pos = e.GetPosition(sender as MainWindow);
         shadowFile.SetPosition((int) pos.X - FileView.ICON_SIZE/2, (int) pos.Y - FileView.ICON_SIZE/2);
         shadowFile.IsVisible = true;
+
+
+        //HARDCODED BUG FIX IT 
+        if(workingDir.GetPath().Equals(file.GetPath()))stopDrag();
     }
 
     public void DropFiles(List<FileSystemItem> droppedFiles)

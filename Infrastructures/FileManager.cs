@@ -174,6 +174,17 @@ public class FileManager
         System.IO.File.Move(file.path.path, Combine(file.path.PathWithoutName(),newName));
         CastWorkingDirChanged();
     }
+    public void Move(File origen,Models.Path dest){
+        Console.WriteLine(origen.path.path+" in "+Combine(dest.path,origen.path.name));
+        System.IO.File.Move(origen.path.path, Combine(dest.path,origen.path.name));
+        CastWorkingDirChanged();
+    }
+    public void Move(DirItem origen,Models.Path dest){
+        Console.WriteLine(origen.path.path + " in " + dest.path);
+        Directory.Move(origen.path.path, Combine(dest.path,origen.path.name));
+        CastWorkingDirChanged();
+    }
+
 
     public bool CreateDir(DirItem dir,string name)
     {

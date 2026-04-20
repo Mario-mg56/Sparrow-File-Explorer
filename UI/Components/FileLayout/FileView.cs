@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
+using DynamicFileExplorer.Infrastructures;
 using DynamicFileExplorer.Models;
 using DynamicFileExplorer.ViewModels;
 
@@ -56,7 +57,11 @@ public class FileView : Grid
     }
 
     public static readonly ContextMenu<FileSystemItem> fileContextMenu = new ([
-        new (name: "Open", itemAction: (i, file, _) => Console.WriteLine("wd " + file)),
+        new (name: "Open", itemAction: (i, file, _) => {
+            if(file is DirItem fo){
+                App.Current.fileManager.ChangeDirectory(fo);
+            }
+        }),
         new (name: "Delete", itemAction: (i, file, _) => App.Current.fileManager.Delete(file!)),
         new (name: "Rename", itemAction: (i, file, _) => {
             var input = TextInputPopUp.getInstance();    
@@ -71,5 +76,6 @@ public class FileView : Grid
                 App.Current.UIManager.AddOnMainWindowLoadedListener(mw => (mw.DataContext as MainViewModel)!.RefreshBackground());
             }
         })
-    ]) {Background = Brushes.White};
+    ]) ;
+    // {Background = new SolidColorBrush(Color.FromArgb(180, 30, 30, 30))};
 }
