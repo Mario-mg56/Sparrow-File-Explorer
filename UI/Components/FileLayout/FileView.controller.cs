@@ -62,6 +62,7 @@ public class FileViewController
             SetSelected(false);
         };
         FilesDropped +=OnFilesDroppedDir;
+        FilesDropped +=OnFilesDroppedFile;
     }
     private void OnLeftClick(object? sender, PointerPressedEventArgs e)
     {
