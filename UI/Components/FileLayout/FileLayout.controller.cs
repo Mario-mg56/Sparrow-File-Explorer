@@ -16,6 +16,7 @@ public class FileLayoutController
     public FileView? PointingFile {get; private set;}
     public readonly ContextMenu<DirItem> contextMenu;
     public event Action<FileView?>? OnChangePointingFile;
+    public readonly DragController dragController;
     private readonly FileManager fileManager = App.Current.fileManager;
     public FileLayoutController(Control fileLayout)
     {
@@ -44,20 +45,20 @@ public class FileLayoutController
             mw.PointerMoved += (_, e) => SetPointingFile(BubbleSearchView<FileView>(mw, e))
         );
 
-        var dc = new DragController(fileLayout)
-         {StartDraggingCondition = (_, e) =>
+        dragController = new DragController(fileLayout) {StartDraggingCondition = (_, e) =>
              BubbleSearchView<FileView>(fileLayout, e) == null}; //No cuenta si arrastra un file
-        dc.StartDragging += (d, _, e) => Console.WriteLine("Start" + e.GetPosition(d));
-        dc.StopDragging += (d, _, e) => Console.WriteLine("Stop" + e.GetPosition(d));
+        dragController.StartDragging += (d, _, e) => Console.WriteLine("Start" + e.GetPosition(d));
+        dragController.StopDragging += (d, _, e) => Console.WriteLine("Stop" + e.GetPosition(d));
+
         // fileLayout.PointerPressed += (_, e) => {
         //     BubbleSearchView<FileView>(fileLayout, e); //TODO: Si no hay ninguno settear los selected items a 0
         // };
 
-        fileManager.WorkingDirChanged += OnChangeWorkingDir;
-        OnChangeWorkingDir(fileManager.WorkingDir);
+        fileManager.WorkingDirChanged += ReloadFiles;
+        ReloadFiles(fileManager.WorkingDir);
     }
 
-    private void OnChangeWorkingDir(DirItem wd)
+    private void ReloadFiles(DirItem wd)
     {
         List<FileView> fvs = [];
         attachements.Clear();
@@ -81,10 +82,5 @@ public class FileLayoutController
         });
         PointingFile?.Background = FileView.SELECTED_COLOR;
         OnChangePointingFile?.Invoke(PointingFile);
-    }
-
-    private void OnLeftClick()
-    {
-        
     }
 }

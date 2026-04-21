@@ -46,6 +46,7 @@ public class DragController
 
         draggable.PointerReleased += (sender, e) =>
         {
+            draggingTimer.Stop();
             App.Current.UIManager.AddOnMainWindowLoadedListener(mw => mw.PointerMoved -= OnDrag);
             Dragging = false;
             StopDragging?.Invoke(draggable, sender, e);
