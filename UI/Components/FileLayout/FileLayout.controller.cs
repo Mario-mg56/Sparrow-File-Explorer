@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using Avalonia.Controls;
 using Avalonia.Media;
 using DynamicFileExplorer.Infrastructures;
@@ -17,6 +18,8 @@ public class FileLayoutController
     public readonly ContextMenu<DirItem> contextMenu;
     public event Action<FileView?>? OnChangePointingFile;
     public readonly DragController dragController;
+    public readonly FileSelector fileSelector;
+    private Point startPosFSBuffer;
     private readonly FileManager fileManager = App.Current.fileManager;
     public FileLayoutController(Control fileLayout)
     {
@@ -45,10 +48,26 @@ public class FileLayoutController
             mw.PointerMoved += (_, e) => SetPointingFile(BubbleSearchView<FileView>(mw, e))
         );
 
-        dragController = new DragController(fileLayout) {StartDraggingCondition = (_, e) =>
-             BubbleSearchView<FileView>(fileLayout, e) == null}; //No cuenta si arrastra un file
-        dragController.StartDragging += (d, _, e) => Console.WriteLine("Start" + e.GetPosition(d));
-        dragController.StopDragging += (d, _, e) => Console.WriteLine("Stop" + e.GetPosition(d));
+        fileSelector = new();
+    
+        dragController = new DragController(fileLayout)
+            {StartDraggingCondition = (_, e) => PointingFile == null}; //No cuenta si arrastra un file
+            
+        dragController.StartDragging += (d, _, e) => {
+            var pos = e.GetPosition(d);
+            startPosFSBuffer = new Point((int) Math.Round(pos.X), (int) Math.Round(pos.Y));
+            fileSelector.IsVisible = true;
+        };
+        dragController.Drag += (d, _, e) => {
+            var pos = e.GetPosition(d);
+            fileSelector.SetPosition(startPosFSBuffer, new Point((int) Math.Round(pos.X), (int) Math.Round(pos.Y)));
+        };
+        dragController.StopDragging += (d, _, e) => {
+            fileSelector.IsVisible = false;
+            fileSelector.Reset();
+        };
+
+
 
         // fileLayout.PointerPressed += (_, e) => {
         //     BubbleSearchView<FileView>(fileLayout, e); //TODO: Si no hay ninguno settear los selected items a 0
@@ -82,5 +101,6 @@ public class FileLayoutController
         });
         PointingFile?.Background = FileView.SELECTED_COLOR;
         OnChangePointingFile?.Invoke(PointingFile);
+        System.Console.WriteLine(PointingFile);
     }
 }

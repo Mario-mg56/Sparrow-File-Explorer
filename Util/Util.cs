@@ -7,8 +7,12 @@ namespace DynamicFileExplorer.Util;
 
 public static class Util
 {
-    public static bool IsSquareTouchingSquare(Point startA, Point endA, Point startB, Point endB) => ( //Assuming origin bottom left
+    public static bool IsSquareTouchingSquareNormalizedPos(Point startA, Point endA, Point startB, Point endB) => ( //Assuming origin bottom left
         endA.X >= startB.X && endA.Y >= startB.Y && endB.X >= startA.X && endB.Y >= startA.Y
+    );
+
+    public static bool IsSquareTouchingSquare(Point startA, Point endA, Point startB, Point endB) => ( //Assuming origin Top left
+        endA.X >= startB.X && endA.Y < startB.Y && endB.X >= startA.X && endB.Y < startA.Y
     );
     
     public static T? BubbleSearchView<T>(Control pointedView, PointerEventArgs e) where T : Control

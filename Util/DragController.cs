@@ -39,14 +39,15 @@ public class DragController
         draggingTimer.Tick += (_, _) =>
         {
             Dragging = true;
-            App.Current.UIManager.AddOnMainWindowLoadedListener(mw => mw.PointerMoved += OnDrag);
             StartDragging?.Invoke(draggable, _senderStartDraggingBuffer, _eStartDraggingBuffer!);
+            App.Current.UIManager.AddOnMainWindowLoadedListener(mw => mw.PointerMoved += OnDrag);
             draggingTimer.Stop();
         };
 
         draggable.PointerReleased += (sender, e) =>
         {
             draggingTimer.Stop();
+            if (!Dragging) return;
             App.Current.UIManager.AddOnMainWindowLoadedListener(mw => mw.PointerMoved -= OnDrag);
             Dragging = false;
             StopDragging?.Invoke(draggable, sender, e);
