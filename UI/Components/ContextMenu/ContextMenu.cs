@@ -24,6 +24,7 @@ public class ContextMenu : FlexLayout
         AttachedLayouts = attachedLayouts ?? [];
         IsVisible = false;
         Padding = new Thickness(0, 0, 0, ContextMenuItemView.MARGIN_TOP);
+        
         this.items.ForEach(i =>  Children.Add(new ContextMenuItemView(i)));
 
 
@@ -60,6 +61,7 @@ public class ContextMenu : FlexLayout
 
     public void SetAttachedLayouts(List<Control> attachedLayouts)
     {
+       
         AttachedLayouts.ForEach(al => al.PointerReleased -= OnReleaseAttachedLayoutHandler);
         attachedLayouts.ForEach(al => al.PointerReleased += OnReleaseAttachedLayoutHandler);
 
@@ -76,7 +78,10 @@ public class ContextMenu : FlexLayout
         items.ForEach(i =>  i.AttachedLayout = sender);
     }
 
+    
     public virtual void Show() {
+        Children.Clear();
+        items.Where(i=>i.Render()).ToList().ForEach(i => Children.Add(new ContextMenuItemView(i)));
         IsVisible = true;
         blurBackgroundEffect.RefreshBlur();
         OnShowMenu?.Invoke(this);

@@ -9,6 +9,7 @@ using System.Linq;
 using DynamicFileExplorer.Models;
 using System.Threading.Tasks;
 using File = Models.File;
+using System.Diagnostics;
 
 public class FileManager
 {
@@ -174,17 +175,28 @@ public class FileManager
         System.IO.File.Move(file.path.path, Combine(file.path.PathWithoutName(),newName));
         CastWorkingDirChanged();
     }
-    public void Move(File origen,Models.Path dest){
-        Console.WriteLine(origen.path.path+" in "+Combine(dest.path,origen.path.name));
-        System.IO.File.Move(origen.path.path, Combine(dest.path,origen.path.name));
-        CastWorkingDirChanged();
-    }
-    public void Move(DirItem origen,Models.Path dest){
-        Console.WriteLine(origen.path.path + " in " + dest.path);
-        Directory.Move(origen.path.path, Combine(dest.path,origen.path.name));
-        CastWorkingDirChanged();
-    }
 
+
+    public static void MoveItems(List<FileSystemItem> items, DirItem dest)
+    {
+        items.OfType<FileSystemItem>()
+                .Where(f=>!f.Equals(dest))
+                .ToList()
+                .ForEach(f => App.Current.fileManager.Move(f, dest.path));
+    }
+    public void Move(FileSystemItem origen,Models.Path dest){
+        Console.WriteLine(origen.path.path+" in "+Combine(dest.path,origen.path.name));
+        try
+        {
+            System.IO.File.Move(origen.path.path, Combine(dest.path,origen.path.name));
+            
+        } catch(FileNotFoundException )
+        {
+            if(!Exists(Combine(dest.path,origen.path.name)))Console.WriteLine("No se pudo mover");
+        }
+        CastWorkingDirChanged();
+    }
+    
 
     public DirItem? CreateDir(DirItem dir,string name)
     {
@@ -240,10 +252,24 @@ public class FileManager
     {
         if(SelectedItems.Count()!=1) return null;   
         
-        if(SelectedItems[0] is DirItem dir)
+        Open(SelectedItems[0]);
+        return null;
+
+    }
+    public FileManager? Open(FileSystemItem item)
+    {
+        
+        if(item is DirItem dir)
         {
             ChangeDirectory(dir);
             return instance;
+        } else if (item is File file)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = file.GetPath(),
+                UseShellExecute = true
+            });
         }
         return null;
 

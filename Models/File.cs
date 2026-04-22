@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace DynamicFileExplorer.Models;
 
@@ -16,6 +17,15 @@ public class File : FileSystemItem
 
     public override string GetPath() => path.path;
 
+    public bool CheckExtension(string expectedExtension)
+    {
+        return expectedExtension.Contains(extension);
+    }
+    public bool CheckExtension(HashSet<string> expectedExtensions)
+    {
+        Console.WriteLine(expectedExtensions.Contains(extension));
+        return expectedExtensions.Contains(extension);
+    }
 
     public string NameWithoutExtension()
     {

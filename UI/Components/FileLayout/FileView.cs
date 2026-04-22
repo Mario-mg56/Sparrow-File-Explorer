@@ -6,6 +6,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using DynamicFileExplorer.Infrastructures;
 using DynamicFileExplorer.Models;
+using DynamicFileExplorer.UI.Helpers;
 using DynamicFileExplorer.ViewModels;
 
 namespace DynamicFileExplorer.UI.Components;
@@ -58,9 +59,7 @@ public class FileView : Grid
 
     public static readonly ContextMenu<FileSystemItem> fileContextMenu = new ([
         new (name: "Open", itemAction: (i, file, _) => {
-            if(file is DirItem fo){
-                App.Current.fileManager.ChangeDirectory(fo);
-            }
+            App.Current.fileManager.Open(file);
         }),
         new (name: "Delete", itemAction: (i, file, _) => App.Current.fileManager.Delete(file!)),
         new (name: "Rename", itemAction: (i, file, _) => {
@@ -75,7 +74,13 @@ public class FileView : Grid
                 App.cacheService.UpdateBgImage(file.GetPath());
                 App.Current.UIManager.AddOnMainWindowLoadedListener(mw => (mw.DataContext as MainViewModel)!.RefreshBackground());
             }
-        })
+        },whenAppears:(file)=>{
+            if(file is File f){
+                return f.CheckExtension(AppResources.ImageExtensions);
+            }
+            return false;
+        }
+        )
     ]) ;
     // {Background = new SolidColorBrush(Color.FromArgb(180, 30, 30, 30))};
 }

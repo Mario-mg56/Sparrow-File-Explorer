@@ -30,8 +30,6 @@ public class FileLayoutController
             new (name: "Crear Carpeta", itemAction: (i, wd, _) => {
                 var input = TextInputPopUp.getInstance();    
                 input.Show();   
-                input.Show();   
-                input.Show();   
                 input.title = "";
                 input.Resolve = (s)=> fileManager.CreateDir(wd!, s);
             }),
@@ -101,6 +99,5 @@ public class FileLayoutController
         });
         PointingFile?.Background = FileView.SELECTED_COLOR;
         OnChangePointingFile?.Invoke(PointingFile);
-        System.Console.WriteLine(PointingFile);
     }
 }

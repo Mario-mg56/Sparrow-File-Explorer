@@ -34,4 +34,14 @@ public abstract class FileSystemItem
         return new SolidColorBrush(Color.FromRgb
             ((byte)rnd.Next(0, 256), (byte)rnd.Next(0, 256), (byte)rnd.Next(0, 256)));
     }
+
+    public bool Equals(FileSystemItem obj)
+    {
+        return obj.GetPath()==GetPath();
+    }
+
+    public bool Exists()
+    {
+        return System.IO.Path.Exists(GetPath());
+    }
 }

@@ -11,7 +11,7 @@ public class InspectorViewModel : INotifyPropertyChanged
 {
 
 
-    public static InspectorViewModel instance;
+    public static InspectorViewModel? instance;
     public event PropertyChangedEventHandler? PropertyChanged;
 
 
@@ -101,6 +101,7 @@ public class InspectorViewModel : INotifyPropertyChanged
         {
             field = value;
             if (value == null) return;
+            if(!file.Exists())return;
 
             fileName = value.path.name;
             tipo = value is Models.File ? "Archivo" : "Carpeta";

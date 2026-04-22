@@ -12,18 +12,29 @@ public class ContextMenuItem(SolidColorBrush? icon = null, string? name = null, 
 
     public virtual void Execute() => itemAction?.Invoke(this, AttachedLayout);
     
+
     private static SolidColorBrush GenerateIconPlaceholder()
     {   
         var rnd = new Random();
         return new SolidColorBrush(Color.FromRgb
             ((byte)rnd.Next(0, 256), (byte)rnd.Next(0, 256), (byte)rnd.Next(0, 256)));
     }
+    public virtual bool Render()
+    {
+        return true;
+    }
 }
 
-public class ContextMenuItem<T> (SolidColorBrush? icon = null, string? name = null, Action<ContextMenuItem<T>, T?, Control?>? itemAction = null)
+public class ContextMenuItem<T> (SolidColorBrush? icon = null, string? name = null, Action<ContextMenuItem<T>, T?, Control?>? itemAction = null, Predicate<T>? whenAppears = null)
  : ContextMenuItem(icon, name, null)
 {
     public T? AttachedItem { get; internal set; }
+    public override bool Render()
+    {
+        if(whenAppears==null)return true;
+        if(AttachedItem==null)return true;
+        return whenAppears.Invoke(AttachedItem);
+    }
     public new Action<ContextMenuItem<T>, T?, Control?>? itemAction = itemAction;
 
     public override void Execute() => itemAction?.Invoke(this, AttachedItem, AttachedLayout);

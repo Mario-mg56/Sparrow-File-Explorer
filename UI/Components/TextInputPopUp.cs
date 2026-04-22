@@ -16,11 +16,11 @@ public class TextInputPopUp : Grid
             input.Text = value;
 
         }
-        get;}  
+        get;}  = "";
     public readonly TextBox input; 
     static readonly int PADDING = 10;
 
-    private static TextInputPopUp instance;
+    private static TextInputPopUp? instance;
 
     public Action<string>? Resolve {set;get;}
     public TextInputPopUp()

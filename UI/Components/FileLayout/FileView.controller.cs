@@ -95,34 +95,24 @@ public class FileViewController
     {
         if (file is DirItem folder)
         {
-            items.OfType<File>()
-                .ToList()
-                .ForEach(f => App.Current.fileManager.Move(f, folder.path));
 
-            items.OfType<DirItem>()
-                .ToList()
-                .ForEach(d => App.Current.fileManager.Move(d, folder.path));
+            FileManager.MoveItems(items,folder);
         }
     }
     private void OnFilesDroppedFile(List<FileSystemItem> items)
     {
-        var input = TextInputPopUp.getInstance();    
-        input.Show();   
-        input.title = "Nueva carpeta";
-        input.Resolve = (s)=> {
+        if (file is DirItem folder){
+            var input = TextInputPopUp.getInstance();    
+            input.Show();   
+            input.title = "Nueva carpeta";
+            input.Resolve = (s)=> {
             DirItem? newDir = App.Current.fileManager.CreateDir(App.Current.fileManager.WorkingDir, s);
-            if(newDir==null)return;
-            if (file is DirItem folder)
-            {
-                items.OfType<File>()
-                    .ToList()
-                    .ForEach(f => App.Current.fileManager.Move(f, newDir.path));
+                if(newDir==null)return;
+                FileManager.MoveItems(items,newDir);
 
-                items.OfType<DirItem>()
-                    .ToList()
-                    .ForEach(d => App.Current.fileManager.Move(d, newDir.path));
-            }
-        };
+            
+            };
+        }
 
     }
 }
