@@ -1,7 +1,9 @@
 
 using System;
-using System.Drawing;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
+using DynamicFileExplorer.Util;
 
 namespace DynamicFileExplorer.UI.Components;
 
@@ -9,23 +11,59 @@ public class FileSelector : Border
 {
     public int X {get; private set;} = 0;
     public int Y {get; private set;} = 0;
+    public Point Start {get; private set;} = new (0, 0);
+    public Point End {get; private set;} = new (0, 0);
+    public readonly Control attachedControl;
+    public event Action<Point, Point>? Selecting;
+    public Func<object?, PointerPressedEventArgs, bool>? StartSelectingCondition {
+        get => dragController.StartDraggingCondition; 
+        set => dragController.StartDraggingCondition = value;
+    }
+    private readonly DragController dragController;
+    private Point startPosFSBuffer;
     public static readonly float ALPHA = 0.5f;
-    public FileSelector()
+    public FileSelector(Control attachedControl)
     {
+        this.attachedControl = attachedControl;
         App.Current.UIManager.AddOnMainWindowLoadedListener(mw => mw.Overlay.Children.Add(this));
-
         Background = FileView.SELECTED_COLOR;
         Opacity = ALPHA;
 
+        dragController = new DragController(attachedControl);
+            
+        dragController.StartDragging += (d, _, e) => {
+            var pos = e.GetPosition(d);
+            startPosFSBuffer = new Point((int) Math.Round(pos.X), (int) Math.Round(pos.Y));
+            IsVisible = true;
+        };
+        dragController.Drag += (d, _, e) => {
+            var pos = e.GetPosition(d);
+            SetPositionRelativeTo
+            (startPosFSBuffer, new Point((int) Math.Round(pos.X), (int) Math.Round(pos.Y)), attachedControl);
+            Selecting?.Invoke(Start, End);
+        };
+        dragController.StopDragging += (d, _, e) => {
+            IsVisible = false;
+            Reset();
+        };
     }
 
     public void SetPosition(Point start, Point end)
     {
-        SetPosition(Math.Min(start.X, end.X), Math.Min(start.Y, end.Y)); 
+        Start = start;
+        End = end;
+        SetPosition((int) Math.Min(start.X, end.X), (int) Math.Min(start.Y, end.Y));
         Width = Math.Abs(start.X - end.X);
-        Height = Math.Abs(start.Y - end.Y);     
+        Height = Math.Abs(start.Y - end.Y);
     }
 
+    public void SetPositionRelativeTo(Point start, Point end, Control control)
+    {
+        App.Current.UIManager.AddOnMainWindowLoadedListener(mw => {
+            SetPosition(control.TranslatePoint(start, mw) ?? new(0, 0),
+                        control.TranslatePoint(end, mw) ?? new(0, 0));
+        });
+    }
     public void Reset()
     {
         Width = 0;
@@ -33,9 +71,9 @@ public class FileSelector : Border
     }
 
     private void SetPosition(int x, int y) {
-        Canvas.SetLeft(this, x);
-        Canvas.SetTop(this, y);
         X = x;
         Y = y;
+        Canvas.SetLeft(this, X);
+        Canvas.SetTop(this, Y);
     }
 }

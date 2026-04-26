@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Media;
 using DynamicFileExplorer.Models;
 using DynamicFileExplorer.UI.Helpers;
 using DynamicFileExplorer.UI.Views.MainWindow;
@@ -28,9 +27,7 @@ public class ContextMenu : FlexLayout
         this.items.ForEach(i =>  Children.Add(new ContextMenuItemView(i)));
 
 
-        blurBackgroundEffect = new BackdropBlurControl
-        {
-        };
+        blurBackgroundEffect = new();
 
         var root = new Grid();
 

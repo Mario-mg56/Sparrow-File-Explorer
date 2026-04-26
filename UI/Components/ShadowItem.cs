@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using Avalonia.Media;
 
 namespace DynamicFileExplorer.UI.Components;
 

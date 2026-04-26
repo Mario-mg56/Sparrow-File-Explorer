@@ -21,7 +21,6 @@ public class FileManager
 
     private HistoryManager historyManager = new();
     public event Action<DirItem>? WorkingDirChanged;
-    public event Action<List<FileSystemItem>>? FocusChanged;
     private readonly SearchManager searchManager;
 
     private FileManager(DirItem currentPath)
@@ -80,7 +79,7 @@ public class FileManager
             .Where(IsNotHidden)
             .OrderBy(GetFileName,
             StringComparer.CurrentCultureIgnoreCase))
-            files.Add(new Models.File(new Models.Path(path)));
+            files.Add(new File(new Models.Path(path)));
         } else
         {
             searchManager.GetResults().ToList().ForEach(files.Add);
@@ -136,7 +135,7 @@ public class FileManager
     }
     public void Delete(FileSystemItem item)
     {
-        if(item is Models.File f)
+        if(item is File f)
         {
              Delete(f);
         } else if (item is DirItem d)
@@ -200,7 +199,7 @@ public class FileManager
 
     public DirItem? CreateDir(DirItem dir,string name)
     {
-        DirectoryInfo? result = null;
+        DirectoryInfo? result;
         try
         {
             result = Directory.CreateDirectory(Combine(dir.path.path,name));
@@ -248,14 +247,6 @@ public class FileManager
         return ChangeDirectory((DirItem)ListAll()[index]);
     }
 
-    public FileManager? Open()
-    {
-        if(SelectedItems.Count()!=1) return null;   
-        
-        Open(SelectedItems[0]);
-        return null;
-
-    }
     public FileManager? Open(FileSystemItem item)
     {
         
@@ -275,51 +266,6 @@ public class FileManager
 
     }
 
-    public bool SelectItems(List<FileSystemItem> items)
-    {
-        foreach (var item in items)
-        {
-            if (item is Models.File file)
-            {
-                if(!System.IO.File.Exists(file.GetPath()))return false;
-            } if (item is DirItem dir)
-            {
-                if(!Directory.Exists(dir.GetPath()))return false;
-            }
-        }
-        SelectedItems = items;
-        CastFocusChanged();
-        return true;
-    }
-
-    public FileManager? Select(Models.File file)
-    {
-        if(SelectedItems.Any() && file == SelectedItems[0])
-        {
-            Open();
-            return instance;
-        }
-        if(!System.IO.File.Exists(file.GetPath()))return null;
-        SelectedItems.Clear();
-        SelectedItems.Add(file);
-        CastFocusChanged();
-        return instance;
-    }
-    public FileManager? Select(DirItem dir)
-    {
-        Console.WriteLine("se ha selecionado" + dir.path.name);
-        if(SelectedItems.Any() && dir == SelectedItems[0])
-        {
-            Open();
-            return instance;
-        }
-        if(!Directory.Exists(dir.GetPath()))return null;
-        SelectedItems.Clear();
-        SelectedItems.Add(dir);
-        CastFocusChanged();
-        return instance;
-    }
-
     public FileManager? GoBack() 
     {
         var parentPath = new DirectoryInfo(WorkingDir.GetPath()).Parent?.FullName;
@@ -336,10 +282,6 @@ public class FileManager
         // Console.WriteLine("WD changed to " + WorkingDir.GetPath());
         LoadFiles();
         WorkingDirChanged?.Invoke(WorkingDir);
-    }
-    private void CastFocusChanged()
-    {
-        FocusChanged?.Invoke(SelectedItems);
     }
    
     public void ChangeHideItems(bool? state)

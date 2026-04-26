@@ -101,7 +101,7 @@ public class InspectorViewModel : INotifyPropertyChanged
         {
             field = value;
             if (value == null) return;
-            if(!file.Exists())return;
+            if(file?.Exists() ?? true) return;
 
             fileName = value.path.name;
             tipo = value is Models.File ? "Archivo" : "Carpeta";

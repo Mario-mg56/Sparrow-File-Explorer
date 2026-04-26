@@ -3,8 +3,5 @@ using System.Collections.Generic;
 namespace DynamicFileExplorer.UI.Components;
 public interface IFileLayout
 {
-    void SetFileViews(List<FileView> fileViews)
-    {
-        
-    }
+    void SetFileViews(List<FileView> fileViews);
 }

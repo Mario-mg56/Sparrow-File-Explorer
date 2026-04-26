@@ -11,26 +11,28 @@ using DynamicFileExplorer.ViewModels;
 
 namespace DynamicFileExplorer.Infrastructures;
 
-class UIManager
+class UM
 {
-    private static UIManager? instance;
+    private static UM? instance;
     public MainViewModel? MainViewModel { get; private set; }
     public MainWindow? MainWindow { get; private set; }
     public FileLayoutController? FilesLayoutController { get; set; }
     public event Action<MainWindow>? OnMainWindowLoaded;
     public event Action<Border>? OnTabsResized;
-    private readonly Dictionary<Key, KeyEvent> KeyEvents = [];
-    public UIManager()
+    public readonly Dictionary<string, KeyEvent> KeyEvents = [];
+    public UM()
     {
+        Enum.GetNames(typeof(Key)).ToList().ForEach(k => KeyEvents.Add(k, new KeyEvent()));
         AddOnMainWindowLoadedListener(mw => {
-            mw.KeyDown += (_, e) => GetKeyEvent(e.Key).TriggerKeyPressed();
-            mw.KeyUp += (_, e) => GetKeyEvent(e.Key).TriggerKeyReleased();
+            mw.KeyDown += (_, e) => KeyEvents[e.Key.ToString()].TriggerKeyPressed();
+            mw.KeyUp += (_, e) => KeyEvents[e.Key.ToString()].TriggerKeyReleased();
+            KeyEvents[Key.LeftCtrl + ""].KeyPressed += () => Console.WriteLine("LCtrl pressed");
         });
     }
 
-    public static UIManager Init()
+    public static UM Init()
     {
-        instance ??= new UIManager();
+        instance ??= new UM();
         return instance;
     }
 
@@ -70,17 +72,17 @@ class UIManager
         return border.Bounds.Width/MainWindow.Bounds.Width;
     }
 
-    public KeyEvent GetKeyEvent(Key key)
-    {
-        if (!KeyEvents.Keys.ToArray().Contains(key))
-        {
-            var ev = new KeyEvent();
-            KeyEvents.Add(key, ev);
-            ev.KeyPressed += () => ev.IsPressed = true;
-            ev.KeyReleased += () => ev.IsPressed = false;
-        }
-        return KeyEvents[key];
-    }
+    // public KeyEvent GetKeyEvent(Key key)
+    // {
+    //     if (!KeyEvents.Keys.ToArray().Contains(key))
+    //     {
+    //         var ev = new KeyEvent();
+    //         KeyEvents.Add(key, ev);
+    //         ev.KeyPressed += () => ev.IsPressed = true;
+    //         ev.KeyReleased += () => ev.IsPressed = false;
+    //     }
+    //     return KeyEvents[key];
+    // }
 
     public class KeyEvent() { 
         public bool IsPressed {get; set;} = false;

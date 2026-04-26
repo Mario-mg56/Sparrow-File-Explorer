@@ -13,8 +13,8 @@ public class DragController
     public int DraggingTimeTrigger {
         get => _draggingTimeTrigger;
         set {
-            draggingTimer.Interval = TimeSpan.FromMilliseconds(value);
             _draggingTimeTrigger = value;
+            draggingTimer.Interval = TimeSpan.FromMilliseconds(value);
         }
     }
     public Func<object?, PointerPressedEventArgs, bool>? StartDraggingCondition {get; set;}
@@ -31,18 +31,15 @@ public class DragController
 
         draggable.PointerPressed += (sender, e) =>
         {
-            _senderStartDraggingBuffer = sender;
-            _eStartDraggingBuffer = e;
-            if (StartDraggingCondition?.Invoke(sender, e) ?? true) draggingTimer.Start();
+            if (StartDraggingCondition?.Invoke(sender, e) ?? true) {
+                _senderStartDraggingBuffer = sender;
+                _eStartDraggingBuffer = e;
+                if (_draggingTimeTrigger != 0) draggingTimer.Start();
+                else OnStart();
+            }
         };
 
-        draggingTimer.Tick += (_, _) =>
-        {
-            Dragging = true;
-            StartDragging?.Invoke(draggable, _senderStartDraggingBuffer, _eStartDraggingBuffer!);
-            App.Current.UIManager.AddOnMainWindowLoadedListener(mw => mw.PointerMoved += OnDrag);
-            draggingTimer.Stop();
-        };
+        draggingTimer.Tick += (_, _) => OnStart();
 
         draggable.PointerReleased += (sender, e) =>
         {
@@ -54,5 +51,15 @@ public class DragController
         };
     }
 
+    private void OnStart()
+    {
+        Dragging = true;
+        StartDragging?.Invoke(draggable, _senderStartDraggingBuffer, _eStartDraggingBuffer!);
+        App.Current.UIManager.AddOnMainWindowLoadedListener(mw => mw.PointerMoved += OnDrag);
+        draggingTimer.Stop();
+    }
+
     private void OnDrag(object? sender, PointerEventArgs e) => Drag?.Invoke(draggable, sender, e);
+
+    public void AbortDrag() => draggingTimer.Stop(); //Aborta un drag pendiente
 }

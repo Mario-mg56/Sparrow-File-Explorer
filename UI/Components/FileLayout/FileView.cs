@@ -4,7 +4,6 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
-using DynamicFileExplorer.Infrastructures;
 using DynamicFileExplorer.Models;
 using DynamicFileExplorer.UI.Helpers;
 using DynamicFileExplorer.ViewModels;
@@ -17,10 +16,7 @@ public class FileView : Grid
     public string name;
     public readonly Image iconImg;
     public readonly TextBlock label;
-    public static readonly int PADDING = 10, DRAGGING_TIME_TRIGGER = 20, ICON_SIZE = App.Styles.IconSize;
-    public static readonly DispatcherTimer draggingTimer = new()
-     {Interval = TimeSpan.FromMilliseconds(DRAGGING_TIME_TRIGGER)};
-
+    public static readonly int PADDING = 10, ICON_SIZE = App.Styles.IconSize;
     public static readonly SolidColorBrush SELECTED_COLOR = new(Colors.LightBlue),
          TRANSPARENT = new(Colors.Transparent);
 
@@ -59,7 +55,7 @@ public class FileView : Grid
 
     public static readonly ContextMenu<FileSystemItem> fileContextMenu = new ([
         new (name: "Open", itemAction: (i, file, _) => {
-            App.Current.fileManager.Open(file);
+            if (file != null) App.Current.fileManager.Open(file);
         }),
         new (name: "Delete", itemAction: (i, file, _) => App.Current.fileManager.Delete(file!)),
         new (name: "Rename", itemAction: (i, file, _) => {
