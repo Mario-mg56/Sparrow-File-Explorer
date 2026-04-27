@@ -44,4 +44,5 @@ public abstract class FileSystemItem
     {
         return System.IO.Path.Exists(GetPath());
     }
+    
 }

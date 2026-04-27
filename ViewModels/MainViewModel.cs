@@ -30,16 +30,27 @@ public class MainViewModel : INotifyPropertyChanged
         return new Bitmap(assets);      
     }
 
+
+
+    public Border inspectorBorder{set;get;} = null!;
+  
+
+    public Action<bool>? changingInspector;
     public bool inspectorVisibility
     {
         set
         {
+            changingInspector?.Invoke(value);
             field = value;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(inspectorVisibility)));
-            inspectorWidth = value? new GridLength(2,GridUnitType.Star):new GridLength(0,GridUnitType.Star);
+            inspectorWidth = value? lastInspectorWidth:new GridLength(0,GridUnitType.Star);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(inspectorWidth)));
         }
         get;} = false;
 
     public GridLength inspectorWidth{get;set;} = new GridLength(0,GridUnitType.Star);
+    public GridLength lastInspectorWidth{get;set;} = new GridLength(2,GridUnitType.Star);
+
+    public GridLength resizableWidth{get;} = new GridLength(3,GridUnitType.Pixel);
+    public IBrush resizableColor{get;} = Brushes.Black;
 }

@@ -1,7 +1,6 @@
+using System;
 using Avalonia.Controls;
-using DynamicFileExplorer.Infrastructures;
 using DynamicFileExplorer.UI.Components.Inspector;
-using DynamicFileExplorer.UI.Helpers;
 
 namespace DynamicFileExplorer.UI.Components;
 

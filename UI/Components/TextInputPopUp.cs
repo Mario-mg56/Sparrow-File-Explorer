@@ -58,7 +58,9 @@ public class TextInputPopUp : Grid
         App.Current.UIManager.AddOnMainWindowLoadedListener(mw => mw.overlay.Children.Add(this));
     }
 
-    public virtual void Show() {
+    public virtual void Show(Action<string> _resolve,string _title = "") {
+        title  = _title;
+        Resolve  = _resolve;
         App.Current.UIManager.AddOnMainWindowLoadedListener(mw => 
             SetPosition((int) (mw.Bounds.Width/2 - Bounds.Width),
                 (int) (mw.Bounds.Height/2 - Bounds.Height))

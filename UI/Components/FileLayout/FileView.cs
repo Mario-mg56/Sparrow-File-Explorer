@@ -60,9 +60,7 @@ public class FileView : Grid
         new (name: "Delete", itemAction: (i, file, _) => App.Current.fileManager.Delete(file!)),
         new (name: "Rename", itemAction: (i, file, _) => {
             var input = TextInputPopUp.getInstance();    
-            input.Show();
-            input.title = file?.path.name ?? "";
-            input.Resolve = (s)=> App.Current.fileManager.Rename(file!, s);
+            input.Show((s)=> App.Current.fileManager.Rename(file!, s),_title: file?.path.name ?? "");
             App.cacheService.UpdateBgImage("path");
         }),
         new (name: "Set as background image", itemAction: (_, file, _) => {

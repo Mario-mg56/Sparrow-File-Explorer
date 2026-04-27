@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -63,6 +64,7 @@ public class FileLayoutController
         fileSelector.Selecting += OnDragSelection;
 
         SelectedFilesChanged += RefreshFileSelection;
+        SelectedFilesChanged += ()=> App.Current.UIManager.LoadFileInfo(selectedFiles.Select(f=>f.controller.file).ToList());
 
         openFileTimer.Tick += (_, _) => {
             lastFileSelected = null;
@@ -162,18 +164,16 @@ public class FileLayoutController
         selectedFiles.ForEach(fv => fv.controller.SetSelected(true));
     }
 
+
+
     public static readonly ContextMenu<DirItem> contextMenu  = new (items:[
         new (name: "Crear Carpeta", itemAction: (i, wd, _) => {
             var input = TextInputPopUp.getInstance();    
-            input.Show();   
-            input.title = "";
-            input.Resolve = (s)=> App.Current.fileManager.CreateDir(wd!, s);
+            input.Show((s)=> App.Current.fileManager.CreateDir(wd!, s));   
         }),
         new (name: "Crear Archivo", itemAction: (i, wd, _) => {
             var input = TextInputPopUp.getInstance();    
-            input.Show();   
-            input.title = "";
-            input.Resolve = (s)=> App.Current.fileManager.CreateFile(wd!, s);
+            input.Show((s)=> App.Current.fileManager.CreateFile(wd!, s));   
         }),
         new (name: "Item 3", itemAction: (i, _, _) => Console.WriteLine(i.name + " selected"))
     ]);

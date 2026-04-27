@@ -43,10 +43,10 @@ class UM
     }
 
 
-    public void LoadFileInfo(FileSystemItem? file)
+    public void LoadFileInfo(List<FileSystemItem>? file)
     {
         MainViewModel?.inspectorVisibility = file != null;
-        InspectorViewModel.instance.file = file;
+        InspectorViewModel.instance.files = file;
     }
 
     public void DeselectFIleInfo()

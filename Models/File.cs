@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace DynamicFileExplorer.Models;
 
@@ -33,6 +34,11 @@ public class File : FileSystemItem
         return path.name;
 
         return path.name.Replace(extension, "");
+    }
+
+    public FileInfo GetInfo()
+    {
+        return new FileInfo(GetPath());
     }
     
 }

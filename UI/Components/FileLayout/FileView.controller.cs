@@ -5,6 +5,7 @@ using Avalonia.Input;
 using Avalonia.Media;
 using DynamicFileExplorer.Infrastructures;
 using DynamicFileExplorer.Models;
+using DynamicFileExplorer.UI.Components.Inspector;
 using DynamicFileExplorer.Util;
 
 namespace DynamicFileExplorer.UI.Components;
@@ -76,16 +77,15 @@ public class FileViewController
     private void OnFilesDroppedFile(List<FileSystemItem> items)
     {
         if (file is DirItem folder){
-            var input = TextInputPopUp.getInstance();    
-            input.Show();   
-            input.title = "Nueva carpeta";
-            input.Resolve = (s)=> {
+            var input = TextInputPopUp.getInstance();   
+            input.Show((s)=> {
             DirItem? newDir = App.Current.fileManager.CreateDir(App.Current.fileManager.WorkingDir, s);
                 if(newDir==null)return;
                 FileManager.MoveItems(items,newDir);
 
             
-            };
+            },_title:"Nueva carpeta");   
+            
         }
 
     }

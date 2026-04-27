@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Runtime.ConstrainedExecution;
 using Avalonia.Media.Imaging;
 using DynamicFileExplorer.Models;
 using DynamicFileExplorer.UI.Helpers;
@@ -93,45 +95,121 @@ public class InspectorViewModel : INotifyPropertyChanged
             OnPropertyChanged(nameof(imageSource));
         }
     }
-
-    public FileSystemItem? file
+    
+    public List<FileSystemItem>? files
     {
         get;
         set
         {
             field = value;
-            if (value == null) return;
-            if(file?.Exists() ?? true) return;
+            if(value==null)return;
+            if (value?.Count == 0) return;
 
-            fileName = value.path.name;
-            tipo = value is Models.File ? "Archivo" : "Carpeta";
-            ruta = value.path.path;
 
-            // tamaño correcto (solo si es archivo)
-            if (value is Models.File fi)
+            if(value.Count == 1)
             {
+                var file = value[0];
+                fileName = file.path.name;
+                tipo = file is Models.File ? "Archivo" : "Carpeta";
+                ruta = file.path.path;
+
+                // tamaño correcto (solo si es archivo)
+                if (file is Models.File fi)
+                {
+                    visibleTamanio=true;
+                    var size = new FileInfo(file.GetPath()).Length;
+                    tamanio = FormatSize(size);
+                    Console.WriteLine(fi.extension);
+                    var ext = fi.extension;
+                    if(AppResources.ImageExtensions.Contains(ext)){
+                        imageSource = new Bitmap(file.GetPath());
+                        imageVisibility=true;
+                        } else{imageVisibility=false;};
+                    
+                } else if (file is DirItem di)
+                {
+                    visibleTamanio=true;
+                    tamanio = FormatSize(GetDirectorySize(file.GetPath()));
+                }
+
+                lastModification = new FileInfo(file.GetPath()).LastWriteTime+"";
+            } else
+            {
+                imageVisibility=false;
+                lastModification = "";
                 visibleTamanio=true;
-                var size = new FileInfo(value.GetPath()).Length;
-                tamanio = $"{size / (1024.0 * 1024.0):F2} MB";
-                Console.WriteLine(fi.extension);
-                var ext = fi.extension;
-                if(AppResources.ImageExtensions.Contains(ext)){
-                    imageSource = new Bitmap(file.GetPath());
-                    imageVisibility=true;
-                    } else{imageVisibility=false;};
-                
-            }
-            else
-            {
-                visibleTamanio=false;
-                tamanio = "-";
-            }
+                string finalNames = "";
+                long finalSize = 0;
+                int[] cantidad = [0,0];
+                foreach(var file in files)
+                {
+                    finalNames+=file.path.name+",";
+                    cantidad[0] += file is Models.File ? 1:0;
+                    cantidad[1] += file is DirItem ? 1:0;
 
-            lastModification = new FileInfo(value.GetPath()).LastWriteTime+"";
+                    finalSize+= file is Models.File? new FileInfo(file.GetPath()).Length:GetDirectorySize(file.GetPath());
+                }
 
-            OnPropertyChanged(nameof(file));
+
+
+                fileName = finalNames;
+                tipo = "Archivo: " +cantidad[0] +" Carpeta: " + cantidad[1];
+                tamanio = FormatSize(finalSize);
+                // ruta = file.path.path; cambiar si se quiere a futuro 
+                // tamaño correcto (solo si es archivo)
+
+            }
+            OnPropertyChanged(nameof(files));
         }
     }
+    public static long GetDirectorySize(string path)
+    {
+        try
+        {
+            DirectoryInfo dir = new(path);
+
+            long size = 0;
+
+            foreach (FileInfo file in dir.GetFiles("*", SearchOption.AllDirectories))
+            {
+                size += file.Length;
+            }
+            return size;
+
+        } catch (UnauthorizedAccessException ){
+        }
+        return 0;
+        
+
+    }
+    public static string FormatSize(long bytes)
+    {
+        string[] units = { "B", "KB", "MB", "GB", "TB" };
+
+        double size = bytes;
+        int unit = 0;
+
+        while (size < 1 && unit > 0)
+        {
+            size *= 1024;
+            unit--;
+        }
+
+        while (size >= 1024 && unit < units.Length - 1)
+        {
+            size /= 1024;
+            unit++;
+        }
+
+        while (size < 0.1 && unit > 0)
+        {
+            size *= 1024;
+            unit--;
+        }
+
+        return $"{size:F1} {units[unit]}";
+    }
+
 
     public InspectorViewModel()
     {

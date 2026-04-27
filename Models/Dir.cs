@@ -27,6 +27,11 @@ public class DirItem : FileSystemItem
         return fm.ListAllDirectories(this).Find(s => s.path.name.Equals(name));
     }
 
+    public DirectoryInfo GetInfo()
+    {
+        return new DirectoryInfo(GetPath());
+    }
+
     public override string GetPath() => path.path;
 
 }

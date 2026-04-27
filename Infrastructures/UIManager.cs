@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
@@ -41,10 +42,11 @@ class UIManager
     }
 
 
-    public void LoadFileInfo(FileSystemItem? file)
+    public void LoadFileInfo(List<FileSystemItem> files)
     {
-        MainViewModel?.inspectorVisibility = file != null;
-        InspectorViewModel.instance.file = file;
+        MainViewModel?.inspectorVisibility = files != null;
+        MainViewModel?.inspectorVisibility = files.Count!=0 ;
+        InspectorViewModel.instance?.files = files;
     }
 
     public void DeselectFIleInfo()
