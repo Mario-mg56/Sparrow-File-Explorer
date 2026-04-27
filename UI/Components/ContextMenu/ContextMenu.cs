@@ -122,6 +122,7 @@ public class ContextMenu<T> : ContextMenu
             i.AttachedLayout = sender;
             i.AttachedItem = attachement.Value.AttachedItem;
         });
+        Show();
     }
 
     private static List<Control> ConvertAttachments(List<ContextAttachement>? items) {

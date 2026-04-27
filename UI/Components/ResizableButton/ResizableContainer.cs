@@ -58,17 +58,8 @@ public abstract class ResizableContainer
         isDragging = false;
     }
 
-    public virtual void SetSize(Point pixels)
-    {
-    }
+    public abstract void SetSize(Point pixels);
+    public abstract void OnafterThingChange(bool yes);
 
-    public virtual void OnafterThingChange(bool yes)
-    {
-
-    }
-
-    public virtual void SetPrevThingSize(GridLength newSize)
-    {
-        
-    }
+    public abstract void SetPrevThingSize(GridLength newSize);
 }

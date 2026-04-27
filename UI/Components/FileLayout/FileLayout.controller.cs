@@ -145,7 +145,7 @@ public class FileLayoutController
         fileViews.ForEach(fv => {
             var absPos = fv.TranslatePoint(new Point(0, 0), App.Current.UIManager.MainWindow!) ?? new(0, 0);
             if(IsSquareTouchingSquareNormalizedPos(fsStart, fsEnd, absPos,
-                 new Point(absPos.X+fv.Bounds.Width, absPos.Y+fv.Bounds.Height))) selectedFiles.Add(fv); 
+                 new Point(absPos.X+fv.Bounds.Width, absPos.Y+fv.Bounds.Height))) {selectedFiles.Add(fv); }
         });
         SelectedFilesChanged?.Invoke();
     }

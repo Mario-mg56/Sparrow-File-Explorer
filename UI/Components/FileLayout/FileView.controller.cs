@@ -45,6 +45,7 @@ public class FileViewController
         var pos = e.GetPosition(sender as Control);
         shadowFile.SetPosition((int) pos.X - FileView.ICON_SIZE/2, (int) pos.Y - FileView.ICON_SIZE/2);
         shadowFile.IsVisible = true;
+        
     }
     private void OnStopDrag(Control _, object? sender, PointerReleasedEventArgs e)
     {
