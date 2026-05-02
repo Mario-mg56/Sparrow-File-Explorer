@@ -16,7 +16,6 @@ public class FileLayoutController
     private readonly List<ContextMenu<FileSystemItem>.ContextAttachement> attachements = [];
     public readonly Control fileLayout;
     public FileView? PointingFile {get; private set;}
-
     public readonly List<FileView> fileViews = [];
     public readonly List<FileView> selectedFiles = [];
     public readonly FileSelector fileSelector;
@@ -37,13 +36,9 @@ public class FileLayoutController
         fileLayout.PointerPressed += (sender, e) => {
             if(PointingFile == null) {
                 selectedFiles.Clear();
-                RefreshFileSelection();
+                SelectedFilesChanged?.Invoke();
             }
         };
-
-        // App.Current.UIManager.AddOnMainWindowLoadedListener(mw => 
-        //     mw.PointerMoved += (_, e) => SetPointingFile(BubbleSearchView<FileView>(mw, e))
-        // );
 
         App.Current.UIManager.AddOnMainWindowLoadedListener(mw => 
             mw.PointerMoved += (sender, e) => {
@@ -64,7 +59,7 @@ public class FileLayoutController
         fileSelector.Selecting += OnDragSelection;
 
         SelectedFilesChanged += RefreshFileSelection;
-        SelectedFilesChanged += ()=> App.Current.UIManager.LoadFileInfo(selectedFiles.Select(f=>f.controller.file).ToList());
+        SelectedFilesChanged += OpenInspector;
 
         openFileTimer.Tick += (_, _) => {
             lastFileSelected = null;
@@ -138,15 +133,20 @@ public class FileLayoutController
 
     private void OnDragSelection(Point _, Point _2)
     {  
-        selectedFiles.Clear();
         if(App.Current.UIManager.MainWindow == null) return;
+
         Point fsStart, fsEnd;
         (fsStart, fsEnd) = (fileSelector.Bounds.TopLeft, fileSelector.Bounds.BottomRight);
-        fileViews.ForEach(fv => {
-            var absPos = fv.TranslatePoint(new Point(0, 0), App.Current.UIManager.MainWindow!) ?? new(0, 0);
-            if(IsSquareTouchingSquareNormalizedPos(fsStart, fsEnd, absPos,
-                 new Point(absPos.X+fv.Bounds.Width, absPos.Y+fv.Bounds.Height))) {selectedFiles.Add(fv); }
-        });
+
+        var selected = new HashSet<FileView>(fileViews.Where(fv => {
+            var absPos = fv.TranslatePoint(new Point(0, 0), App.Current.UIManager.MainWindow) ?? new(0, 0);
+            return IsSquareTouchingSquareNormalizedPos(fsStart, fsEnd, absPos,
+                 new Point(absPos.X+fv.Bounds.Width, absPos.Y+fv.Bounds.Height));
+        }));
+
+        if (new HashSet<FileView>(selectedFiles).SetEquals(selected)) return; //No se ha modificado la selección
+        selectedFiles.Clear();
+        selectedFiles.AddRange(selected);
         SelectedFilesChanged?.Invoke();
     }
 
@@ -158,13 +158,40 @@ public class FileLayoutController
         RefreshFileSelection();
         PointingFile?.Background = FileView.SELECTED_COLOR;
     }
+    
+    public static int i = 1 ;
 
     public void RefreshFileSelection() {
         fileViews.ForEach(fv => fv.controller.SetSelected(false));
         selectedFiles.ForEach(fv => fv.controller.SetSelected(true));
     }
 
+    private void OpenInspector()
+    {
+        var draggingFile = selectedFiles.Find(f =>
+            f.controller.dragController.TryingToDrag || f.controller.dragController.Dragging
+        );
+        void ShowInspector() =>
+                App.Current.UIManager.LoadFileInfo(selectedFiles.Select(f => f.controller.file).ToList());
 
+        if (draggingFile == null) {
+            ShowInspector();
+            return;
+        }
+
+        void ShowAndClean()
+        {
+            ShowInspector();
+            draggingFile.controller.dragController.DragFailed -= ShowInspectorIfDragFails;
+            draggingFile.controller.dragController.StopDragging -= ShowInspectorOnStopDragging;
+        }
+
+        void ShowInspectorIfDragFails(object _) => ShowAndClean();
+        void ShowInspectorOnStopDragging(object _, object? _1, object _2) => ShowAndClean();
+
+        draggingFile.controller.dragController.DragFailed += ShowInspectorIfDragFails;
+        draggingFile.controller.dragController.StopDragging += ShowInspectorOnStopDragging;
+    }
 
     public static readonly ContextMenu<DirItem> contextMenu  = new (items:[
         new (name: "Crear Carpeta", itemAction: (i, wd, _) => {

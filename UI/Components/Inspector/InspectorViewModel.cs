@@ -119,7 +119,6 @@ public class InspectorViewModel : INotifyPropertyChanged
                     visibleTamanio=true;
                     var size = new FileInfo(file.GetPath()).Length;
                     tamanio = FormatSize(size);
-                    Console.WriteLine(fi.extension);
                     var ext = fi.extension;
                     if(AppResources.ImageExtensions.Contains(ext)){
                         imageSource = new Bitmap(file.GetPath());

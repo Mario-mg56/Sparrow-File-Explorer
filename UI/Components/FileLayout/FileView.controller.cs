@@ -5,7 +5,6 @@ using Avalonia.Input;
 using Avalonia.Media;
 using DynamicFileExplorer.Infrastructures;
 using DynamicFileExplorer.Models;
-using DynamicFileExplorer.UI.Components.Inspector;
 using DynamicFileExplorer.Util;
 
 namespace DynamicFileExplorer.UI.Components;
@@ -15,7 +14,7 @@ public class FileViewController
     public readonly FileSystemItem file;
     public readonly FileView view;
     public bool Selected {get; private set;} = false;
-    public bool Dragging {get; private set;} = false;
+    public bool Dragging {get => dragController.Dragging;}
     public ShadowItem shadowFile;
     public event Action<List<FileSystemItem>>? FilesDropped;
     public readonly DragController dragController;
@@ -41,7 +40,6 @@ public class FileViewController
 
     private void OnDrag(Control _, object? sender, PointerEventArgs e)
     {
-        Dragging = true;
         var pos = e.GetPosition(sender as Control);
         shadowFile.SetPosition((int) pos.X - FileView.ICON_SIZE/2, (int) pos.Y - FileView.ICON_SIZE/2);
         shadowFile.IsVisible = true;
@@ -49,7 +47,6 @@ public class FileViewController
     }
     private void OnStopDrag(Control _, object? sender, PointerReleasedEventArgs e)
     {
-        Dragging = false;
         shadowFile.IsVisible = false;
         var flc = App.Current.UIManager.FilesLayoutController!;
         if (flc.PointingFile == null || flc.PointingFile.controller.file == file || flc.selectedFiles.Count == 0) return;
