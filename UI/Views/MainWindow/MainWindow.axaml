@@ -14,41 +14,28 @@
         <ImageBrush Source="{Binding BackgroundImage}" Opacity="{Binding BackgroundImageOpacity}"
                     Stretch="UniformToFill"/>
     </Window.Background>
-    <Grid Name="MainGrid">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"></ColumnDefinition>
-            <ColumnDefinition Width="{Binding resizableWidth}"></ColumnDefinition>
-            <ColumnDefinition Width="4*"></ColumnDefinition>
-            <ColumnDefinition Width="{Binding resizableWidth}"></ColumnDefinition>
-            <ColumnDefinition Width="{Binding inspectorWidth}"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="{Binding resizableWidth}"/>
-            <RowDefinition Height="9*"/>
-        </Grid.RowDefinitions>
-        <Border Grid.Row="0" Grid.ColumnSpan="5" Background="Transparent" Name="HeaderContainer">
-                <components:HeaderContainer />
-        </Border>
-        <Border Name="SeparadorV" Grid.ColumnSpan="5" Grid.Row="1"></Border>
-        <Border Grid.Row="2" Grid.Column="0" Background="Transparent"  Name="HierarchyContainer">
-                <components:HierarchyView/>
-        </Border>
-        <Border Name="Separador1" Grid.Row="2" Grid.Column="1"></Border>
-        <Border Grid.Row="2" Grid.Column="2" Background="Transparent" Name="FilesContainer">
+    <components:ResizableGrid Name="MainGrid" RowDefinitions="1*, 9*" ColumnDefinitions="1*, 4*, 1*">
+        <components:ResizableBorder Grid.Row="0" Grid.ColumnSpan="3"
+          Background="Transparent" Name="HeaderContainer" BottomResizing="True">
+            <components:HeaderContainer />
+        </components:ResizableBorder>
+        <components:ResizableBorder Grid.Row="1" Grid.Column="0" Background="Transparent"
+          Name="HierarchyContainer" EndResizing="True">
+            <components:HierarchyView/>
+        </components:ResizableBorder>
+        <Border Name="FilesBorder" Grid.Row="1" Grid.Column="1" Background="Transparent">
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <components:FilesGrid/>
             </ScrollViewer>
         </Border>
-        <Border Name="Separador2" Grid.Row="2" Grid.Column="3" IsVisible="{Binding inspectorVisibility}"></Border>
-        <Border Grid.Row="2" Grid.Column="4" Background="Transparent"  Name="InspectorContainer" IsVisible="{Binding inspectorVisibility}">
+        <components:ResizableBorder Grid.Row="1" Grid.Column="2" Background="Transparent"  Name="InspectorContainer"
+          IsVisible="{Binding inspectorVisibility}" StartResizing="True">
                 <components:InspectorView/>
-                
-        </Border>
+        </components:ResizableBorder>
         <Canvas
             Name="Overlay"
             Grid.RowSpan="2"
             Grid.ColumnSpan="3"
         />
-    </Grid>
+    </components:ResizableGrid>
 </Window>
