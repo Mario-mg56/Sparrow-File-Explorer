@@ -19,7 +19,7 @@ public class FileViewController
     public event Action<List<FileSystemItem>>? FilesDropped;
     public readonly DragController dragController;
     public static readonly int DRAGGING_TIME_TRIGGER = 100, OPEN_FILE_MAX_CLICK_INTERVAL = 500;
-    public static readonly SolidColorBrush SELECTED_COLOR = new(Colors.LightBlue), TRANSPARENT = new(Colors.Transparent);
+    public static readonly SolidColorBrush TRANSPARENT = new(Colors.Transparent);
 
     public FileViewController(FileSystemItem file, FileView view)
     {
@@ -35,7 +35,7 @@ public class FileViewController
         dragController.Drag += OnDrag;
         dragController.StopDragging += OnStopDrag;
         
-        FilesDropped += file is File ? OnFilesDroppedFile : OnFilesDroppedDir;
+        // FilesDropped += file is File ? OnFilesDroppedFile : OnFilesDroppedDir;
     }
 
     private void OnDrag(Control _, object? sender, PointerEventArgs e)
@@ -50,7 +50,7 @@ public class FileViewController
         shadowFile.IsVisible = false;
         var flc = App.Current.UIManager.FilesLayoutController!;
         if (flc.PointingFile == null || flc.PointingFile.controller.file == file || flc.selectedFiles.Count == 0) return;
-        flc.PointingFile.controller.DropFiles(App.Current.fileManager.SelectedItems);
+        // flc.PointingFile.controller.DropFiles(App.Current.fileManager.SelectedItems);
     }
 
     public void DropFiles(List<FileSystemItem> droppedFiles)
@@ -61,30 +61,29 @@ public class FileViewController
 
     public void SetSelected(bool selected){
         Selected = selected;
-        view.Background = selected ? SELECTED_COLOR : TRANSPARENT;
+        view.Background = selected ? FileView.SelectedColor : TRANSPARENT;
     }
 
-    private void OnFilesDroppedDir(List<FileSystemItem> items)
-    {
-        if (file is DirItem folder)
-        {
-
-            FileManager.MoveItems(items,folder);
-        }
-    }
-    private void OnFilesDroppedFile(List<FileSystemItem> items)
-    {
-        if (file is DirItem folder){
-            var input = TextInputPopUp.getInstance();   
-            input.Show((s)=> {
-            DirItem? newDir = App.Current.fileManager.CreateDir(App.Current.fileManager.WorkingDir, s);
-                if(newDir==null)return;
-                FileManager.MoveItems(items,newDir);
+    // private void OnFilesDroppedDir(List<FileSystemItem> items)
+    // {
+    //     if (file is DirItem folder)
+    //     {
+    //         FileManager.MoveItems(items,folder);
+    //     }
+    // }
+    // private void OnFilesDroppedFile(List<FileSystemItem> items)
+    // {
+    //     if (file is DirItem folder){
+    //         var input = TextInputPopUp.getInstance();   
+    //         input.Show((s)=> {
+    //         DirItem? newDir = App.Current.fileManager.CreateDir(App.Current.fileManager.WorkingDir, s);
+    //             if(newDir==null)return;
+    //             FileManager.MoveItems(items,newDir);
 
             
-            },_title:"Nueva carpeta");   
+    //         },_title:"Nueva carpeta");   
             
-        }
+    //     }
 
-    }
+    // }
 }

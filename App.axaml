@@ -2,27 +2,64 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:helpers="using:DynamicFileExplorer.UI.Helpers"
              x:Class="DynamicFileExplorer.App"
+             xmlns:components="clr-namespace:DynamicFileExplorer.UI.Components"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 <Application.Styles>
 
     <FluentTheme />
 
-    <Style Selector="TextBlock">
-        <Setter Property="FontFamily" Value="{x:Static helpers:AppResources.Font}"/>
-        <Setter Property="Foreground" Value="{x:Static helpers:AppResources.TextColor}"/>
-    </Style>
+        <Style Selector="TextBlock">
+            <Setter Property="FontFamily" Value="{x:Static helpers:AppResources.Font}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextForeground}"/>
+        </Style>
 
-    <Style Selector="Button">
-        <Setter Property="FontFamily" Value="{x:Static helpers:AppResources.Font}" />
-        <Setter Property="Foreground" Value="{x:Static helpers:AppResources.TextColor}"/>
-    </Style>
+        <Style Selector="Button">
+            <Setter Property="FontFamily" Value="{x:Static helpers:AppResources.Font}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextForeground}"/>
+        </Style>
 
-    <Style Selector="TextBox">
-        <Setter Property="FontFamily" Value="{x:Static helpers:AppResources.Font}" />
-        <Setter Property="Foreground" Value="{x:Static helpers:AppResources.TextColor}"/>
-    </Style>
-        <FluentTheme />
+        <Style Selector="TextBox">
+            <Setter Property="FontFamily" Value="{x:Static helpers:AppResources.Font}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextForeground}"/>
+        </Style>
+
+        <Style Selector="components|SVGIcon">
+            <Setter Property="Background" Value="{DynamicResource IconBackground}" />
+            <Setter Property="IconForeground" Value="{DynamicResource IconForeground}" />
+            <Setter Property="HoverBackground" Value="{DynamicResource IconHover}" />
+            <Setter Property="HoverForeground" Value="{DynamicResource IconHoverForeground}" />
+            <Setter Property="IconSize" Value="12" />
+            <Setter Property="Padding_x" Value="16" />
+            <Setter Property="Padding_y" Value="12" />
+        </Style>
+
+        <Style Selector="components|SVGIcon">
+            <Setter Property="Background" Value="Transparent" />
+
+            <Style Selector="^ PathIcon">
+                <Setter Property="Foreground" Value="{Binding $parent[components:SVGIcon].IconForeground}" />
+            </Style>
+            <Style Selector="^:pointerover">
+                <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource Self}, Path=HoverBackground}" />
+                
+                <Style Selector="^ PathIcon">
+                    <Setter Property="Foreground" Value="{Binding $parent[components:SVGIcon].HoverForeground}" />
+                </Style>
+            </Style>
+        </Style>
+
+        <Style Selector="components|ThinScrollBarViewer">
+            <Setter Property="RestColor" Value="{DynamicResource Primary}" />
+            <Setter Property="HoverColor" Value="{DynamicResource Selection}" />
+            <Setter Property="PressedColor" Value="{DynamicResource FileHover}" />
+            <Setter Property="TrackRestColor" Value="{DynamicResource Destructive}" />
+            <Setter Property="TrackHoverColor" Value="{DynamicResource Primary}" />
+            <Setter Property="TrackPressedColor" Value="{DynamicResource Foreground}" />
+        </Style>
+
+        
+    <FluentTheme />
 
 </Application.Styles>
 </Application>

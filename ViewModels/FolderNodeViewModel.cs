@@ -68,7 +68,7 @@ public class FolderNodeViewModel : INotifyPropertyChanged
 
         Children.Clear(); // quitar placeholder
 
-        var dirs = App.Current.fileManager.ListAllDirectories(Node);
+        var dirs = FileManager.ListAllDirectories(Node);
 
         foreach (var dir in dirs)
         {

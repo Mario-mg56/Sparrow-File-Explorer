@@ -8,34 +8,51 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:DataType="vm:MainViewModel"
         x:Class="DynamicFileExplorer.UI.Views.MainWindow.MainWindow"
-        Title="DynamicFileExplorer">
-
-        <Window.Background>
+        Title="DynamicFileExplorer"
+        Background="Transparent"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        TransparencyLevelHint="Transparent"
+    >
+    <Window.Background>
         <ImageBrush Source="{Binding BackgroundImage}" Opacity="{Binding BackgroundImageOpacity}"
                     Stretch="UniformToFill"/>
     </Window.Background>
-    <components:ResizableGrid Name="MainGrid" RowDefinitions="1*, 9*" ColumnDefinitions="1*, 4*, 1*">
-        <components:ResizableBorder Grid.Row="0" Grid.ColumnSpan="3"
-          Background="Transparent" Name="HeaderContainer" BottomResizing="True">
-            <components:HeaderContainer />
-        </components:ResizableBorder>
-        <components:ResizableBorder Grid.Row="1" Grid.Column="0" Background="Transparent"
-          Name="HierarchyContainer" EndResizing="True">
-            <components:HierarchyView/>
-        </components:ResizableBorder>
-        <Border Name="FilesBorder" Grid.Row="1" Grid.Column="1" Background="Transparent">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                <components:FilesGrid/>
-            </ScrollViewer>
-        </Border>
-        <components:ResizableBorder Grid.Row="1" Grid.Column="2" Background="Transparent"  Name="InspectorContainer"
-          IsVisible="{Binding inspectorVisibility}" StartResizing="True">
-                <components:InspectorView/>
-        </components:ResizableBorder>
-        <Canvas
-            Name="Overlay"
-            Grid.RowSpan="2"
-            Grid.ColumnSpan="3"
-        />
-    </components:ResizableGrid>
+
+    <Border Padding="{Binding $parent[Window].OffScreenMargin}"> <!--Evita que al maximizar la app la pantalla se coma los bordes-->
+        <components:ResizableGrid Name="MainGrid" RowDefinitions="auto, auto, auto, 8*"> 
+            <components:ResizableGrid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="4*" /> 
+                <ColumnDefinition Width="{Binding inspectorWidth}"/>
+            </components:ResizableGrid.ColumnDefinitions>
+
+            <components:WindowHeader Grid.Row="0" Grid.ColumnSpan="3" Name="WindowHeader"/>
+
+            <components:HeaderContainer Grid.Row="1" Grid.ColumnSpan="3" Name="HeaderContainer"/>
+
+            <components:TabsPanel BorderThickness="0,0,0,5" BorderBrush="Black" MinHeight="36"
+                 Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Background="Transparent" Name="Tabs"/>
+
+            <components:ResizableBorder Grid.Row="3" Grid.Column="0" Background="Transparent"
+                Name="HierarchyContainer" EndResizing="True">
+                <components:HierarchyView/>
+            </components:ResizableBorder>
+
+            <Border Name="FilesBorder" Grid.Row="3" Grid.Column="1" Background="Transparent" Margin="0,0,2,0">
+                <components:Body/>
+            </Border>
+
+            <components:ResizableBorder Grid.Row="3" Grid.Column="2" Background="Transparent"  Name="InspectorContainer"
+                IsVisible="{Binding inspectorVisibility}" StartResizing="True">
+                    <components:InspectorView/>
+            </components:ResizableBorder>
+
+            <Canvas
+                Name="Overlay"
+                Grid.RowSpan="4"
+                Grid.ColumnSpan="3"
+            />
+        </components:ResizableGrid>
+    </Border>
 </Window>

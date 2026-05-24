@@ -38,33 +38,30 @@ namespace DynamicFileExplorer.ViewModels
         public ICommand SearchCommand { get; }
 
         private string lastSearch = string.Empty;
-        private readonly FileManager fm;
+        private FileManager? FM {get => App.Current.FocusedTab?.fileManager; }
 
         public SearchContainerViewModel()
         {
-            fm = App.Current.fileManager;
-
             SearchCommand = new RelayCommand(async () =>
             {
-                if (fm == null) return;
+                if (FM == null) return;
 
                 if (lastSearch == SearchText)
                 {
                     SearchText = string.Empty;
                     lastSearch = string.Empty;
 
-                    fm.CleanSearch();
+                    FM.CleanSearch();
                     BuscarText = "Buscar";
-                    fm.WorkingDirChanged -=  LimpiarSearch;
+                    FM.WorkingDirChanged -=  LimpiarSearch;
                     return;
                 }
 
-                // 👉 Nueva búsqueda
                 lastSearch = SearchText;
                 BuscarText = "Limpiar";
                 
-                await fm.SearchWorkingDir(SearchText);
-                fm.WorkingDirChanged +=  LimpiarSearch;
+                await FM.SearchWorkingDir(SearchText);
+                FM.WorkingDirChanged +=  LimpiarSearch;
             });
 
         }

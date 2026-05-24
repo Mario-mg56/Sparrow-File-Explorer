@@ -19,18 +19,12 @@ public class DirItem : FileSystemItem
         
     }
 
-    public DirItem? GetSubDir(string name)
-    {
-        FileManager fm = App.Current.fileManager 
-        ?? throw new Exception("fileManager es null");
-        
-        return fm.ListAllDirectories(this).Find(s => s.path.name.Equals(name));
-    }
+    public DirItem? GetSubDir(string name) =>
+        FileManager.ListAllDirectories(this).Find(s => s.path.name.Equals(name));
+    
 
-    public DirectoryInfo GetInfo()
-    {
-        return new DirectoryInfo(GetPath());
-    }
+    public DirectoryInfo GetInfo() => new (GetPath());
+
 
     public override string GetPath() => path.path;
 

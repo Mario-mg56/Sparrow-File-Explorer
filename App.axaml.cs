@@ -1,33 +1,39 @@
 namespace DynamicFileExplorer;
 
-using System;
+using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using DynamicFileExplorer.Infrastructures;
 using DynamicFileExplorer.Models;
+using static DynamicFileExplorer.Models.Path;
 using DynamicFileExplorer.UI.Views.MainWindow;
+using DynamicFileExplorer.UI.Config;
+using static DynamicFileExplorer.Infrastructures.TabManager;
 
 public partial class App : Application
 {
     public static new App Current => (Application.Current as App)!;
-    internal FileManager fileManager = null!;
+    public MainWindow MainWindow { get; private set; } = null!;
+    internal TabManager tabManager = null!;
     internal UIManager UIManager = null!;
     internal static SettingsService Settings = null!;
     internal static CacheData Cache = null!;
     internal static CacheService cacheService = null!;
     internal static new Styles Styles = null!;
     internal static Config Config = null!;
-    public MainWindow MainWindow { get; private set; } = null!;
+    internal List<Tab> Tabs {get => tabManager.tabs;}
+    internal Tab? FocusedTab {get => tabManager.FocusedTab;}
 
     public override void Initialize()
     {
-        
+        Theme.Apply(new CustomTheme());
         Settings = new SettingsService();
         Settings.Load();
         Styles = Settings.CurrentStyle;
         Config = Settings.Config;
-        fileManager = FileManager.Init(new DirItem(new Path(AppContext.BaseDirectory)));
+        tabManager = Init();
+        tabManager.CreateTab(new DirItem(BasePath));
         cacheService = new CacheService().Load();
         Cache = cacheService.Cache;
         cacheService.ImportLastDir();

@@ -36,14 +36,9 @@ public class BackdropBlurControl : Control
 
     private static SKShader? s_acrylicNoiseShader;
 
-    // CACHE DEL BLUR
     private SKImage? _cachedImage;
     private Size _lastSize;
 
-    /// <summary>
-    /// Llama a esto cuando quieras refrescar manualmente el blur
-    /// (por ejemplo al abrir menú).
-    /// </summary>
     public void RefreshBlur()
     {
         _cachedImage?.Dispose();
@@ -54,6 +49,7 @@ public class BackdropBlurControl : Control
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnDetachedFromVisualTree(e);
+
         _cachedImage?.Dispose();
         _cachedImage = null;
     }
@@ -77,6 +73,10 @@ public class BackdropBlurControl : Control
         public void Dispose() { }
 
         public bool HitTest(Point p) => _bounds.Contains(p);
+
+        public Rect Bounds => _bounds.Inflate(4);
+
+        public bool Equals(ICustomDrawOperation? other) => false;
 
         static SKColorFilter CreateAlphaColorFilter(double opacity)
         {
@@ -103,6 +103,9 @@ public class BackdropBlurControl : Control
                 typeof(SkiaPlatform).Assembly.GetManifestResourceStream(
                     "Avalonia.Skia.Assets.NoiseAsset_256X256_PNG.png");
 
+            if (stream == null)
+                return;
+
             using var bitmap = SKBitmap.Decode(stream);
 
             s_acrylicNoiseShader =
@@ -113,12 +116,15 @@ public class BackdropBlurControl : Control
                 .WithColorFilter(CreateAlphaColorFilter(0.0225));
         }
 
-        private void BuildCache(SKCanvas canvas, GRContext? grContext)
+        private void BuildCache(
+            SKSurface surface,
+            SKCanvas canvas,
+            GRContext? grContext)
         {
             if (!canvas.TotalMatrix.TryInvert(out var currentInvertedTransform))
                 return;
 
-            using var backgroundSnapshot = canvas.Surface!.Snapshot();
+            using var backgroundSnapshot = surface.Snapshot();
 
             using var backdropShader = SKShader.CreateImage(
                 backgroundSnapshot,
@@ -135,11 +141,15 @@ public class BackdropBlurControl : Control
                     SKImageInfo.PlatformColorType,
                     SKAlphaType.Premul));
 
+            if (blurredSurface == null)
+                return;
+
             using (var filter = SKImageFilter.CreateBlur(10, 10))
             using (var blurPaint = new SKPaint
             {
                 Shader = backdropShader,
-                ImageFilter = filter
+                ImageFilter = filter,
+                IsAntialias = true
             })
             {
                 blurredSurface.Canvas.DrawRect(
@@ -158,19 +168,24 @@ public class BackdropBlurControl : Control
         public void Render(ImmediateDrawingContext context)
         {
             var leaseFeature = context.TryGetFeature<ISkiaSharpApiLeaseFeature>();
+
             if (leaseFeature == null)
                 return;
 
             using var lease = leaseFeature.Lease();
 
-            var skia = lease;
-            if (skia == null)
+            // IMPORTANTE:
+            // según versión puede ser Surface o SkSurface.
+            var surface = lease.SkSurface;
+
+            if (surface == null)
                 return;
 
-            // Solo regenerar si no existe cache o cambió tamaño
+            var canvas = lease.SkCanvas;
+
             if (_owner._cachedImage == null || _owner._lastSize != _bounds.Size)
             {
-                BuildCache(skia.SkCanvas, skia.GrContext);
+                BuildCache(surface, canvas, lease.GrContext);
             }
 
             if (_owner._cachedImage == null)
@@ -184,7 +199,7 @@ public class BackdropBlurControl : Control
                 IsAntialias = true
             })
             {
-                skia.SkCanvas.DrawRect(
+                canvas.DrawRect(
                     0,
                     0,
                     (float)_bounds.Width,
@@ -194,10 +209,13 @@ public class BackdropBlurControl : Control
 
             EnsureNoiseShader();
 
-            using var acrylicPaint = new SKPaint();
-            acrylicPaint.IsAntialias = true;
+            using var acrylicPaint = new SKPaint
+            {
+                IsAntialias = true
+            };
 
             var tintColor = _material.TintColor;
+
             var tint = new SKColor(
                 tintColor.R,
                 tintColor.G,
@@ -212,24 +230,23 @@ public class BackdropBlurControl : Control
                     _material.MaterialColor.A));
 
             using var tintShader = SKShader.CreateColor(tint);
-            using var effectiveTint = SKShader.CreateCompose(backdrop, tintShader);
-            using var compose = SKShader.CreateCompose(effectiveTint, s_acrylicNoiseShader);
+
+            using var effectiveTint =
+                SKShader.CreateCompose(backdrop, tintShader);
+
+            using var compose =
+                SKShader.CreateCompose(
+                    effectiveTint,
+                    s_acrylicNoiseShader);
 
             acrylicPaint.Shader = compose;
 
-            skia.SkCanvas.DrawRect(
+            canvas.DrawRect(
                 0,
                 0,
                 (float)_bounds.Width,
                 (float)_bounds.Height,
                 acrylicPaint);
-        }
-
-        public Rect Bounds => _bounds.Inflate(4);
-
-        public bool Equals(ICustomDrawOperation? other)
-        {
-            return false;
         }
     }
 

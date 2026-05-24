@@ -1,9 +1,8 @@
-using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
-using Avalonia.Threading;
+using DynamicFileExplorer.Infrastructures;
 using DynamicFileExplorer.Models;
 using DynamicFileExplorer.UI.Helpers;
 using DynamicFileExplorer.ViewModels;
@@ -17,14 +16,20 @@ public class FileView : Grid
     public readonly Image iconImg;
     public readonly TextBlock label;
     public static readonly int PADDING = 10, ICON_SIZE = App.Styles.IconSize;
-    public static readonly SolidColorBrush SELECTED_COLOR = new(Colors.LightBlue),
-         TRANSPARENT = new(Colors.Transparent);
+    public static readonly SolidColorBrush TRANSPARENT = new(Colors.Transparent);
+    public static SolidColorBrush SelectedColor {get; private set;} = new(Color.Parse(Config.Theme.Current.FileSelected));
+    public static SolidColorBrush HoverColor {get; private set;} = new(Color.Parse(Config.Theme.Current.FileHover));
+
+    static FileView() {
+        Config.Theme.ThemeChanged += theme => (SelectedColor, HoverColor) =
+            (new SolidColorBrush(Color.Parse(theme.FileSelected)), new SolidColorBrush(Color.Parse(theme.FileHover)));
+    }
 
     public FileView(FileSystemItem file, bool uncontrolled = false)
     {
         controller = uncontrolled ? null! : new FileViewController(file, this);
 
-        name = file is File f? App.Config.DefaultIsExtensionNameIncluded? f.path.name:f.NameWithoutExtension():file.path.name;
+        name = file is File f ? App.Config.DefaultIsExtensionNameIncluded ? f.path.name:f.NameWithoutExtension() : file.path.name;
         Margin = new Thickness(PADDING);
         Background = new SolidColorBrush(Colors.Transparent); //Para que reciba eventos de mouse aunque no tenga fondo
 
@@ -53,14 +58,14 @@ public class FileView : Grid
         Children.Add(label);
     }
 
-    public static readonly ContextMenu<FileSystemItem> fileContextMenu = new ([
+    public static ContextMenu<FileSystemItem> MakeFileContextMenu(FileManager fm) => new ([
         new (name: "Open", itemAction: (i, file, _) => {
-            if (file != null) App.Current.fileManager.Open(file);
+            if (file != null) fm.Open(file);
         }),
-        new (name: "Delete", itemAction: (i, file, _) => App.Current.fileManager.Delete(file!)),
+        new (name: "Delete", itemAction: (i, file, _) => fm.Delete(file!)),
         new (name: "Rename", itemAction: (i, file, _) => {
             var input = TextInputPopUp.getInstance();    
-            input.Show((s)=> App.Current.fileManager.Rename(file!, s),_title: file?.path.name ?? "");
+            input.Show((s)=> fm.Rename(file!, s),_title: file?.path.name ?? "");
             App.cacheService.UpdateBgImage("path");
         }),
         new (name: "Set as background image", itemAction: (_, file, _) => {
