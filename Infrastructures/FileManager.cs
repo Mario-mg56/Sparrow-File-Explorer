@@ -13,29 +13,22 @@ using System.Diagnostics;
 
 public class FileManager
 {
-    private static FileManager? instance;
     public DirItem WorkingDir;
     public ObservableCollection<FileSystemItem> files = [];
     public List<FileSystemItem> SelectedItems {get; private set;} = [];
-    private bool isHideItemsHide = App.Config.DefaultIsHideItems;
+    private static bool ShowHiddenItems {get => App.Config.DefaultIsHideItems;}
 
     private HistoryManager historyManager = new();
     public event Action<DirItem>? WorkingDirChanged;
     private readonly SearchManager searchManager;
 
-    private FileManager(DirItem currentPath)
+    public FileManager(DirItem currentPath)
     {
         searchManager = new(this);
         WorkingDirChanged += (_) => LoadFiles();
         if (!ChangeDirectory(currentPath)) throw new ArgumentException("Invalid directory");
         WorkingDir = currentPath;
         
-    } 
-
-    public static FileManager Init(DirItem currentPath)
-    {
-        instance ??= new FileManager(currentPath);
-        return instance;
     }
 
     public void GoBackward() => historyManager.GoBackward();
@@ -87,9 +80,9 @@ public class FileManager
         return files;
     }
 
-    public bool IsNotHidden(string path)
+    public static bool IsNotHidden(string path)
     {
-        if (!isHideItemsHide)return true;
+        if (!ShowHiddenItems)return true;
         string? name = GetFileName(path);
 
         if (string.IsNullOrEmpty(name))
@@ -99,12 +92,11 @@ public class FileManager
             return false;
 
         var attr = System.IO.File.GetAttributes(path);
-        if ((attr & FileAttributes.Hidden) != 0)
-        return false;
 
+        if ((attr & FileAttributes.Hidden) != 0) return false;
         return true;
     }
-    public List<DirItem> ListAllDirectories(DirItem dir)
+    public static List<DirItem> ListAllDirectories(DirItem dir)
     {
          List<DirItem> files = [];
 
@@ -135,53 +127,26 @@ public class FileManager
     }
     public void Delete(FileSystemItem item)
     {
-        if(item is File f)
-        {
-             Delete(f);
-        } else if (item is DirItem d)
-        {
-             Delete(d);
+        if(item is File) System.IO.File.Delete(item.path.path);
+        else if (item is DirItem)  Directory.Delete(item.path.path,recursive:true);
             
-        }
         CastWorkingDirChanged();
-    }
-    public bool Delete(File item)
-    {
-        try
-        {
-            System.IO.File.Delete(item.path.path);
-        } catch (IOException )
-        {
-            return false;
-        }
-        CastWorkingDirChanged();
-        return true;
-    }
-    public bool Delete(DirItem item)
-    {
-        try
-        {
-            Directory.Delete(item.path.path,recursive:true);
-        } catch (IOException )
-        {
-            return false;
-        }
-        return true;
     }
 
-    public void Rename(FileSystemItem file,string newName)
+    public void Rename(FileSystemItem file, string newName)
     {
         System.IO.File.Move(file.path.path, Combine(file.path.PathWithoutName(),newName));
         CastWorkingDirChanged();
     }
 
 
-    public static void MoveItems(List<FileSystemItem> items, DirItem dest)
+    public void MoveItems(List<FileSystemItem> items, DirItem dest)
     {
         items.OfType<FileSystemItem>()
                 .Where(f=>!f.Equals(dest))
                 .ToList()
-                .ForEach(f => App.Current.fileManager.Move(f, dest.path));
+                .ForEach(f => Move(f, dest.path));
+        CastWorkingDirChanged();
     }
     public void Move(FileSystemItem origen,Models.Path dest){
         Console.WriteLine(origen.path.path+" in "+Combine(dest.path,origen.path.name));
@@ -191,13 +156,13 @@ public class FileManager
             
         } catch(FileNotFoundException )
         {
-            if(!Exists(Combine(dest.path,origen.path.name)))Console.WriteLine("No se pudo mover");
+            if(!Exists(Combine(dest.path,origen.path.name))) Console.WriteLine("No se pudo mover");
         }
         CastWorkingDirChanged();
     }
     
 
-    public DirItem? CreateDir(DirItem dir,string name)
+    public DirItem? CreateDir(DirItem dir, string name)
     {
         DirectoryInfo? result;
         try
@@ -215,7 +180,7 @@ public class FileManager
     {
         try
         {
-            System.IO.File.Create(Combine(dir.path.path,nameWithExtension));
+            System.IO.File.Create(Combine(dir.path.path,nameWithExtension)).Dispose();
             
         } catch (IOException)
         {
@@ -244,7 +209,8 @@ public class FileManager
     }
     public bool ChangeDirectoryByIndex(int index)
     {
-        return ChangeDirectory((DirItem)ListAll()[index]);
+        if (index < 0 || index >= files.Count) return false;
+        return ChangeDirectory((DirItem)files[index]);
     }
 
     public FileManager? Open(FileSystemItem item)
@@ -253,7 +219,7 @@ public class FileManager
         if(item is DirItem dir)
         {
             ChangeDirectory(dir);
-            return instance;
+            return this;
         } else if (item is File file)
         {
             Process.Start(new ProcessStartInfo
@@ -274,7 +240,7 @@ public class FileManager
 
         ChangeDirectory(new DirItem(parentPath));
 
-        return instance;
+        return this;
     }
     
     public void CastWorkingDirChanged()
@@ -286,9 +252,8 @@ public class FileManager
    
     public void ChangeHideItems(bool? state)
     {
-        if (!state.HasValue)
-            return;
-        isHideItemsHide = state.Value;
+        if (!state.HasValue)  return;
+        App.Config.DefaultIsHideItems = state.Value;
         CastWorkingDirChanged();
     }
 

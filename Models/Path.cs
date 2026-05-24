@@ -1,11 +1,13 @@
 namespace DynamicFileExplorer.Models;
 
 using System;
+using System.Linq;
 using static System.IO.Path;
 
 public readonly struct Path
 {
     public readonly string path, name;
+    public static readonly Path BasePath = new(AppContext.BaseDirectory.Last() == DirectorySeparatorChar ? AppContext.BaseDirectory[..^1] : AppContext.BaseDirectory);
 
     public Path(string path)
     {
@@ -13,6 +15,7 @@ public readonly struct Path
             throw new ArgumentException($"Invalid path: {path}");
         this.path = path;
         name = GetFileName(path);
+        // Console.WriteLine("p: " + path + " : " + name);
     }
     public string PathWithoutName()
     {

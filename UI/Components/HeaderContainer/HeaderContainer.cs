@@ -7,12 +7,11 @@ public partial class HeaderContainer : UserControl
 {
     readonly Button backButton, forwardButton, backwardButton;
     readonly CheckBox hideItemsCheckBox;
-    readonly FileManager fileManager;
+    private static FileManager? FM {get => App.Current.FocusedTab?.fileManager; }
 
     public HeaderContainer()
     {
         InitializeComponent();
-        fileManager = App.Current.fileManager;
         backButton = this.FindControl<Button>("BackButton")
             ?? throw new Exception("No se encontró BackButton");
 
@@ -23,10 +22,10 @@ public partial class HeaderContainer : UserControl
         hideItemsCheckBox = this.FindControl<CheckBox>("UnHideItems")
             ?? throw new Exception("No se encontró ForwardButton");
         hideItemsCheckBox.IsChecked = App.Config.DefaultIsHideItems;
-        hideItemsCheckBox.IsCheckedChanged += (_,_) => fileManager.ChangeHideItems(hideItemsCheckBox.IsChecked);
-        forwardButton.Click += (_, _) => fileManager.GoForward();
-        backwardButton.Click += (_, _) => fileManager.GoBackward();
-        backButton.Click += (_, _) => fileManager.GoBack();
+        hideItemsCheckBox.IsCheckedChanged += (_,_) => FM?.ChangeHideItems(hideItemsCheckBox.IsChecked);
+        forwardButton.Click += (_, _) => FM?.GoForward();
+        backwardButton.Click += (_, _) => FM?.GoBackward();
+        backButton.Click += (_, _) => FM?.GoBack();
 
     }
 

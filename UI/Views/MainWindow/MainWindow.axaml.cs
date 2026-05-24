@@ -1,7 +1,6 @@
 namespace DynamicFileExplorer.UI.Views.MainWindow;
 
 using Avalonia.Controls;
-using DynamicFileExplorer.UI.Components;
 using DynamicFileExplorer.ViewModels;
 
 public partial class MainWindow : Window
@@ -14,9 +13,6 @@ public partial class MainWindow : Window
         InitializeComponent();
         overlay = this.FindControl<Canvas>("Overlay")!;
     }
-
-
-       
 
 
 }

@@ -23,7 +23,7 @@ public FolderNodeViewModel? SelectedItem
 
         if (value != null)
         {
-            _ = App.Current.fileManager.ChangeDirectory(value.GetNode());
+            _ = App.Current.FocusedTab?.fileManager?.ChangeDirectory(value.GetNode());
         }
     }
 }

@@ -1,0 +1,25 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:components="clr-namespace:DynamicFileExplorer.UI.Components"
+    xmlns:config="clr-namespace:DynamicFileExplorer.UI.Config"
+    x:Class="DynamicFileExplorer.UI.Components.WindowHeader"
+>
+    <components:WindowHeaderLayout>
+        <components:SVGIcon
+            Name="Close"
+            IconPath="{x:Static config:Icons.CLOSE_SVG_PATH}"
+            HoverBackground="{DynamicResource TitleBarCloseIconHover}"
+        />
+        <components:SVGIcon
+            Name="Maximize"
+            IconPath="{x:Static config:Icons.MAXIMIZE_SVG_PATH}"
+            HoverBackground="{DynamicResource TitleBarIconHover}"
+        />
+        <components:SVGIcon
+            Name="Minimize"
+            IconPath="{x:Static config:Icons.MINIMIZE_SVG_PATH}"
+            HoverBackground="{DynamicResource TitleBarIconHover}"
+        />
+    </components:WindowHeaderLayout>
+</UserControl>
