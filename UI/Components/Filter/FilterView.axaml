@@ -1,0 +1,84 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:blur="using:DynamicFileExplorer.UI.Helpers"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:DynamicFileExplorer.ViewModels"
+             xmlns:components="clr-namespace:DynamicFileExplorer.UI.Components"
+             x:Class="DynamicFileExplorer.UI.Components.FilterView"
+             x:DataType="vm:FilterViewModel"
+             Name="FlexLayout"
+             Background="rgba(255,255,255,0.2)"
+             CornerRadius="10">
+
+    <Grid>
+        <blur:BackdropBlurControl x:Name="BlurBackground"/>  
+
+        <StackPanel>
+            <Grid ColumnDefinitions="Auto,2*,Auto">
+
+                <!-- Columna izquierda -->
+                <StackPanel Grid.Column="0" Orientation="Vertical">
+                    
+                    <TextBlock TextAlignment="Center"
+                               FontSize="16"
+                               FontWeight="Bold">Sort</TextBlock>
+                    <Grid RowDefinitions="Auto,Auto,Auto,Auto">
+                        <StackPanel Grid.Row="{Binding gridNameIndex}" Orientation="Horizontal">
+                        <TextBlock VerticalAlignment="Center">Nombre archivo</TextBlock>
+                        <Button Content="{Binding OrderName}"
+                                Command="{Binding ToggleOrderCommand}"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="{Binding gridSizeIndex}" Orientation="Horizontal">
+                            <TextBlock VerticalAlignment="Center">Tamaño archivo</TextBlock>
+                            <Button Content="{Binding SizeName}"
+                                    Command="{Binding ToggleSizeCommand}"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="{Binding gridCreationIndex}" Orientation="Horizontal">
+                            <TextBlock VerticalAlignment="Center">Fecha Creacion</TextBlock>
+                            <Button Content="{Binding CreationName}"
+                                    Command="{Binding ToggleCreationCommand}"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="{Binding gridModifyIndex}" Orientation="Horizontal">
+                            <TextBlock VerticalAlignment="Center">Fecha Tamaño</TextBlock>
+                            <Button Content="{Binding ModifyName}"
+                                    Command="{Binding ToggleModifyCommand}"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+                    
+                </StackPanel>
+
+                <!-- Separador -->
+                <Border Background="White" Grid.Column="1"/>
+
+                <!-- Columna derecha -->
+                <StackPanel Grid.Column="2" Orientation="Vertical">
+                    <TextBlock TextAlignment="Center"
+                               FontSize="16"
+                               FontWeight="Bold">Filter</TextBlock>
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock VerticalAlignment="Center">Carpeta</TextBlock>
+                        <CheckBox VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock VerticalAlignment="Center">Archivo oculto</TextBlock>
+                        <CheckBox VerticalAlignment="Center"/>
+                    </StackPanel>
+                </StackPanel>
+
+            </Grid>
+        </StackPanel>
+    </Grid>
+
+</UserControl>
