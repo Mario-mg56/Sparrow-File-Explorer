@@ -31,7 +31,6 @@ public class ContextMenuItem<T> (SolidColorBrush? icon = null, string? name = nu
     public T? AttachedItem { get; internal set; }
     public override bool Render()
     {
-        System.Console.WriteLine(AttachedItem+"llegue");
         if(whenAppears==null)return true;
         if(AttachedItem==null)return true;
         return whenAppears.Invoke(AttachedItem);

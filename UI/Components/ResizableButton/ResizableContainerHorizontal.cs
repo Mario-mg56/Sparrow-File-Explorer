@@ -46,7 +46,7 @@ public class ResizableContainerHorizontal:ResizableContainer
     }
     public override void SetPrevThingSize(GridLength newSize)
     {
-        Console.WriteLine(newSize+"   "+topDefinition.Width);
+        // Console.WriteLine(newSize+"   "+topDefinition.Width);
         topDefinition.Width = newSize;
 
     }

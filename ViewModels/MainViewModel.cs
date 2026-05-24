@@ -4,6 +4,8 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using DynamicFileExplorer.UI.Components;
+using DynamicFileExplorer.UI.Config;
 namespace DynamicFileExplorer.ViewModels;
 public class MainViewModel : INotifyPropertyChanged
 {
@@ -43,14 +45,16 @@ public class MainViewModel : INotifyPropertyChanged
             changingInspector?.Invoke(value);
             field = value;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(inspectorVisibility)));
-            inspectorWidth = value? lastInspectorWidth:new GridLength(0,GridUnitType.Star);
+            inspectorWidth = value ? lastInspectorWidth :new GridLength(0, GridUnitType.Pixel);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(inspectorWidth)));
         }
-        get;} = false;
+        get;
+    } = false;
 
-    public GridLength inspectorWidth{get;set;} = new GridLength(0,GridUnitType.Star);
-    public GridLength lastInspectorWidth{get;set;} = new GridLength(2,GridUnitType.Star);
+    public GridLength inspectorWidth{get;set;} = new GridLength(0, GridUnitType.Star);
+    public GridLength lastInspectorWidth{get;set;} = new GridLength(1,GridUnitType.Star);
 
     public GridLength resizableWidth{get;} = new GridLength(3,GridUnitType.Pixel);
     public IBrush resizableColor{get;} = Brushes.Black;
+    
 }

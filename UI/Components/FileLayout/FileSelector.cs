@@ -3,6 +3,7 @@ using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Media;
 using DynamicFileExplorer.Util;
 
 namespace DynamicFileExplorer.UI.Components;
@@ -21,13 +22,12 @@ public class FileSelector : Border
     }
     private readonly DragController dragController;
     private Point startPosFSBuffer;
-    public static readonly float ALPHA = 0.5f;
     public FileSelector(Control attachedControl)
     {
         this.attachedControl = attachedControl;
         App.Current.UIManager.AddOnMainWindowLoadedListener(mw => mw.Overlay.Children.Add(this));
-        Background = FileView.SELECTED_COLOR;
-        Opacity = ALPHA;
+        Background = new SolidColorBrush(Color.Parse(Config.Theme.Current.FileSelector));
+        Config.Theme.ThemeChanged += theme => Background = new SolidColorBrush(Color.Parse(theme.FileSelector));
 
         dragController = new DragController(attachedControl);
             

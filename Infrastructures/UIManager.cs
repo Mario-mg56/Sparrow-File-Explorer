@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
@@ -45,7 +44,7 @@ class UIManager
     public void LoadFileInfo(List<FileSystemItem> files)
     {
         MainViewModel?.inspectorVisibility = files != null;
-        MainViewModel?.inspectorVisibility = files.Count!=0 ;
+        MainViewModel?.inspectorVisibility = (files?.Count ?? 0) != 0 ;
         InspectorViewModel.instance?.files = files;
     }
 
@@ -56,7 +55,7 @@ class UIManager
     public void LoadMainWindow(MainWindow mainWindow)
     {
         MainWindow = mainWindow;
-        MainViewModel = (MainViewModel)MainWindow.DataContext;
+        MainViewModel = (MainViewModel)MainWindow.DataContext!;
         OnMainWindowLoaded?.Invoke(mainWindow);
     }
 

@@ -24,8 +24,8 @@ public class File : FileSystemItem
     }
     public bool CheckExtension(HashSet<string> expectedExtensions)
     {
-        Console.WriteLine(expectedExtensions.Contains(extension));
-        Console.WriteLine(extension);
+        // Console.WriteLine(expectedExtensions.Contains(extension));
+        // Console.WriteLine(extension);
         return expectedExtensions.Contains(extension);
     }
 

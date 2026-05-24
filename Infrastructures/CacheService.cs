@@ -24,7 +24,11 @@ public class CacheService : JsonStorageService
 
     public CacheService()
     {
-        App.Current.fileManager.WorkingDirChanged+= UpdateLastDir;
+        FileManager? lastTab = null;
+        App.Current.tabManager.TabFocused += tab => {
+            lastTab?.WorkingDirChanged -= UpdateLastDir;
+            tab?.fileManager?.WorkingDirChanged += UpdateLastDir;
+        };
     }
     public CacheService Load()
     {
@@ -46,9 +50,9 @@ public class CacheService : JsonStorageService
         Save();
     }
 
-    public void ImportLastDir()
+    public DirItem ImportLastDir()
     {
-        App.Current.fileManager.ChangeDirectory(new DirItem(new Models.Path(Cache.LastDir)));
+        return new DirItem(new Models.Path(Cache.LastDir));
     }
 
     public void Save()
