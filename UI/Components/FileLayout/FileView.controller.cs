@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
-using DynamicFileExplorer.Helpers;
 using DynamicFileExplorer.Models;
 using DynamicFileExplorer.Util;
 
@@ -35,7 +35,7 @@ public class FileViewController
         dragController.Drag += OnDrag;
         dragController.StopDragging += OnStopDrag;
         
-        // FilesDropped += file is File ? OnFilesDroppedFile : OnFilesDroppedDir;
+        FilesDropped += file is File ? OnFilesDroppedFile : OnFilesDroppedDir;
     }
 
     private void OnDrag(Control _, object? sender, PointerEventArgs e)
@@ -43,19 +43,22 @@ public class FileViewController
         var pos = e.GetPosition(sender as Control);
         shadowFile.SetPosition((int) pos.X - FileView.ICON_SIZE/2, (int) pos.Y - FileView.ICON_SIZE/2);
         shadowFile.IsVisible = true;
-        
     }
+
     private void OnStopDrag(Control _, object? sender, PointerReleasedEventArgs e)
     {
         shadowFile.IsVisible = false;
         var flc = App.Current.UIManager.FilesLayoutController!;
+        
         if (flc.PointingFile == null || flc.PointingFile.controller.file == file || flc.selectedFiles.Count == 0) return;
-        // flc.PointingFile.controller.DropFiles(App.Current.fileManager.SelectedItems);
+        
+        var itemsToDrop = flc.selectedFiles.Select(fv => fv.controller.file).ToList();
+        flc.PointingFile.controller.DropFiles(itemsToDrop);
     }
 
     public void DropFiles(List<FileSystemItem> droppedFiles)
     {
-        Console.WriteLine(droppedFiles  + " dropped in " + view.name);
+        Console.WriteLine(droppedFiles.Count + " items dropped in " + view.name);
         FilesDropped?.Invoke(droppedFiles);
     }
 
@@ -64,26 +67,28 @@ public class FileViewController
         view.Background = selected ? FileView.SelectedColor : TRANSPARENT;
     }
 
-    // private void OnFilesDroppedDir(List<FileSystemItem> items)
-    // {
-    //     if (file is DirItem folder)
-    //     {
-    //         FileManager.MoveItems(items,folder);
-    //     }
-    // }
-    // private void OnFilesDroppedFile(List<FileSystemItem> items)
-    // {
-    //     if (file is DirItem folder){
-    //         var input = TextInputPopUp.getInstance();   
-    //         input.Show((s)=> {
-    //         DirItem? newDir = App.Current.fileManager.CreateDir(App.Current.fileManager.WorkingDir, s);
-    //             if(newDir==null)return;
-    //             FileManager.MoveItems(items,newDir);
+    private void OnFilesDroppedDir(List<FileSystemItem> items)
+    {
+        if (file is DirItem folder)
+        {
+            App.Current.FocusedTab?.fileManager?.MoveItems(items, folder);
+        }
+    }
 
-            
-    //         },_title:"Nueva carpeta");   
-            
-    //     }
+    private void OnFilesDroppedFile(List<FileSystemItem> items)
+    {
+        if (file is File)
+        {
+            var input = TextInputPopUp.getInstance();   
+            input.Show((s, _) => {
+                var fm = App.Current.FocusedTab?.fileManager;
+                if (fm == null) return;
 
-    // }
+                DirItem? newDir = fm.CreateDir(fm.WorkingDir, s);
+                if (newDir == null) return;
+                
+                fm.MoveItems(items, newDir);
+            }, _title:"Agrupar en Nueva Carpeta");   
+        }
+    }
 }

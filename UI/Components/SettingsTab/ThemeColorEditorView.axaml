@@ -11,7 +11,7 @@
                     <TextBox Name="ThemeNameTextBox" Watermark="Enter unique theme name..."/>
                 </StackPanel>
                 <Button Name="ActivateThemeBtn" Grid.Column="1" Content="Activate Theme" 
-                        VerticalAlignment="Bottom" Padding="15,8" Background="{DynamicResource Primary}" Foreground="White"/>
+                        VerticalAlignment="Bottom" Padding="15,8" Background="{DynamicResource SecondaryTransparent}" Foreground="{DynamicResource Foreground}"/>
             </Grid>
             
             <Border Height="1" Background="#20000000" Margin="0,5,0,10"/>

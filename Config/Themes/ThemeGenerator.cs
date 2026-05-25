@@ -39,9 +39,13 @@ public static class ThemeGenerator
             nameof(CustomTheme.ScrollTrackHover) => TRANSPARENT,
             nameof(CustomTheme.ScrollTrackPressed) => TRANSPARENT,
 
+            nameof(CustomTheme.NavBackground) => Glassify(Resolve(theme, nameof(CustomTheme.Secondary)), 0.5f),
+            nameof(CustomTheme.SecondaryTransparent) => Glassify(Resolve(theme, nameof(CustomTheme.Secondary)), 0.1f),
+
             //Fallback
             nameof(CustomTheme.Primary) => "#1994aa",
             nameof(CustomTheme.Destructive) => "#ff0000",
+            nameof(CustomTheme.Secondary) => "#000000",
             nameof(CustomTheme.Foreground) => "#ffffff",
             nameof(CustomTheme.IconBackground) => TRANSPARENT,
 

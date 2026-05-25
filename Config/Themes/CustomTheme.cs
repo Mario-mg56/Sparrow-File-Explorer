@@ -5,6 +5,7 @@ public class CustomTheme
     public string Name { get; set; } = "default_theme";
 
     public string Primary { get; set; } = "#1994aa";
+    public string Secondary { get; set; } = "#000000";
     public string Destructive { get; set; } = "#ff0000";
     public string Foreground { get; set; } = "#ffffff";
     public string IconBackground { get; set; } = "#00000000";
@@ -33,4 +34,7 @@ public class CustomTheme
     public string? ScrollTrack { get; set; }
     public string? ScrollTrackHover { get; set; }
     public string? ScrollTrackPressed { get; set; }
+
+    public string? SecondaryTransparent { get; set; }
+    public string? NavBackground { get; set; }
 }

@@ -17,8 +17,6 @@ public class PersistenceService : JsonStorageService
         KeyBindingsPath = Combine(PersistencePath, "bindings.json")
     ;
 
-    public static Action<Persistence> CacheLoaded;
-
     static PersistenceService()
     {
         EnsureDirectories();

@@ -21,12 +21,12 @@ public class FileView : Grid
     public static readonly int PADDING = 10;
     public static int ICON_SIZE => App.Current.Cache?.Style?.IconSize ?? 100;
     public static readonly SolidColorBrush TRANSPARENT = new(Colors.Transparent);
-    public static SolidColorBrush SelectedColor {get; private set;} = new(Color.Parse(Persistence.Theme.Current.FileSelected));
-    public static SolidColorBrush HoverColor {get; private set;} = new(Color.Parse(Persistence.Theme.Current.FileHover));
+    public static SolidColorBrush SelectedColor {get; private set;} = new(Color.Parse(Persistence.Theme.Current.FileSelected!));
+    public static SolidColorBrush HoverColor {get; private set;} = new(Color.Parse(Persistence.Theme.Current.FileHover!));
 
     static FileView() {
         Persistence.Theme.ThemeChanged += theme => (SelectedColor, HoverColor) =
-            (new SolidColorBrush(Color.Parse(theme.FileSelected)), new SolidColorBrush(Color.Parse(theme.FileHover)));
+            (new SolidColorBrush(Color.Parse(theme.FileSelected!)), new SolidColorBrush(Color.Parse(theme.FileHover!)));
     }
 
     public FileView(FileSystemItem file, bool uncontrolled = false)

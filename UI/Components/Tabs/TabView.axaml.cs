@@ -28,11 +28,11 @@ public partial class TabView : UserControl
     }
 
     public event Action<TabView>? ClickedTab, ClosedTab;
-    public static SolidColorBrush FocusColor {get; private set;} = new(Color.Parse(Persistence.Theme.Current.TabFocus));
+    public static SolidColorBrush FocusColor {get; private set;} = new(Color.Parse(Persistence.Theme.Current.TabFocus!));
 
     static TabView() {
         Persistence.Theme.ThemeChanged += theme => FocusColor =
-            new SolidColorBrush(Color.Parse(theme.TabFocus));
+            new SolidColorBrush(Color.Parse(theme.TabFocus!));
     }
 
     public TabView()
@@ -59,6 +59,6 @@ public partial class TabView : UserControl
     public void FocusTab(bool focus)
     {
         Background = focus ? FocusColor
-         : new SolidColorBrush(Color.Parse(Persistence.Theme.Current.TabBackground));
+         : new SolidColorBrush(Color.Parse(Persistence.Theme.Current.TabBackground!));
     }
 }

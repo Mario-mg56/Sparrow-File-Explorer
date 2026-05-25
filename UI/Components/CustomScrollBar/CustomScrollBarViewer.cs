@@ -57,12 +57,12 @@ public class CustomScrollBarViewer : ScrollViewer
 
     private void ApplyScrollTheme(CustomTheme theme)
     {
-        RestColor = new SolidColorBrush(Color.Parse(theme.ScrollThumb));
-        HoverColor = new SolidColorBrush(Color.Parse(theme.ScrollThumbHover));
-        PressedColor = new SolidColorBrush(Color.Parse(theme.ScrollThumbPressed));
-        TrackRestColor = new SolidColorBrush(Color.Parse(theme.ScrollTrack));
-        TrackHoverColor = new SolidColorBrush(Color.Parse(theme.ScrollTrackHover));
-        TrackPressedColor = new SolidColorBrush(Color.Parse(theme.ScrollTrackPressed));
+        RestColor = new SolidColorBrush(Color.Parse(theme.ScrollThumb!));
+        HoverColor = new SolidColorBrush(Color.Parse(theme.ScrollThumbHover!));
+        PressedColor = new SolidColorBrush(Color.Parse(theme.ScrollThumbPressed!));
+        TrackRestColor = new SolidColorBrush(Color.Parse(theme.ScrollTrack!));
+        TrackHoverColor = new SolidColorBrush(Color.Parse(theme.ScrollTrackHover!));
+        TrackPressedColor = new SolidColorBrush(Color.Parse(theme.ScrollTrackPressed!));
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)

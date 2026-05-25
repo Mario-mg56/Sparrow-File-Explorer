@@ -10,12 +10,12 @@
 
             <Style Selector="Border.TransparentBorder">
                 <Setter Property="Background" Value="Transparent"/>
-                <Setter Property="BorderBrush" Value="Black"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Secondary}"/>
                 <Setter Property="BorderThickness" Value="2"/>
                 <Setter Property="CornerRadius" Value="15"/>
             </Style>
             <Style Selector="Border.BlackBackground">
-                <Setter Property="Background" Value="#80000000"/>
+                <Setter Property="Background" Value="{DynamicResource NavBackground}"/>
                 <Setter Property="CornerRadius" Value="15"/>
             </Style>
 

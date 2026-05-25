@@ -26,8 +26,8 @@ public class FileSelector : Border
     {
         this.attachedControl = attachedControl;
         App.Current.UIManager.AddOnMainWindowLoadedListener(mw => mw.Overlay.Children.Add(this));
-        Background = new SolidColorBrush(Color.Parse(Persistence.Theme.Current.FileSelector));
-        Persistence.Theme.ThemeChanged += theme => Background = new SolidColorBrush(Color.Parse(theme.FileSelector));
+        Background = new SolidColorBrush(Color.Parse(Persistence.Theme.Current.FileSelector!));
+        Persistence.Theme.ThemeChanged += theme => Background = new SolidColorBrush(Color.Parse(theme.FileSelector!));
 
         dragController = new DragController(attachedControl);
             
