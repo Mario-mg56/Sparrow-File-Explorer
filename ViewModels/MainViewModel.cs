@@ -25,11 +25,23 @@ public class MainViewModel : INotifyPropertyChanged
 
     public static Bitmap LoadImage(string? image)
     {
-        _ = image ?? throw new ArgumentNullException(nameof(image));
+        if (string.IsNullOrWhiteSpace(image))
+        throw new ArgumentNullException(nameof(image));
+
+        if (System.IO.File.Exists(image))
+        {
+            return new Bitmap(image);
+        }
 
         var uri = new Uri(image);
-        var assets = AssetLoader.Open(uri);
-        return new Bitmap(assets);      
+
+        if (uri.Scheme == "avares")
+        {
+            var assets = AssetLoader.Open(uri);
+            return new Bitmap(assets);
+        }
+
+        throw new NotSupportedException($"Formato de imagen no soportado: {image}");
     }
 
 

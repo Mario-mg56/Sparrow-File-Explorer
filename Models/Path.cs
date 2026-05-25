@@ -29,4 +29,5 @@ public readonly struct Path
         string normalizedPath = GetFullPath(path);
         return normalizedPath.Equals(GetPathRoot(normalizedPath));
     }
+
 }

@@ -42,7 +42,10 @@ public class SettingsService : JsonStorageService
             CurrentStyle = AllStyles.Values.FirstOrDefault() ?? new Styles();
         }
     }
-
+    public void SaveConfig()
+    {
+        Save(ConfigPath, Config);
+    }
 
     // public void SaveStyles()
     // {
