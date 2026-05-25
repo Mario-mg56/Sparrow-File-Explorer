@@ -11,10 +11,14 @@ public class IconHelper
     public static void SetIcon(FileSystemItem path, string icon, Boolean isForPath)
     {
         if (isForPath)
+        {
             SetIconForPath(path, icon);
+        }
         else
+        {
             SetIconForExtension(path, icon);
-            
+        }
+        
         PersistenceService.Save(App.Current.Cache);
     }
     
@@ -37,17 +41,32 @@ public class IconHelper
 
         foreach (var icon in icons)
         {
-            if (icon.Uri.Contains(fullPath)) icon.Uri.Remove(fullPath);
-            if (icon.Image == iconPath) targetIcon = icon;
+            if (icon.Uri.Contains(fullPath))
+            {
+                icon.Uri.Remove(fullPath);
+            }
+
+            if (icon.Image == iconPath)
+            {
+                targetIcon = icon;
+            }
         }
 
         if (targetIcon != null)
         {
-            if (!targetIcon.Uri.Contains(fullPath)) targetIcon.Uri.Add(fullPath);
+            if (!targetIcon.Uri.Contains(fullPath))
+            {
+                targetIcon.Uri.Add(fullPath);
+            }
         }
         else
         {
-            icons.Add(new IconData { Image = iconPath, Uri = [fullPath], Formatos = [] });
+            icons.Add(new IconData 
+            { 
+                Image = iconPath, 
+                Uri = new List<string> { fullPath }, 
+                Formatos = new List<string>() 
+            });
         }
     }
     
@@ -62,12 +81,23 @@ public class IconHelper
         foreach (var icon in icons)
         {
             icon.Formatos.Remove(ext);
-            if (icon.Image == iconPath) target = icon;
+            if (icon.Image == iconPath)
+            {
+                target = icon;
+            }
         }
 
         if (target == null)
-            icons.Add(new IconData { Image = iconPath, Formatos = [ext] });
+        {
+            icons.Add(new IconData 
+            { 
+                Image = iconPath, 
+                Formatos = new List<string> { ext } 
+            });
+        }
         else if (!target.Formatos.Contains(ext))
+        {
             target.Formatos.Add(ext);
+        }
     }
 }

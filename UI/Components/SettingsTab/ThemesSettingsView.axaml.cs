@@ -8,7 +8,6 @@ namespace DynamicFileExplorer.UI.Components;
 
 public partial class ThemesSettingsView : UserControl
 {
-    // Guardamos la referencia real al tema que el usuario tiene abierto
     private CustomTheme? _currentEditingTheme;
 
     public ThemesSettingsView()
@@ -29,7 +28,7 @@ public partial class ThemesSettingsView : UserControl
                 themesList.Add(newTheme);
                 App.Current.Cache.Themes = themesList.ToArray();
 
-                _currentEditingTheme = newTheme; // Marcamos el nuevo como editado
+                _currentEditingTheme = newTheme; 
                 RefreshThemesList();
             };
         }
@@ -37,19 +36,13 @@ public partial class ThemesSettingsView : UserControl
 
     public void RefreshThemesList()
     {
-        // 1. DESENGANCHAR: Evita que el ListBox intente cerrar el editor mientras reconstruimos la lista
         ThemesList.SelectionChanged -= OnThemeSelected;
 
-        // 2. Reconstruir la lista de strings
         ThemesList.ItemsSource = App.Current.Cache.Themes.Select(t => t.Name).ToList();
 
-        // 3. Volver a seleccionar el tema usando su nombre (incluso si acaba de cambiar por una pulsación de tecla)
-        if (_currentEditingTheme != null)
-        {
+        if (_currentEditingTheme != null) 
             ThemesList.SelectedItem = _currentEditingTheme.Name;
-        }
-
-        // 4. REENGANCHAR: Volvemos a la normalidad
+        
         ThemesList.SelectionChanged += OnThemeSelected;
     }
 

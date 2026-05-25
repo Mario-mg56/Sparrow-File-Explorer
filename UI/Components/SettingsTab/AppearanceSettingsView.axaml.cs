@@ -10,7 +10,6 @@ public partial class AppearanceSettingsView : UserControl
 {
     private bool _isLoaded = false;
     
-    // Lista de fuentes seguras/populares por defecto
     private readonly List<string> _availableFonts = [
         "Inter", "Arial", "Segoe UI", "Consolas", "JetBrains Mono Nerd Font"
     ];
@@ -20,7 +19,6 @@ public partial class AppearanceSettingsView : UserControl
         InitializeComponent();
         LoadFromCache();
 
-        // Conectamos los eventos tras cargar los datos
         IconSizeSlider.PropertyChanged += OnIconSizePropertyChanged;
         FontSizeSlider.PropertyChanged += OnFontSizePropertyChanged;
         FontComboBox.SelectionChanged += OnFontSelectionChanged;
@@ -32,14 +30,11 @@ public partial class AppearanceSettingsView : UserControl
     {
         var style = App.Current.Cache.Style;
         
-        // 1. Tamaño del Icono
         IconSizeSlider.Value = style.IconSize;
         
-        // 2. Tamaño de la Fuente
         if (style.FontSize == 0) style.FontSize = 14; 
         FontSizeSlider.Value = style.FontSize;
 
-        // 3. Tipografía (Si la que tiene guardada no está en la lista base, la añadimos)
         if (!_availableFonts.Contains(style.FontStyle ?? "Inter"))
         {
             _availableFonts.Add(style.FontStyle!);
@@ -56,7 +51,6 @@ public partial class AppearanceSettingsView : UserControl
             App.Current.Cache.Style.IconSize = (int)newValue;
             SaveCache();
             
-            // Forzamos la recarga de los iconos de la carpeta actual en tiempo real
             App.Current.FocusedTab?.fileManager?.CastWorkingDirChanged();
         }
     }
@@ -68,7 +62,6 @@ public partial class AppearanceSettingsView : UserControl
         {
             App.Current.Cache.Style.FontSize = newValue;
             
-            // Aplicamos a toda la UI en tiempo real
             App.Current.Resources["AppFontSize"] = newValue;
             SaveCache();
         }
@@ -81,7 +74,6 @@ public partial class AppearanceSettingsView : UserControl
         {
             App.Current.Cache.Style.FontStyle = selectedFont;
             
-            // Aplicamos a toda la UI en tiempo real
             App.Current.Resources["AppFont"] = new FontFamily(selectedFont);
             SaveCache();
         }

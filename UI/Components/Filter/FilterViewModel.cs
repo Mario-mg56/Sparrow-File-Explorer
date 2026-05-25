@@ -12,12 +12,10 @@ public class FilterViewModel : INotifyPropertyChanged
     private bool _isAscCreation = true;
     private bool _isAscModify = true;
 
-
-    public int gridNameIndex{get;set{field=value;OnPropertyChanged();}} = 0;
-    public int gridSizeIndex{get;set{field=value;OnPropertyChanged();}} = 1;
-    public int gridCreationIndex{get;set{field=value;OnPropertyChanged();}} = 2;
-    public int gridModifyIndex{get;set{field=value;OnPropertyChanged();}}= 3;
-
+    public int gridNameIndex { get; set; } = 0;
+    public int gridSizeIndex { get; set; } = 1;
+    public int gridCreationIndex { get; set; } = 2;
+    public int gridModifyIndex { get; set; } = 3;
 
     public bool IsAbc
     {

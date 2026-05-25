@@ -9,8 +9,8 @@ public class MainViewModel : INotifyPropertyChanged
 {
     public IImage? BackgroundImage
     {
-        // get => LoadImage(Styles.BackgroundImage);
-        get => new Bitmap(App.Current.Cache.Cache.BgImage);
+        get => string.IsNullOrWhiteSpace(App.Current.Cache.Cache.BgImage) ? null 
+            : LoadImage(App.Current.Cache.Cache.BgImage);
     }
 
     public double BackgroundImageOpacity{get;} = 0.6;

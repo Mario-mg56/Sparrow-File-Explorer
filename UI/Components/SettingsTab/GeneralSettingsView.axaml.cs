@@ -12,7 +12,6 @@ public partial class GeneralSettingsView : UserControl
         LoadFromCache();
     }
 
-    // 1. Cargamos los datos del formulario a partir de la caché global
     private void LoadFromCache()
     {
         var config = App.Current.Cache.Config;
@@ -21,12 +20,10 @@ public partial class GeneralSettingsView : UserControl
         ExtensionsCheckBox.IsChecked = config.DefaultIsExtensionNameIncluded;
     }
 
-    // 2. Cuando el usuario hace click, actualizamos la caché y guardamos
     private void OnHiddenFilesCheckedChanged(object? sender, RoutedEventArgs e)
     {
         App.Current.Cache.Config.DefaultIsHideItems = HiddenFilesCheckBox.IsChecked ?? true;
         
-        // Si el usuario cambia esto, le decimos al FileManager actual que recargue los archivos
         App.Current.FocusedTab?.fileManager?.ChangeHideItems(HiddenFilesCheckBox.IsChecked);
         
         SaveCache();
@@ -36,7 +33,6 @@ public partial class GeneralSettingsView : UserControl
     {
         App.Current.Cache.Config.DefaultIsExtensionNameIncluded = ExtensionsCheckBox.IsChecked ?? false;
         
-        // Aquí podrías forzar un Reload de la UI para que se redibujen los nombres
         App.Current.FocusedTab?.fileManager?.CastWorkingDirChanged();
         
         SaveCache();

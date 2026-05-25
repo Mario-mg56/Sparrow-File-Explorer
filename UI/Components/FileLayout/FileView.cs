@@ -4,6 +4,7 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using DynamicFileExplorer.Helpers;
+using DynamicFileExplorer.Infrastructures;
 using DynamicFileExplorer.Models;
 using DynamicFileExplorer.UI.Helpers;
 using DynamicFileExplorer.ViewModels;
@@ -12,6 +13,7 @@ namespace DynamicFileExplorer.UI.Components;
 
 public class FileView : Grid
 {
+    public static bool compact = false;
     public readonly FileViewController controller;
     public string name;
     public readonly Image iconImg;
@@ -31,13 +33,9 @@ public class FileView : Grid
     {
         controller = uncontrolled ? null! : new FileViewController(file, this);
 
-        name = file is File f ? App.Current.Cache.Config.DefaultIsExtensionNameIncluded ? f.path.name:f.NameWithoutExtension() : file.path.name;
+        name = file is File f ? App.Current.Cache.Config.DefaultIsExtensionNameIncluded ? f.path.name : f.NameWithoutExtension() : file.path.name;
         Margin = new Thickness(PADDING);
-        Background = new SolidColorBrush(Colors.Transparent); //Para que reciba eventos de mouse aunque no tenga fondo
-
-        RowDefinitions.Add(new RowDefinition(new GridLength(3, GridUnitType.Star)));
-        RowDefinitions.Add(new RowDefinition(new GridLength(1, GridUnitType.Star)));
-        ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
+        Background = new SolidColorBrush(Colors.Transparent);
 
         Bitmap source = null!;
         
@@ -65,22 +63,49 @@ public class FileView : Grid
             }
             source ??= MainViewModel.LoadImage(App.Current.Cache.Style.DirImageIcon);
         }
-        
-        iconImg = new Image {
-            Source = source,
-            Stretch = Stretch.Uniform
-        };
 
-        label = new TextBlock {
-            Text = name,
-            VerticalAlignment = VerticalAlignment.Center,
-            HorizontalAlignment = HorizontalAlignment.Center
-        };
+        if (compact)
+        {
+            Height = 24;
+            ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
+            ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
 
-        SetRow(iconImg, 0);
-        SetColumn(iconImg, 0);
-        SetRow(label, 1);
-        SetColumn(label, 0);
+            iconImg = new Image
+            {
+                Source = source,
+                Width = 24,
+                Height = 24,
+                Margin = new Thickness(5),
+                Stretch = Stretch.Uniform
+            };
+            label = new TextBlock
+            {
+                Text = name,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            SetColumn(iconImg, 0);
+            SetColumn(label, 1);
+        }
+        else
+        {
+            RowDefinitions.Add(new RowDefinition(new GridLength(3, GridUnitType.Star)));
+            RowDefinitions.Add(new RowDefinition(new GridLength(1, GridUnitType.Star)));
+            ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
+
+            iconImg = new Image
+            {
+                Source = source,
+                Stretch = Stretch.Uniform
+            };
+            label = new TextBlock
+            {
+                Text = name,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            SetRow(iconImg, 0);
+            SetRow(label, 1);
+        }
 
         Children.Add(iconImg);
         Children.Add(label);
@@ -92,20 +117,26 @@ public class FileView : Grid
         }),
         new (name: "Delete", itemAction: (i, file, _) => fm.Delete(file!)),
         new (name: "Rename", itemAction: (i, file, _) => {
-            var input = TextInputPopUp.getInstance();  
+            var input = TextInputPopUp.getInstance();   
             input.Show((s, _) => fm.Rename(file!, s), _title: file?.path.name ?? "");
         }),
         new(
-                name: "Copy path",
-                itemAction: async (i, file, c) =>
-                {
-                    await ClipboardHelper.CopyToClipboard(
-                        TopLevel.GetTopLevel(c)!,
-                        file?.GetPath()
-                    );
-                }
-            )
-            ,
+            name: "Open with",
+            itemAction: async (i, file, c) =>
+            {
+               AppInstanceLauncher.Open(AppMode.MiniExplorer);
+            }
+        ),
+        new(
+            name: "Copy path",
+            itemAction: async (i, file, c) =>
+            {
+                await ClipboardHelper.CopyToClipboard(
+                    TopLevel.GetTopLevel(c)!,
+                    file?.GetPath()
+                );
+            }
+        ),
         new(
             name: "Set icon",
             itemAction: async (i, file, c) =>
@@ -113,24 +144,22 @@ public class FileView : Grid
                 var input = TextInputPopUp.getInstance();    
                 if (file == null) return;
                 if(file is File f){
-                    input.Show((s,b)=>{IconHelper.SetIcon(f,s,b);},_watermark:"Path to img",_checkboxText:"Establecer para todos los "+f.extension);   
+                    input.Show((s,b)=>{IconHelper.SetIcon(f,s,b);}, _watermark:"Path to img", _checkboxText:"Establecer para todos los "+f.extension);   
                 } else {
-                    input.Show((s,b)=>{IconHelper.SetIconForDirs(file,s,b);},_watermark:"Path to img",_checkboxText:"Establecer para todas las carpetas ");   
+                    input.Show((s,b)=>{IconHelper.SetIconForDirs(file,s,b);}, _watermark:"Path to img", _checkboxText:"Establecer para todas las carpetas ");   
                 }
             }
-        )
-        ,
+        ),
         new (name: "Set as background image", itemAction: (_, file, _) => {
             if (file != null) {
                 App.Current.Cache.Cache.BgImage = file.GetPath();
                 App.Current.UIManager.AddOnMainWindowLoadedListener(mw => (mw.DataContext as MainViewModel)!.RefreshBackground());
             }
-        },whenAppears:(file)=>{
-            if(file is File f){
+        }, whenAppears: (file) => {
+            if (file is File f) {
                 return f.CheckExtension(AppResources.ImageExtensions);
             }
             return false;
-        }
-        )
-    ]) ;
+        })
+    ]);
 }

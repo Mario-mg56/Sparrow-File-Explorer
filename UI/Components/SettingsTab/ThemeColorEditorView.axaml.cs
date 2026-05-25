@@ -14,7 +14,6 @@ public partial class ThemeColorEditorView : UserControl
     private readonly CustomTheme _theme;
     private readonly Action _onThemeRenamed;
     
-    // Guardamos las referencias de todos los TextBoxes generados
     private readonly Dictionary<PropertyInfo, TextBox> _colorInputs = new();
 
     public ThemeColorEditorView(CustomTheme theme, Action onThemeRenamed)
@@ -25,26 +24,22 @@ public partial class ThemeColorEditorView : UserControl
 
         InitializeHeaderControls();
         BuildDynamicForm();
-        UpdateAllWatermarks(); // Inicializamos las marcas de agua
+        UpdateAllWatermarks();
     }
 
     private void InitializeHeaderControls()
     {
-        // Buscamos los controles manualmente de forma segura
         var themeNameTextBox = this.FindControl<TextBox>("ThemeNameTextBox");
         var activateThemeBtn = this.FindControl<Button>("ActivateThemeBtn");
 
         if (themeNameTextBox == null || activateThemeBtn == null) return;
 
-        // 1. Asignamos el nombre actual
         themeNameTextBox.Text = _theme.Name;
         
-        // 2. Validación y renombrado en tiempo real
         themeNameTextBox.TextChanged += (s, e) =>
         {
             string newName = themeNameTextBox.Text?.Trim() ?? "";
 
-            // 🛑 EL CORTAFUEGOS: Si el nombre no ha cambiado realmente, ignorar
             if (newName == _theme.Name) return;
 
             bool isEmpty = string.IsNullOrEmpty(newName);
@@ -61,16 +56,13 @@ public partial class ThemeColorEditorView : UserControl
                 activateThemeBtn.IsEnabled = true;
 
                 if (App.Current.Cache.Cache.CurrentTheme == _theme.Name)
-                {
                     App.Current.Cache.Cache.CurrentTheme = newName;
-                }
-
+                
                 _theme.Name = newName;
                 _onThemeRenamed?.Invoke(); 
             }
         };
 
-        // 3. Lógica del botón de activación
         activateThemeBtn.Click += (s, e) =>
         {
             App.Current.Cache.Cache.CurrentTheme = _theme.Name;
@@ -98,7 +90,6 @@ public partial class ThemeColorEditorView : UserControl
                 VerticalAlignment = VerticalAlignment.Center 
             };
 
-            // Registramos el input en el diccionario
             _colorInputs[prop] = textBox;
 
             textBox.TextChanged += (s, e) =>
@@ -107,28 +98,19 @@ public partial class ThemeColorEditorView : UserControl
 
                 if (string.IsNullOrEmpty(inputText))
                 {
-                    prop.SetValue(_theme, null); // Guardamos como nulo para que el JSON quede limpio
+                    prop.SetValue(_theme, null);
+                    if (requiredBaseProperties.Contains(prop.Name)) textBox.Foreground = Brushes.Red;
+                    else textBox.ClearValue(ForegroundProperty);
                     
-                    if (requiredBaseProperties.Contains(prop.Name))
-                    {
-                        textBox.Foreground = Brushes.Red;
-                    }
-                    else
-                    {
-                        textBox.ClearValue(ForegroundProperty);
-                    }
                 }
                 else if (Color.TryParse(inputText, out _))
                 {
                     textBox.ClearValue(ForegroundProperty);
                     prop.SetValue(_theme, inputText);
                 }
-                else
-                {
-                    textBox.Foreground = Brushes.Red;
-                }
+                else textBox.Foreground = Brushes.Red;
+                
 
-                // 🔥 UX MAGNÍFICA: Actualizamos las marcas de agua de los demás campos en tiempo real
                 UpdateAllWatermarks();
             };
 
@@ -152,23 +134,13 @@ public partial class ThemeColorEditorView : UserControl
             var textBox = kvp.Value;
             var currentValue = prop.GetValue(_theme) as string;
 
-            // Solo mostramos el Watermark si el campo está vacío (es decir, usa el valor heredado)
             if (string.IsNullOrEmpty(currentValue))
             {
-                if (requiredBaseProperties.Contains(prop.Name))
-                {
-                    textBox.Watermark = "Campo Base Obligatorio";
-                }
-                else
-                {
-                    // Le preguntamos al motor de generación cuál sería el color final actual
-                    textBox.Watermark = ThemeGenerator.Resolve(_theme, prop.Name);
-                }
+                if (requiredBaseProperties.Contains(prop.Name))  textBox.Watermark = "Campo Base Obligatorio";
+                else textBox.Watermark = ThemeGenerator.Resolve(_theme, prop.Name);
             }
-            else
-            {
-                textBox.Watermark = ""; // Si tiene valor escrito, limpiamos la marca de agua
-            }
+            else textBox.Watermark = "";
+            
         }
     }
 }
