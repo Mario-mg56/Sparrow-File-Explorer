@@ -44,7 +44,7 @@ public class FilesGrid : Grid, IFileLayout
         Rows = (int) Math.Ceiling(Items.Count/(float)Cols);
 
         for (int i = 0; i < Rows; i++)
-            RowDefinitions.Add(new RowDefinition(new GridLength(IconSize)));
+            RowDefinitions.Add(new RowDefinition(new GridLength(FileView.compact? 15:IconSize)));
         for (int i = 0; i < Cols; i++) 
             ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
 

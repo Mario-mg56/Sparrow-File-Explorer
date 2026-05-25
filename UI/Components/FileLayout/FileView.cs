@@ -1,3 +1,4 @@
+using System.Security.AccessControl;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
@@ -15,6 +16,7 @@ namespace DynamicFileExplorer.UI.Components;
 
 public class FileView : Grid
 {
+    public static bool compact = false;
     public readonly FileViewController controller;
     public string name;
     public readonly Image iconImg;
@@ -37,9 +39,6 @@ public class FileView : Grid
         Margin = new Thickness(PADDING);
         Background = new SolidColorBrush(Colors.Transparent); //Para que reciba eventos de mouse aunque no tenga fondo
 
-        RowDefinitions.Add(new RowDefinition(new GridLength(3, GridUnitType.Star)));
-        RowDefinitions.Add(new RowDefinition(new GridLength(1, GridUnitType.Star)));
-        ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
 
         Bitmap source = null!;
         if (file is File tipo)
@@ -70,24 +69,58 @@ public class FileView : Grid
             source ??= MainViewModel.LoadImage(App.Styles.DirImageIcon);
             
         }
-        iconImg = new Image {
-            Source = source,
-            Stretch = Stretch.Uniform
-        };
 
-        label = new TextBlock {
-            Text = name,
-            VerticalAlignment = VerticalAlignment.Center,
-            HorizontalAlignment = HorizontalAlignment.Center
-        };
+        if (compact)
+        {
+            Height = 24;
 
-        SetRow(iconImg, 0);
-        SetColumn(iconImg, 0);
-        SetRow(label, 1);
-        SetColumn(label, 0);
+            ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
+            ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
+
+            iconImg = new Image
+            {
+                Source = source,
+                Width = 24,
+                Height = 24,
+                Margin = new Thickness(5),
+                Stretch = Stretch.Uniform
+            };
+
+            label = new TextBlock
+            {
+                Text = name,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            SetColumn(iconImg, 0);
+            SetColumn(label, 1);
+        }
+        else
+        {
+            RowDefinitions.Add(new RowDefinition(new GridLength(3, GridUnitType.Star)));
+            RowDefinitions.Add(new RowDefinition(new GridLength(1, GridUnitType.Star)));
+            ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
+
+            iconImg = new Image
+            {
+                Source = source,
+                Stretch = Stretch.Uniform
+            };
+
+            label = new TextBlock
+            {
+                Text = name,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            SetRow(iconImg, 0);
+            SetRow(label, 1);
+        }
 
         Children.Add(iconImg);
         Children.Add(label);
+                
     }
 
     public static ContextMenu<FileSystemItem> MakeFileContextMenu(FileManager fm) => new ([
@@ -100,6 +133,14 @@ public class FileView : Grid
             input.Show((s,_)=> fm.Rename(file!, s),_title: file?.path.name ?? "");
             App.cacheService.UpdateBgImage("path");
         }),
+        new(
+                name: "Open with",
+                itemAction: async (i, file, c) =>
+                {
+                   AppInstanceLauncher.Open(AppMode.MiniExplorer);
+                }
+            )
+        ,
         new(
                 name: "Copy path",
                 itemAction: async (i, file, c) =>
