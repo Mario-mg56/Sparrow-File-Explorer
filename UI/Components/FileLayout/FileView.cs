@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
-using DynamicFileExplorer.Infrastructures;
+using DynamicFileExplorer.Helpers;
 using DynamicFileExplorer.Models;
 using DynamicFileExplorer.UI.Helpers;
 using DynamicFileExplorer.ViewModels;
@@ -15,13 +15,14 @@ public class FileView : Grid
     public string name;
     public readonly Image iconImg;
     public readonly TextBlock label;
-    public static readonly int PADDING = 10, ICON_SIZE = App.Styles.IconSize;
+    public static readonly int PADDING = 10;
+    public static int ICON_SIZE => App.Current.Cache?.Style?.IconSize ?? 100;
     public static readonly SolidColorBrush TRANSPARENT = new(Colors.Transparent);
-    public static SolidColorBrush SelectedColor {get; private set;} = new(Color.Parse(Config.Theme.Current.FileSelected));
-    public static SolidColorBrush HoverColor {get; private set;} = new(Color.Parse(Config.Theme.Current.FileHover));
+    public static SolidColorBrush SelectedColor {get; private set;} = new(Color.Parse(Persistence.Theme.Current.FileSelected));
+    public static SolidColorBrush HoverColor {get; private set;} = new(Color.Parse(Persistence.Theme.Current.FileHover));
 
     static FileView() {
-        Config.Theme.ThemeChanged += theme => (SelectedColor, HoverColor) =
+        Persistence.Theme.ThemeChanged += theme => (SelectedColor, HoverColor) =
             (new SolidColorBrush(Color.Parse(theme.FileSelected)), new SolidColorBrush(Color.Parse(theme.FileHover)));
     }
 
@@ -29,7 +30,7 @@ public class FileView : Grid
     {
         controller = uncontrolled ? null! : new FileViewController(file, this);
 
-        name = file is File f ? App.Config.DefaultIsExtensionNameIncluded ? f.path.name:f.NameWithoutExtension() : file.path.name;
+        name = file is File f ? App.Current.Cache.Config.DefaultIsExtensionNameIncluded ? f.path.name:f.NameWithoutExtension() : file.path.name;
         Margin = new Thickness(PADDING);
         Background = new SolidColorBrush(Colors.Transparent); //Para que reciba eventos de mouse aunque no tenga fondo
 
@@ -39,7 +40,9 @@ public class FileView : Grid
 
         iconImg = new Image {
             
-            Source = file is File? MainViewModel.LoadImage(App.Styles.FileImageIcon): MainViewModel.LoadImage(App.Styles.DirImageIcon),
+            Source = file is File?
+                ImageLoader.LoadImage(App.Current.Cache.Style.FileImageIcon) :
+                ImageLoader.LoadImage(App.Current.Cache.Style.DirImageIcon),
             Stretch = Stretch.Uniform
         };
 
@@ -66,11 +69,11 @@ public class FileView : Grid
         new (name: "Rename", itemAction: (i, file, _) => {
             var input = TextInputPopUp.getInstance();    
             input.Show((s)=> fm.Rename(file!, s),_title: file?.path.name ?? "");
-            App.cacheService.UpdateBgImage("path");
+            // App.cacheService.UpdateBgImage("path");
         }),
         new (name: "Set as background image", itemAction: (_, file, _) => {
             if (file != null) {
-                App.cacheService.UpdateBgImage(file.GetPath());
+                App.Current.Cache.Cache.BgImage = file.GetPath();
                 App.Current.UIManager.AddOnMainWindowLoadedListener(mw => (mw.DataContext as MainViewModel)!.RefreshBackground());
             }
         },whenAppears:(file)=>{
@@ -81,5 +84,4 @@ public class FileView : Grid
         }
         )
     ]) ;
-    // {Background = new SolidColorBrush(Color.FromArgb(180, 30, 30, 30))};
 }

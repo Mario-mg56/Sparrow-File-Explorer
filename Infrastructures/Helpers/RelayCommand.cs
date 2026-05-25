@@ -1,4 +1,4 @@
-namespace DynamicFileExplorer.Infrastructures;
+namespace DynamicFileExplorer.Helpers;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;

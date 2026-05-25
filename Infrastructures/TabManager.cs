@@ -6,7 +6,7 @@ using System.Linq;
 using DynamicFileExplorer.Models;
 using DynamicFileExplorer.UI.Components;
 
-namespace DynamicFileExplorer.Infrastructures;
+namespace DynamicFileExplorer.Helpers;
 
 class TabManager
 {
@@ -23,10 +23,25 @@ class TabManager
 
     public Tab CreateTab(DirItem dir)
     {
-        var tab = new Tab() {fileManager = new(dir)};
+        var tab = new Tab() {
+            Type = TabType.FILES,
+            fileManager = new(dir)
+        };
         tabs.Add(tab);
-        if (tabs.Count == 1) FocusTab(tab);
         TabAdded?.Invoke(tab);
+        if (tabs.Count == 1) FocusTab(tab);
+        return tab;
+    }
+
+    public Tab CreateSettingsTab()
+    {
+        Tab? tab = tabs.Find(t => t.Type == TabType.SETTINGS);
+        if (tab == null){
+            tab = new Tab() {Type = TabType.SETTINGS};
+            tabs.Add(tab);
+        }
+        TabAdded?.Invoke(tab);
+        FocusTab(tab);
         return tab;
     }
 
@@ -48,7 +63,9 @@ class TabManager
 
     public class Tab
     {
+        public TabType? Type {get; init;}
         public FileManager? fileManager {get; set;}
         public TabView? View {get; set;}
     }
+    public enum TabType {FILES, SETTINGS}
 }

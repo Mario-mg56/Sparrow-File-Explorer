@@ -1,6 +1,6 @@
 using System;
 using Avalonia.Controls;
-using DynamicFileExplorer.Infrastructures;
+using DynamicFileExplorer.Helpers;
 
 namespace DynamicFileExplorer.UI.Components;
 public partial class HeaderContainer : UserControl
@@ -21,11 +21,16 @@ public partial class HeaderContainer : UserControl
             ?? throw new Exception("No se encontró ForwardButton");
         hideItemsCheckBox = this.FindControl<CheckBox>("UnHideItems")
             ?? throw new Exception("No se encontró ForwardButton");
-        hideItemsCheckBox.IsChecked = App.Config.DefaultIsHideItems;
+        hideItemsCheckBox.IsChecked = App.Current.Cache.Config.DefaultIsHideItems;
         hideItemsCheckBox.IsCheckedChanged += (_,_) => FM?.ChangeHideItems(hideItemsCheckBox.IsChecked);
         forwardButton.Click += (_, _) => FM?.GoForward();
         backwardButton.Click += (_, _) => FM?.GoBackward();
         backButton.Click += (_, _) => FM?.GoBack();
+
+        SettingsIcon.PointerPressed += (_, e) => {
+            if(e.GetCurrentPoint(SettingsIcon).Properties.IsLeftButtonPressed)
+                App.Current.tabManager.CreateSettingsTab();
+        };
 
     }
 

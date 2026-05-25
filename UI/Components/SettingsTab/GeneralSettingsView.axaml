@@ -1,0 +1,21 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="DynamicFileExplorer.UI.Components.GeneralSettingsView">
+    <StackPanel Spacing="15" MaxWidth="800" HorizontalAlignment="Left">
+        <TextBlock Text="General Settings" FontSize="24" FontWeight="Bold" Margin="0,0,0,10"/>
+        
+        <CheckBox Name="HiddenFilesCheckBox" 
+                  Content="Show hidden files and folders" 
+                  IsCheckedChanged="OnHiddenFilesCheckedChanged"/>
+                  
+        <CheckBox Name="ExtensionsCheckBox" 
+                  Content="Show file extensions" 
+                  IsCheckedChanged="OnExtensionsCheckedChanged"/>
+
+        <TextBlock Text="Default Workspace Name" Margin="0,15,0,0"/>
+        <TextBox Watermark="Main Workspace"/>
+
+        <TextBlock Text="Startup Directory"/>
+        <TextBox Watermark="C:\Users\..."/>
+    </StackPanel>
+</UserControl>

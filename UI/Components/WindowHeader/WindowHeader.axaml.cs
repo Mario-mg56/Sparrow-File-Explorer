@@ -1,7 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
-using DynamicFileExplorer.UI.Config;
+using DynamicFileExplorer.UI.Persistence;
 
 namespace DynamicFileExplorer.UI.Components;
 

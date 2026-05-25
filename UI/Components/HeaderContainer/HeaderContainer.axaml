@@ -1,8 +1,10 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:components="clr-namespace:DynamicFileExplorer.UI.Components"
-             x:Class="DynamicFileExplorer.UI.Components.HeaderContainer">
-    <Grid  ColumnDefinitions="100,*,Auto" HorizontalAlignment="Stretch"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:components="clr-namespace:DynamicFileExplorer.UI.Components"
+    xmlns:config="clr-namespace:DynamicFileExplorer.UI.Persistence"
+    x:Class="DynamicFileExplorer.UI.Components.HeaderContainer"
+>
+    <Grid  ColumnDefinitions="Auto,*,Auto" HorizontalAlignment="Stretch"
         Margin="10">
         <Grid.Styles>
 
@@ -18,7 +20,21 @@
             </Style>
 
         </Grid.Styles>
-        <Border Grid.Column="0" Classes="Transparent" ></Border>
+        <Grid Grid.Column="0" VerticalAlignment="Stretch" Width="{Binding $self.Bounds.Height}">
+            <Border Classes="BlackBackground" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <components:SVGIcon
+                    Name="SettingsIcon"
+                    IconPath="{x:Static config:Icons.SETTINGS_SVG_PATH}"
+                    HoverBackground="{DynamicResource IconHover}"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    CornerRadius="15"
+                    IconSize="18"
+                    Width="32"
+                    Height="32"
+                />
+            </Border>
+        </Grid>
         <Border Grid.Column="1"  Classes="TransparentBorder" HorizontalAlignment="Center"  Width="200"><components:SearchContainerView/></Border>
         <Border Grid.Column="2"  Classes="BlackBackground" HorizontalAlignment="Right">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
@@ -38,7 +54,6 @@
                     </Button>
                     <Button Name="BackButton"  Background="Transparent">
                         <Button.Content>
-                                <!-- texto real -->
                                 <TextBlock Text="Back"
                                         Foreground="White"/>
                         </Button.Content>

@@ -4,40 +4,38 @@ using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using DynamicFileExplorer.Infrastructures;
+using DynamicFileExplorer.Helpers;
 using DynamicFileExplorer.Models;
 using static DynamicFileExplorer.Models.Path;
 using DynamicFileExplorer.UI.Views.MainWindow;
-using DynamicFileExplorer.UI.Config;
-using static DynamicFileExplorer.Infrastructures.TabManager;
+using DynamicFileExplorer.UI.Persistence;
+using static DynamicFileExplorer.Helpers.TabManager;
+using System.Linq;
+using System;
 
 public partial class App : Application
 {
     public static new App Current => (Application.Current as App)!;
     public MainWindow MainWindow { get; private set; } = null!;
+    public Persistence Cache {get; set;} = PersistenceService.Load();
     internal TabManager tabManager = null!;
     internal UIManager UIManager = null!;
-    internal static SettingsService Settings = null!;
-    internal static CacheData Cache = null!;
-    internal static CacheService cacheService = null!;
-    internal static new Styles Styles = null!;
-    internal static Config Config = null!;
     internal List<Tab> Tabs {get => tabManager.tabs;}
     internal Tab? FocusedTab {get => tabManager.FocusedTab;}
 
     public override void Initialize()
     {
-        Theme.Apply(new CustomTheme());
-        Settings = new SettingsService();
-        Settings.Load();
-        Styles = Settings.CurrentStyle;
-        Config = Settings.Config;
+        Resources["AppFont"] = new Avalonia.Media.FontFamily(Cache.Style.FontStyle ?? "Inter");
+        Resources["AppFontSize"] = Cache.Style.FontSize > 0 ? Cache.Style.FontSize : 14.0;
+
+        Theme.Apply(
+            Cache.Themes.FirstOrDefault(th => Cache.Cache.CurrentTheme == th.Name)
+            ?? Cache.Themes.FirstOrDefault() ?? new()
+        );
         tabManager = Init();
         tabManager.CreateTab(new DirItem(BasePath));
-        cacheService = new CacheService().Load();
-        Cache = cacheService.Cache;
-        cacheService.ImportLastDir();
         UIManager = UIManager.Init();
+
         AvaloniaXamlLoader.Load(this);
     }
 

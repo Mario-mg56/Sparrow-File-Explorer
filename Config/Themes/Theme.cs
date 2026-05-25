@@ -1,7 +1,7 @@
 using System;
 using Avalonia.Media;
 
-namespace DynamicFileExplorer.UI.Config;
+namespace DynamicFileExplorer.UI.Persistence;
 
 public static class Theme
 {
@@ -10,15 +10,26 @@ public static class Theme
     public static void Apply(CustomTheme theme)
     {
         var resources = App.Current.Resources;
+        
+        var resolvedTheme = new CustomTheme {Name = theme.Name};
 
-        //Itemramos por las propiedades de CustomTheme
         foreach (var prop in typeof(CustomTheme).GetProperties())
         {
-            if (prop.PropertyType == typeof(string))
-                resources[prop.Name] = SolidColorBrush.Parse(prop.GetValue(theme) as string ?? "");
+            if (prop.PropertyType == typeof(string) && prop.Name != "Name")
+            {
+                string finalHexColor = ThemeGenerator.Resolve(theme, prop.Name);
+                resources[prop.Name] = SolidColorBrush.Parse(finalHexColor);
+                prop.SetValue(resolvedTheme, finalHexColor);
+            }
+        }
+        Current = resolvedTheme;
+
+        if (App.Current?.Cache != null)
+        {
+            App.Current.Cache.Cache.CurrentTheme = theme.Name;
+            DynamicFileExplorer.Helpers.PersistenceService.Save(App.Current.Cache);
         }
 
-        Current = theme;
-        ThemeChanged?.Invoke(theme);
+        ThemeChanged?.Invoke(resolvedTheme);
     }
 }

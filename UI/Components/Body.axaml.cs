@@ -1,14 +1,14 @@
-
-
 using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using static DynamicFileExplorer.Helpers.TabManager;
 
 namespace DynamicFileExplorer.UI.Components;
 public class Body : ThinScrollBarViewer
 {
     protected override Type StyleKeyOverride => typeof(ScrollViewer);
     public readonly FilesGrid filesLayout;
+    public readonly SettingsTab settings;
     public Body()
     {
         HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
@@ -23,7 +23,22 @@ public class Body : ThinScrollBarViewer
         Content = filesLayout;
         filesLayout.fileLayoutController.FileManager = App.Current.FocusedTab?.fileManager;
 
-        App.Current.tabManager.TabFocused += tab =>
-            filesLayout.fileLayoutController.SetFileManager(tab?.fileManager);
+        settings = new();
+
+        App.Current.tabManager.TabFocused += tab => {
+            switch(tab?.Type)
+            {
+                case TabType.FILES:
+                    Content = filesLayout;
+                    filesLayout.fileLayoutController.SetFileManager(tab?.fileManager);     
+                    break;
+                case TabType.SETTINGS:
+                    Content = settings;
+                    break;
+                default:
+                    Content = null;     
+                    break;
+            }
+        };
     }
 }

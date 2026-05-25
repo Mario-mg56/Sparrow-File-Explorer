@@ -3,7 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
-using DynamicFileExplorer.Infrastructures;
+using DynamicFileExplorer.Helpers;
 
 namespace DynamicFileExplorer.UI.Components;
 

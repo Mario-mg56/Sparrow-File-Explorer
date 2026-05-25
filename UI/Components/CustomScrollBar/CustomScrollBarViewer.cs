@@ -5,7 +5,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Styling;
-using DynamicFileExplorer.UI.Config;
+using DynamicFileExplorer.UI.Persistence;
 
 namespace DynamicFileExplorer.UI.Components;
 
@@ -49,8 +49,8 @@ public class CustomScrollBarViewer : ScrollViewer
         Styles.Add(hideArrowsStyle);
 
         //No funciona cambiar estos estilos desde App.axaml, por lo que lo hago aquí
-        Config.Theme.ThemeChanged += ApplyScrollTheme;
-        ApplyScrollTheme(Config.Theme.Current);
+        Persistence.Theme.ThemeChanged += ApplyScrollTheme;
+        ApplyScrollTheme(Persistence.Theme.Current);
 
         UpdateColorStyles();
     }

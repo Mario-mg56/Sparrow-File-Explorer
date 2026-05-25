@@ -4,8 +4,8 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Layout;
 using DynamicFileExplorer.Models;
-using DynamicFileExplorer.UI.Config;
-using static DynamicFileExplorer.Infrastructures.TabManager;
+using DynamicFileExplorer.UI.Persistence;
+using static DynamicFileExplorer.Helpers.TabManager;
 using static DynamicFileExplorer.Models.Path;
 
 namespace DynamicFileExplorer.UI.Components;
@@ -61,12 +61,23 @@ public class TabsPanel : ContentControl
     }
 
     private void AddTab(Tab tab) {
-        tab.View = new TabView {Title = tab.fileManager?.WorkingDir.path.name ?? ""};
+        string title = "";
+        switch(tab.Type)
+        {
+            case TabType.FILES:
+                title = tab.fileManager?.WorkingDir.path.name ?? "";
+                tab.fileManager?.WorkingDirChanged += wd => tab.View?.Title = wd.path.name;
+                break;
+            case TabType.SETTINGS:
+                title = "Settings";
+                break;
+        }
+
+        tab.View = new TabView {Title = title};
         tabsContainer.Children.Add(tab.View);
 
         if (App.Current.FocusedTab == tab) FocusTab(tab);
 
-        tab.fileManager?.WorkingDirChanged += wd => tab.View.Title = wd.path.name;
         tab.View.ClickedTab += _ => App.Current.tabManager.FocusTab(tab);
         tab.View.ClosedTab += _ => RemoveTab(tab);
     }
