@@ -219,11 +219,11 @@ public class FileLayoutController
     public static ContextMenu<DirItem> MakeWDContextMenu(FileManager fm) => new ([
         new (name: "Crear Carpeta", itemAction: (i, wd, _) => {
             var input = TextInputPopUp.getInstance();    
-            input.Show((s)=>fm.CreateDir(wd!, s));   
+            input.Show((s,_)=>fm.CreateDir(wd!, s));   
         }),
         new (name: "Crear Archivo", itemAction: (i, wd, _) => {
             var input = TextInputPopUp.getInstance();    
-            input.Show((s)=>fm.CreateFile(wd!, s));   
+            input.Show((s,_)=>fm.CreateFile(wd!, s));   
         }),
         new (name: "Item 3", itemAction: (i, _, _) => Console.WriteLine(i.name + " selected"))
     ]);

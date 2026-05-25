@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using DynamicFileExplorer.Helpers;
 using DynamicFileExplorer.Models;
 using DynamicFileExplorer.UI.Helpers;
@@ -38,11 +39,35 @@ public class FileView : Grid
         RowDefinitions.Add(new RowDefinition(new GridLength(1, GridUnitType.Star)));
         ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
 
+        Bitmap source = null!;
+        
+        if (file is File tipo)
+        {
+            foreach (var icon in App.Current.Cache.Config.Icons)
+            {
+                if (icon.Uri.Contains(tipo.GetPath()) || icon.Formatos.Contains(tipo.extension))
+                {
+                    source = MainViewModel.LoadImage(icon.Image);
+                    break;
+                }
+            }
+            source ??= MainViewModel.LoadImage(App.Current.Cache.Style.FileImageIcon);
+        }
+        else
+        {
+             foreach (var icon in App.Current.Cache.Config.Icons)
+            {
+                if (icon.Uri.Contains(file.GetPath()))
+                {
+                    source = MainViewModel.LoadImage(icon.Image);
+                    break;
+                } 
+            }
+            source ??= MainViewModel.LoadImage(App.Current.Cache.Style.DirImageIcon);
+        }
+        
         iconImg = new Image {
-            
-            Source = file is File?
-                ImageLoader.LoadImage(App.Current.Cache.Style.FileImageIcon) :
-                ImageLoader.LoadImage(App.Current.Cache.Style.DirImageIcon),
+            Source = source,
             Stretch = Stretch.Uniform
         };
 
@@ -67,10 +92,34 @@ public class FileView : Grid
         }),
         new (name: "Delete", itemAction: (i, file, _) => fm.Delete(file!)),
         new (name: "Rename", itemAction: (i, file, _) => {
-            var input = TextInputPopUp.getInstance();    
-            input.Show((s)=> fm.Rename(file!, s),_title: file?.path.name ?? "");
-            // App.cacheService.UpdateBgImage("path");
+            var input = TextInputPopUp.getInstance();  
+            input.Show((s, _) => fm.Rename(file!, s), _title: file?.path.name ?? "");
         }),
+        new(
+                name: "Copy path",
+                itemAction: async (i, file, c) =>
+                {
+                    await ClipboardHelper.CopyToClipboard(
+                        TopLevel.GetTopLevel(c)!,
+                        file?.GetPath()
+                    );
+                }
+            )
+            ,
+        new(
+            name: "Set icon",
+            itemAction: async (i, file, c) =>
+            {
+                var input = TextInputPopUp.getInstance();    
+                if (file == null) return;
+                if(file is File f){
+                    input.Show((s,b)=>{IconHelper.SetIcon(f,s,b);},_watermark:"Path to img",_checkboxText:"Establecer para todos los "+f.extension);   
+                } else {
+                    input.Show((s,b)=>{IconHelper.SetIconForDirs(file,s,b);},_watermark:"Path to img",_checkboxText:"Establecer para todas las carpetas ");   
+                }
+            }
+        )
+        ,
         new (name: "Set as background image", itemAction: (_, file, _) => {
             if (file != null) {
                 App.Current.Cache.Cache.BgImage = file.GetPath();

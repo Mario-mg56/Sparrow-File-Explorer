@@ -1,5 +1,34 @@
 {
-    "DefaultIsHideItems":true,
-    "DefaultIsExtensionNameIncluded":true,
-    "CurrentTheme": "LightTheme"
+  "Icons": [
+    {
+      "Formatos": [
+        ".cs"
+      ],
+      "Uri": [
+        ""
+      ],
+      "Image": "/home/diego/Descargas/codigo_imagen.png"
+    },
+    {
+      "Formatos": [],
+      "Uri": [
+        "/home/diego/Pictures/2026-02-26-132857_hyprshot.png"
+      ],
+      "Image": "/home/diego/Pictures/2026-02-26-132857_hyprshot.png"
+    },
+    {
+      "Formatos": [],
+      "Uri": [
+        "/home/diego/Pictures/2026-02-26-133043_hyprshot.png"
+      ],
+      "Image": "/home/diego/Pictures/2026-02-26-133043_hyprshot.png"
+    },
+    {
+      "Formatos": [],
+      "Uri": [
+        "/home/diego/proyectos/interfaces/DynamicFileExplorer/Assets/Images/DirImageIcon.png"
+      ],
+      "Image": ""
+    }
+  ]
 }

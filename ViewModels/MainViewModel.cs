@@ -3,6 +3,7 @@ using System.ComponentModel;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 namespace DynamicFileExplorer.ViewModels;
 public class MainViewModel : INotifyPropertyChanged
 {
@@ -17,6 +18,29 @@ public class MainViewModel : INotifyPropertyChanged
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public void RefreshBackground() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BackgroundImage)));
+
+    public static Bitmap LoadImage(string? image)
+    {
+        if (string.IsNullOrWhiteSpace(image))
+        throw new ArgumentNullException(nameof(image));
+
+        if (System.IO.File.Exists(image))
+        {
+            return new Bitmap(image);
+        }
+
+        var uri = new Uri(image);
+
+        if (uri.Scheme == "avares")
+        {
+            var assets = AssetLoader.Open(uri);
+            return new Bitmap(assets);
+        }
+
+        throw new NotSupportedException($"Formato de imagen no soportado: {image}");
+    }
+
+
 
     public Border inspectorBorder{set;get;} = null!;
   
