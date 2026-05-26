@@ -50,7 +50,7 @@ class UIManager
 
     public void DeselectFIleInfo()
     {
-        LoadFileInfo(null);
+        LoadFileInfo(null!);
     }
     public void LoadMainWindow(MainWindow mainWindow)
     {

@@ -43,26 +43,21 @@ public partial class App : Application
 
         cacheService = new CacheService().Load();
         Cache = cacheService.Cache;
-        cacheService.ImportLastDir();
+        var value = AppArguments.IsUse(AppUse.OpenWith)? new DirItem(new Path("/usr/share/applications")) :cacheService.ImportLastDir();
+        Current.FocusedTab?.fileManager?.ChangeDirectory(value);
 
         UIManager = UIManager.Init();
+
+        // DesktopLauncher.OpenWithDesktop("/usr/share/applications/vim.desktop","/home/diego/proyectos/interfaces/DynamicFileExplorer/Program.cs");
 
         AvaloniaXamlLoader.Load(this);
     }
 
     public override void OnFrameworkInitializationCompleted()
     {
-        // 🔥 SOLO el primer proceso lanza el segundo
-        // if (!Environment.GetCommandLineArgs().Contains("--child"))
-        // {
-        //     Process.Start(new ProcessStartInfo
-        //     {
-        //         FileName = Environment.ProcessPath,
-        //         Arguments = "--child",
-        //         UseShellExecute = true
-        //     });
-        // }
+        var process = Process.GetCurrentProcess();
 
+AppInstanceLauncher.AppRuntime.RootProcess = process;
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             MainWindow mw = new();

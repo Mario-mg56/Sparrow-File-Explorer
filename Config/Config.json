@@ -23,5 +23,28 @@
       ],
       "Image": "/home/diego/Pictures/2026-02-26-133043_hyprshot.png"
     }
+  ],
+  "OpenTools": [
+    {
+      "Extensiones": [
+        ".cs"
+      ],
+      "Uri": [],
+      "DesktopApp": "/usr/share/applications/vim.desktop"
+    },
+    {
+      "Extensiones": [
+        ".txt"
+      ],
+      "Uri": [],
+      "DesktopApp": "/usr/share/applications/code.desktop"
+    },
+    {
+      "Extensiones": [],
+      "Uri": [
+        "/home/diego/Capturas/2026-03-02-103959_hyprshot.png"
+      ],
+      "DesktopApp": "/usr/share/applications/nvim.desktop"
+    }
   ]
 }

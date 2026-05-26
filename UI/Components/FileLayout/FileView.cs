@@ -1,11 +1,14 @@
+using System;
 using System.Security.AccessControl;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using DynamicData;
 using DynamicFileExplorer.Infrastructures;
+using DynamicFileExplorer.Infrastructures.Helpers;
 using DynamicFileExplorer.Models;
 using DynamicFileExplorer.UI.Config;
 using DynamicFileExplorer.UI.Helpers;
@@ -133,21 +136,61 @@ public class FileView : Grid
             input.Show((s,_)=> fm.Rename(file!, s),_title: file?.path.name ?? "");
             App.cacheService.UpdateBgImage("path");
         }),
-        new(
-                name: "Open with",
-                itemAction: async (i, file, c) =>
+                new(
+    name: "Open with",
+    itemAction: async (i, file, c) =>
+    {
+        var process = AppInstanceLauncher.Open(
+            AppMode.MiniExplorer,
+            AppUse.OpenWith
+        );
+
+
+        AppInstanceLauncher.Listen(process, "OpenWith", msg =>
+        {
+            Console.WriteLine(
+                "holaaa " + msg.Type + " payload: " + msg.Payload
+            );
+
+            if (msg.Type != "apply")
+                return;
+
+            if (file == null)
+                return;
+
+            Dispatcher.UIThread.Post(() =>
+            {
+                if (file is File f)
                 {
-                   AppInstanceLauncher.Open(AppMode.MiniExplorer);
+                    var inputForPipe = TextInputPopUp.getInstance();
+
+                    inputForPipe.Show(_resolve:
+                        (s, b) =>
+                        {
+                            System.Console.WriteLine("asdasdas"+ file.GetPath());
+                            OpenToolHelper.SetTool(file, s, b);
+
+                            App.Current
+                                .FocusedTab?
+                                .fileManager?
+                                .Open(file);
+                        },
+                        _title: msg.Payload,
+                        _checkboxText:
+                            "Establecer para todos los " + f.extension
+                    );
                 }
-            )
-        ,
+            });
+        });
+    }
+),
         new(
                 name: "Copy path",
                 itemAction: async (i, file, c) =>
                 {
                     await ClipboardHelper.CopyToClipboard(
                         TopLevel.GetTopLevel(c)!,
-                        file?.GetPath()
+                        file?.GetPath()?? ""
                     );
                 }
             )

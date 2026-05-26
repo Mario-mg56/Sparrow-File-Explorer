@@ -71,7 +71,8 @@ public class TextInputPopUp : Grid
         {
             if (s.Key == Avalonia.Input.Key.Enter)
             {
-                if (input.Text.Equals("")) Resolve?.Invoke(input.Text,checkBox.IsEnabled);
+                if (!input.Text.Equals("")) {
+                    Resolve?.Invoke(input.Text,checkBox.IsEnabled);};
                 Resolve = null;
                 Hide();
             }

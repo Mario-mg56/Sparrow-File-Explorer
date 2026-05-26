@@ -26,5 +26,7 @@ public partial class MainWindow : Window
         overlay = this.FindControl<Canvas>("Overlay")!;
     }
 
-
+    private void Button_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+    }
 }

@@ -10,6 +10,7 @@ using DynamicFileExplorer.Models;
 using System.Threading.Tasks;
 using File = Models.File;
 using System.Diagnostics;
+using DynamicFileExplorer.Infrastructures.Helpers;
 
 public class FileManager
 {
@@ -222,11 +223,20 @@ public class FileManager
             return this;
         } else if (item is File file)
         {
-            Process.Start(new ProcessStartInfo
+            var value = OpenToolHelper.ResolveTool(file);
+            if (value !=null)
+            {   
+                DesktopLauncher.OpenWithDesktop(value,file.GetPath());
+                
+            } else
             {
-                FileName = file.GetPath(),
-                UseShellExecute = true
-            });
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = file.GetPath(),
+                    UseShellExecute = true
+                });
+            }
+            
         }
         return null;
 

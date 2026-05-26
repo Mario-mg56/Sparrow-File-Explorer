@@ -1,15 +1,20 @@
 using System;
 using System.ComponentModel;
+using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using DynamicFileExplorer.Infrastructures;
 using DynamicFileExplorer.UI.Components;
 using DynamicFileExplorer.UI.Config;
+using DynamicFileExplorer.UI.Views.MainWindow;
 namespace DynamicFileExplorer.ViewModels;
 public class MainViewModel : INotifyPropertyChanged
 {
     public SettingsService SettingsService { get; } = App.Settings;
+
+    public bool TopBarIsVisible{get;} = !AppArguments.IsThis(AppMode.MiniExplorer);
 
     public Styles Styles => SettingsService.CurrentStyle;
     public IImage BackgroundImage
@@ -54,6 +59,11 @@ public class MainViewModel : INotifyPropertyChanged
     {
         set
         {
+            if (AppArguments.IsThis(AppMode.MiniExplorer))
+            {
+                field = false;
+                return;
+            }
             changingInspector?.Invoke(value);
             field = value;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(inspectorVisibility)));
@@ -68,5 +78,43 @@ public class MainViewModel : INotifyPropertyChanged
 
     public GridLength resizableWidth{get;} = new GridLength(3,GridUnitType.Pixel);
     public IBrush resizableColor{get;} = Brushes.Black;
-    
+
+
+    public ICommand Aplicar { get; }
+    public ICommand Cancelar { get; }
+
+    public MainViewModel()
+    {
+        Aplicar = new RelayCommand(OnAplicar);
+        Cancelar = new RelayCommand(OnCancelar);
+    }
+
+    private void OnAplicar()
+    {
+        if (AppArguments.IsUse(AppUse.OpenWith))
+        {
+            var file = App.Current.UIManager.FilesLayoutController.selectedFiles[0].controller.file;
+            if (file == null) return;
+            AppInstanceLauncher.Send(
+                "OpenWith",
+                "apply",
+                file.GetPath()
+            );
+            App.Current.UIManager.MainWindow.Close();
+        }
+    }
+
+    private void OnCancelar()
+    {
+        if (AppArguments.IsUse(AppUse.OpenWith))
+        {
+            var file = App.Current.FocusedTab?.fileManager.SelectedItems.Count;
+            AppInstanceLauncher.Send(
+                "OpenWith",
+                "cancel",
+                ""
+            );
+        }
+        App.Current.UIManager.MainWindow.Close();
+    }
 }

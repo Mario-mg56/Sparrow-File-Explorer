@@ -1,9 +1,15 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:helpers="clr-namespace:DynamicFileExplorer.UI.Helpers"
              xmlns:components="clr-namespace:DynamicFileExplorer.UI.Components"
              x:Class="DynamicFileExplorer.UI.Components.HeaderContainer">
-    <Grid  ColumnDefinitions="100,*,Auto" HorizontalAlignment="Stretch"
-        Margin="10">
+    <Grid HorizontalAlignment="Stretch"
+      Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="{Binding Source={x:Static helpers:AppResources.widthLeftHeader}}" />
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
         <Grid.Styles>
 
             <Style Selector="Border.TransparentBorder">

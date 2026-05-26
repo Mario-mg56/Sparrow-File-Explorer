@@ -27,12 +27,12 @@
                 <ColumnDefinition Width="{Binding inspectorWidth}"/>
             </components:ResizableGrid.ColumnDefinitions>
 
-            <components:WindowHeader Grid.Row="0" Grid.ColumnSpan="3" Name="WindowHeader"/>
+            <components:WindowHeader Grid.Row="0" Grid.ColumnSpan="3" Name="WindowHeader" IsVisible="{Binding TopBarIsVisible}"/>
 
             <components:HeaderContainer Grid.Row="1" Grid.ColumnSpan="3" Name="HeaderContainer"/>
 
             <components:TabsPanel BorderThickness="0,0,0,5" BorderBrush="Black" MinHeight="36"
-                 Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Background="Transparent" Name="Tabs"/>
+                 Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Background="Transparent" Name="Tabs" IsVisible="{Binding TopBarIsVisible}"/>
 
             <components:ResizableBorder Grid.Row="3" Grid.Column="0" Background="Transparent"
                 Name="HierarchyContainer" EndResizing="True">
@@ -48,11 +48,25 @@
                     <components:InspectorView/>
             </components:ResizableBorder>
 
-            <Canvas
-                Name="Overlay"
+            <Canvas Name="Overlay"
                 Grid.RowSpan="4"
-                Grid.ColumnSpan="3"
-            />
+                Grid.ColumnSpan="3">
+
+            <StackPanel IsVisible="{Binding !TopBarIsVisible}" Orientation="Horizontal"
+                        Canvas.Right="20"
+                        Canvas.Bottom="20">
+
+                <Button Content="Cancelar"  Command="{Binding Cancelar}"
+                        Margin="5"
+                        Width="100"/>
+
+                <Button Content="Aplicar"  Command="{Binding Aplicar}"
+                        Margin="5"
+                        Width="100"/>
+
+            </StackPanel>
+
+        </Canvas>
         </components:ResizableGrid>
     </Border>
 </Window>
