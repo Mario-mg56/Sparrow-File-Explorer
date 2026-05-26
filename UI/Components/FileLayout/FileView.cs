@@ -34,7 +34,7 @@ public class FileView : Grid
             (new SolidColorBrush(Color.Parse(theme.FileSelected!)), new SolidColorBrush(Color.Parse(theme.FileHover!)));
     }
 
-    public FileView(FileSystemItem file, bool uncontrolled = false)
+    public FileView(FileSystemItem file, bool uncontrolled = false, bool exlusiveCompact = false)
     {
         controller = uncontrolled ? null! : new FileViewController(file, this);
 
@@ -85,12 +85,11 @@ public class FileView : Grid
         
         
 
-        if (compact)
+        if (compact || exlusiveCompact)
         {
-            Height = 24;
+            Height = exlusiveCompact? 10: 24;
             ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
             ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
-
             iconImg = new Image
             {
                 Source = source,
@@ -162,7 +161,6 @@ public class FileView : Grid
                         {
                             var input = TextInputPopUp.getInstance();
                             input.Show((argumentos, _) => {
-                                // Usamos el método que recibe el Script, el Archivo y la cadena extra del usuario
                                 ScriptRunner.ExecuteWithFileAndString(
                                     custom.ExecutablePath, 
                                     file.GetPath(), 
@@ -197,6 +195,11 @@ public class FileView : Grid
             var input = TextInputPopUp.getInstance();   
             input.Show((s, _) => fm.Rename(file!, s), _title: file?.path.name ?? "");
         }),
+         new (name: "Add to Acceso Directo", itemAction: (i, file, _) => {
+            if (file != null) AccesoRapidoView.AddElement(file);
+
+        })
+        ,
                 new(
     name: "Open with",
     itemAction: async (i, file, c) =>
@@ -228,7 +231,6 @@ public class FileView : Grid
                     inputForPipe.Show(_resolve:
                         (s, b) =>
                         {
-                            System.Console.WriteLine("asdasdas"+ file.GetPath());
                             OpenToolHelper.SetTool(file, s, b);
 
                             App.Current

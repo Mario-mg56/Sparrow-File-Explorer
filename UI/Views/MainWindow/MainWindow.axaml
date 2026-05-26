@@ -37,7 +37,16 @@
 
             <components:ResizableBorder Grid.Row="3" Grid.Column="0" Background="Transparent"
                 Name="HierarchyContainer" EndResizing="True">
-                <components:HierarchyView/>
+                
+                <Grid RowDefinitions="8*, 2*">
+                    
+                    <Border Grid.Row="0">
+                        <components:HierarchyView/>
+                    </Border>
+                    
+                    <Border Grid.Row="1" Name="AccesoRapidoHost" Background="Transparent"/>
+                    
+                </Grid>
             </components:ResizableBorder>
 
             <Border Name="FilesBorder" Grid.Row="3" Grid.Column="1" Background="Transparent" Margin="0,0,2,0">

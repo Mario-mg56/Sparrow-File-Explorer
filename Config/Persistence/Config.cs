@@ -10,6 +10,7 @@ public class Config
     public List<OpenToolData> OpenTools { get; set; } = [];
     public List<ContextMenuItemConfig> FileMenuStates { get; set; } = [];
     public List<ContextMenuItemConfig> WDMenuStates { get; set; } = [];
+    public List<string> AccesoRapidoPaths { get; set; } = [];
 }
 public class ContextMenuItemConfig
 {

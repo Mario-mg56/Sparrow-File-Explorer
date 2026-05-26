@@ -1,0 +1,13 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="DynamicFileExplorer.UI.Components.AccesoRapidoView">
+    
+    <Border BorderBrush="{DynamicResource Secondary}" BorderThickness="0,1,0,0" Padding="5">
+        <Grid RowDefinitions="Auto, *">
+            
+            <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <StackPanel Name="ListaAccesos" Spacing="0" Orientation="Vertical"/>
+            </ScrollViewer>
+        </Grid>
+    </Border>
+</UserControl>

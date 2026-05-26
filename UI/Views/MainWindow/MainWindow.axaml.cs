@@ -1,5 +1,6 @@
 namespace DynamicFileExplorer.UI.Views.MainWindow;
 
+using System.Collections.Generic;
 using Avalonia.Controls;
 using DynamicFileExplorer.UI.Components;
 using DynamicFileExplorer.ViewModels;
@@ -23,6 +24,15 @@ public partial class MainWindow : Window
         }
 
         InitializeComponent();
+     
+
+        var accesoRapidoControl = new AccesoRapidoView();
+
+        var host = this.FindControl<Border>("AccesoRapidoHost");
+        if (host != null)
+        {
+            host.Child = accesoRapidoControl;
+        }
         overlay = this.FindControl<Canvas>("Overlay")!;
     }
 
