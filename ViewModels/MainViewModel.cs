@@ -92,7 +92,7 @@ public class MainViewModel : INotifyPropertyChanged
 
     private void OnAplicar()
     {
-        if (AppArguments.IsUse(AppUse.OpenWith))
+        if (AppArguments.IsUse(AppUse.OpenWith) || AppArguments.IsUse(AppUse.CreateContextMenu))
         {
             var file = App.Current.UIManager.FilesLayoutController?.selectedFiles[0].controller.file;
             if (file == null) return;
@@ -107,7 +107,7 @@ public class MainViewModel : INotifyPropertyChanged
 
     private void OnCancelar()
     {
-        if (AppArguments.IsUse(AppUse.OpenWith))
+        if (AppArguments.IsUse(AppUse.OpenWith) || AppArguments.IsUse(AppUse.CreateContextMenu))
         {
             var file = App.Current.FocusedTab?.fileManager?.SelectedItems.Count;
             AppInstanceLauncher.Send(

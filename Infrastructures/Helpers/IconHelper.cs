@@ -8,15 +8,15 @@ namespace DynamicFileExplorer.UI.Helpers;
 
 public class IconHelper
 {
-    public static void SetIcon(FileSystemItem path, string icon, Boolean isForPath)
+    public static void SetIcon(FileSystemItem path, string icon, bool isforExtension)
     {
-        if (isForPath)
+        if (isforExtension)
         {
-            SetIconForPath(path, icon);
+            SetIconForExtension(path, icon);
         }
         else
         {
-            SetIconForExtension(path, icon);
+            SetIconForPath(path, icon);
         }
         
         PersistenceService.Save(App.Current.Cache);
@@ -72,6 +72,9 @@ public class IconHelper
     
     public static void SetIconForExtension(FileSystemItem file, string iconPath)
     {
+        System.Console.WriteLine(
+            "Trabajado"
+        );
         var ext = file is File f ? f.extension : null; 
         if (string.IsNullOrEmpty(ext)) return;
 

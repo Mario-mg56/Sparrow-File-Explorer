@@ -7,6 +7,7 @@ public partial class SettingsTab : UserControl
     private readonly GeneralSettingsView _generalView;
     private readonly AppearanceSettingsView _appearanceView;
     private readonly ThemesSettingsView _themesView;
+    private readonly ContextSettingsView _contextMenuView;
 
     public SettingsTab()
     {
@@ -14,6 +15,7 @@ public partial class SettingsTab : UserControl
         _generalView = new GeneralSettingsView();
         _appearanceView = new AppearanceSettingsView();
         _themesView = new ThemesSettingsView();
+        _contextMenuView = new ContextSettingsView();
     }
 
     private void OnCategoryChanged(object? sender, SelectionChangedEventArgs e)
@@ -26,6 +28,7 @@ public partial class SettingsTab : UserControl
                 "General" => _generalView,
                 "Appearance" => _appearanceView,
                 "Themes" => _themesView,
+                "ContextMenu" => _contextMenuView,
                 _ => null
             };
         }

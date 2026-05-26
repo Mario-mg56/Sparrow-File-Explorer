@@ -1,5 +1,6 @@
 public enum AppUse
 {
     Normal,
-    OpenWith
+    OpenWith,
+    CreateContextMenu
 }

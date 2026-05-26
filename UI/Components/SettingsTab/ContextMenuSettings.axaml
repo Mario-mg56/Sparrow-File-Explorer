@@ -1,0 +1,106 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:DynamicFileExplorer.ViewModels"
+             x:Class="DynamicFileExplorer.UI.Components.ContextSettingsView"
+             x:DataType="vm:ContextSettingsViewModel"> 
+    
+    <StackPanel Spacing="20" MaxWidth="850" HorizontalAlignment="Left" Margin="20">
+        
+        <TextBlock Text="Configuración de ContextMenu" FontSize="24" FontWeight="Bold" Margin="0,0,0,10"/>
+        
+        <StackPanel Spacing="5">
+            <TextBlock Text="Lista de Files/Dirs" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,5"/>
+            
+            <ItemsControl ItemsSource="{Binding PrimeraColeccion}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:ContextSettingItem">
+                        <Grid ColumnDefinitions="180, 50, 250, Auto, Auto" Margin="0,5" VerticalAlignment="Center">
+                            <TextBlock Grid.Column="0" Text="{Binding Nombre}" VerticalAlignment="Center" FontWeight="Medium"/>
+                            <CheckBox Grid.Column="1" IsChecked="{Binding DynamicValue}" ToolTip.Tip="Activar/Desactivar del menú"/>
+                            <TextBox Grid.Column="2" 
+                                     Text="{Binding ExecutablePath}" 
+                                     Watermark="Ruta del script o ejecutable..." 
+                                     IsVisible="{Binding IsCustom}" 
+                                     Margin="10,0" 
+                                     Height="32"/>
+                            <CheckBox Grid.Column="3" 
+                                      IsChecked="{Binding RequiresUserInput}" 
+                                      Content="User Input?" 
+                                      IsVisible="{Binding IsCustom}" 
+                                      Margin="10,0"/>
+                                      
+                            <Button Grid.Column="4" 
+                                    Content="-" 
+                                    Background="#E53935" 
+                                    Foreground="White"
+                                    FontWeight="Bold"
+                                    Width="30" Height="30"
+                                    CornerRadius="15"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    IsVisible="{Binding IsCustom}"
+                                    Margin="5,0,0,0"
+                                    Command="{Binding $parent[UserControl].DataContext.BorrarContextItemCommand}"
+                                    CommandParameter="{Binding}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Button Content="Crear nuevo contextItem" 
+                    HorizontalAlignment="Right" 
+                    Padding="12,6" 
+                    Margin="0,10,0,0"
+                    Command="{Binding CrearCustomFileItemCommand}"/>
+        </StackPanel>
+
+        <Separator Height="1" Background="Gray" Opacity="0.3"/>
+
+        <StackPanel Spacing="5">
+            <TextBlock Text="Lista de WorkingDirs" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,5"/>
+            
+            <ItemsControl ItemsSource="{Binding SegundaColeccion}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:ContextSettingItem">
+                        <Grid ColumnDefinitions="180, 50, 250, Auto, Auto" Margin="0,5" VerticalAlignment="Center">
+                            <TextBlock Grid.Column="0" Text="{Binding Nombre}" VerticalAlignment="Center" FontWeight="Medium"/>
+                            <CheckBox Grid.Column="1" IsChecked="{Binding DynamicValue}" ToolTip.Tip="Activar/Desactivar del menú"/>
+                            <TextBox Grid.Column="2" 
+                                     Text="{Binding ExecutablePath}" 
+                                     Watermark="Ruta del script" 
+                                     IsVisible="{Binding IsCustom}" 
+                                     Margin="10,0" 
+                                     Height="32"/>
+                            <CheckBox Grid.Column="3" 
+                                      IsChecked="{Binding RequiresUserInput}" 
+                                      Content="User Input?" 
+                                      IsVisible="{Binding IsCustom}" 
+                                      Margin="10,0"/>
+                                      
+                            <Button Grid.Column="4" 
+                                    Content="-" 
+                                    Background="#E53935" 
+                                    Foreground="White"
+                                    FontWeight="Bold"
+                                    Width="30" Height="30"
+                                    CornerRadius="15"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    IsVisible="{Binding IsCustom}"
+                                    Margin="5,0,0,0"
+                                    Command="{Binding $parent[UserControl].DataContext.BorrarContextItemCommand}"
+                                    CommandParameter="{Binding}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Button Content="Crear nuevo contextItem" 
+                    HorizontalAlignment="Right" 
+                    Padding="12,6" 
+                    Margin="0,10,0,0"
+                    Command="{Binding CrearCustomWDItemCommand}"/>
+        </StackPanel>
+                
+    </StackPanel>
+</UserControl>

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
@@ -42,30 +44,46 @@ public class FileView : Grid
 
         Bitmap source = null!;
         
-        if (file is File tipo)
-        {
-            foreach (var icon in App.Current.Cache.Config.Icons)
+            if (file is File tipo)
             {
-                if (icon.Uri.Contains(tipo.GetPath()) || icon.Formatos.Contains(tipo.extension))
+                foreach (var icon in App.Current.Cache.Config.Icons)
                 {
-                    source = MainViewModel.LoadImage(icon.Image);
-                    break;
+                    if (icon.Uri.Contains(tipo.GetPath()) || icon.Formatos.Contains(tipo.extension))
+                    {
+                        try
+                        {
+                            source = MainViewModel.LoadImage(icon.Image);
+                            
+                        } catch (System.UriFormatException e)
+                        {
+                            source ??= MainViewModel.LoadImage(App.Current.Cache.Style.FileImageIcon);
+                        }
+                        break;
+                    }
                 }
+                source ??= MainViewModel.LoadImage(App.Current.Cache.Style.FileImageIcon);
             }
-            source ??= MainViewModel.LoadImage(App.Current.Cache.Style.FileImageIcon);
-        }
-        else
-        {
-             foreach (var icon in App.Current.Cache.Config.Icons)
+            else
             {
-                if (icon.Uri.Contains(file.GetPath()))
+                foreach (var icon in App.Current.Cache.Config.Icons)
                 {
-                    source = MainViewModel.LoadImage(icon.Image);
-                    break;
-                } 
+                    if (icon.Uri.Contains(file.GetPath()))
+                    {
+                        try
+                        {
+                            source = MainViewModel.LoadImage(icon.Image);
+                            
+                        } catch (System.UriFormatException e)
+                        {
+                            source ??= MainViewModel.LoadImage(App.Current.Cache.Style.DirImageIcon);
+                        }
+                        break;
+                    } 
+                }
+                source ??= MainViewModel.LoadImage(App.Current.Cache.Style.DirImageIcon);
             }
-            source ??= MainViewModel.LoadImage(App.Current.Cache.Style.DirImageIcon);
-        }
+        
+        
 
         if (compact)
         {
@@ -114,7 +132,63 @@ public class FileView : Grid
         Children.Add(label);
     }
 
-    public static ContextMenu<FileSystemItem> MakeFileContextMenu(FileManager fm) => new ([
+     public static ContextMenu<FileSystemItem> MakeFileContextMenu(FileManager fm)
+    {
+        List<ContextMenuItem<FileSystemItem>> items = GetContextMenu(fm);
+
+        var config = App.Current.Cache?.Config;
+        if (config?.FileMenuStates != null)
+        {
+            foreach (var item in items)
+            {
+                var saved = config.FileMenuStates.FirstOrDefault(c => c.Nombre == item.name);
+                if (saved != null)
+                {
+                    item.isActive = saved.IsActive;
+                }
+            }
+
+            var personalizados = config.FileMenuStates.Where(c => !string.IsNullOrEmpty(c.ExecutablePath));
+            foreach (var custom in personalizados)
+            {
+                if (items.Any(m => m.name == custom.Nombre)) continue;
+
+                var nuevoItem = new ContextMenuItem<FileSystemItem>(
+                    name: custom.Nombre,
+                    itemAction: (i, file, _) => {
+                        if (file == null) return;
+
+                        if (custom.RequiresUserInput)
+                        {
+                            var input = TextInputPopUp.getInstance();
+                            input.Show((argumentos, _) => {
+                                // Usamos el método que recibe el Script, el Archivo y la cadena extra del usuario
+                                ScriptRunner.ExecuteWithFileAndString(
+                                    custom.ExecutablePath, 
+                                    file.GetPath(), 
+                                    argumentos
+                                );
+                            }, _title: $"Argumentos para {custom.Nombre}");
+                        }
+                        else
+                        {
+                            ScriptRunner.ExecuteWithFile(
+                                custom.ExecutablePath, 
+                                file.GetPath()
+                            );
+                        }
+                    }
+                ) { isActive = custom.IsActive };
+
+                items.Add(nuevoItem);
+            }
+        }
+
+        return new ContextMenu<FileSystemItem>(items);
+    }
+    public static List<ContextMenuItem<FileSystemItem>> GetContextMenu(FileManager fm)
+    {
+        return new List<ContextMenuItem<FileSystemItem>>([
         new (name: "Open", itemAction: (i, file, _) => {
             if (file != null) fm.Open(file);
         }),
@@ -189,7 +263,8 @@ public class FileView : Grid
                 var input = TextInputPopUp.getInstance();    
                 if (file == null) return;
                 if(file is File f){
-                    input.Show((s,b)=>{IconHelper.SetIcon(f,s,b);}, _watermark:"Path to img", _checkboxText:"Establecer para todos los "+f.extension);   
+                    input.Show(_resolve:(s,b)=>{
+                        IconHelper.SetIcon(f,s,b);}, _watermark:"Path to img", _checkboxText:"Establecer para todos los "+f.extension);   
                 } else {
                     input.Show((s,b)=>{IconHelper.SetIconForDirs(file,s,b);}, _watermark:"Path to img", _checkboxText:"Establecer para todas las carpetas ");   
                 }
@@ -207,4 +282,6 @@ public class FileView : Grid
             return false;
         })
     ]);
+    }
+    
 }

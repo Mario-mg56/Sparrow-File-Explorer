@@ -10,6 +10,8 @@ public class ContextMenuItem(SolidColorBrush? icon = null, string? name = null, 
     public readonly string name = name ?? "";
     public Action<ContextMenuItem, Control?>? itemAction = itemAction;
 
+    public bool isActive = true;
+
     public virtual void Execute() => itemAction?.Invoke(this, AttachedLayout);
     
 
@@ -21,7 +23,8 @@ public class ContextMenuItem(SolidColorBrush? icon = null, string? name = null, 
     }
     public virtual bool Render()
     {
-        return true;
+        System.Console.WriteLine("Deberia estar " + isActive);
+        return isActive;
     }
 }
 
@@ -31,13 +34,18 @@ public class ContextMenuItem<T> (SolidColorBrush? icon = null, string? name = nu
     public T? AttachedItem { get; internal set; }
     public override bool Render()
     {
+        if(isActive==false)return false;
         if(whenAppears==null)return true;
         if(AttachedItem==null)return true;
         return whenAppears.Invoke(AttachedItem);
     }
     public new Action<ContextMenuItem<T>, T?, Control?>? itemAction = itemAction;
 
-    public override void Execute() => itemAction?.Invoke(this, AttachedItem, AttachedLayout);
+    public override void Execute()
+    {
+        itemAction?.Invoke(this, AttachedItem, AttachedLayout);
+        App.Current.tabManager.FocusedTab?.fileManager?.CastWorkingDirChanged();
+    } 
 }
 
 

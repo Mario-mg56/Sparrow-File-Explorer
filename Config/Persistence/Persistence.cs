@@ -6,4 +6,5 @@ public class Persistence() {
     public required Config Config {get; init;}
     public required KeyBindings KeyBindings {get; init;}
     public required CustomTheme[] Themes {get; set;}
+    
 }

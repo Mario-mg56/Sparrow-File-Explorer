@@ -28,6 +28,9 @@ public class FileLayoutController
     public event Action? SelectedFilesChanged;
     private FileView? lastFileSelected;
     public static readonly Key MULTIPLE_SELECTION_KEY = Key.LeftCtrl;
+
+
+    public static ContextMenu<FileSystemItem> contextMenuFile = null!;
     public FileLayoutController(Control fileLayout)
     {
         App.Current.UIManager.FilesLayoutController = this;
@@ -97,7 +100,7 @@ public class FileLayoutController
         fileViews.Clear();
         attachements.Clear();
         selectedFiles.Clear();
-        var fileContextMenu = FileView.MakeFileContextMenu(fm);
+        contextMenuFile = FileView.MakeFileContextMenu(fm);
         foreach(var f in fm.files)
         {
             var fv = new FileView(f);
@@ -105,7 +108,7 @@ public class FileLayoutController
             fileViews.Add(fv);
         }
         (fileLayout as IFileLayout)!.SetFileViews(fileViews);
-        fileContextMenu.SetAttachements(attachements);
+        contextMenuFile.SetAttachements(attachements);
         contextMenu!.SetAttachements([new ContextMenu<DirItem>.ContextAttachement(fileLayout, fm.WorkingDir)]);
     }
 
@@ -216,15 +219,68 @@ public class FileLayoutController
         draggingFile.controller.dragController.StopDragging += ShowInspectorOnStopDragging;
     }
 
-    public static ContextMenu<DirItem> MakeWDContextMenu(FileManager fm) => new ([
+    public static ContextMenu<DirItem> MakeWDContextMenu(FileManager fm)
+{
+    var items = new List<ContextMenuItem<DirItem>>
+    {
         new (name: "Crear Carpeta", itemAction: (i, wd, _) => {
             var input = TextInputPopUp.getInstance();    
-            input.Show((s,_)=>fm.CreateDir(wd!, s));   
+            input.Show((s, _) => fm.CreateDir(wd!, s));   
         }),
         new (name: "Crear Archivo", itemAction: (i, wd, _) => {
             var input = TextInputPopUp.getInstance();    
-            input.Show((s,_)=>fm.CreateFile(wd!, s));   
+            input.Show((s, _) => fm.CreateFile(wd!, s));   
         }),
-        new (name: "Item 3", itemAction: (i, _, _) => Console.WriteLine(i.name + " selected"))
-    ]);
+        new (name: "Item 3", itemAction: (i, wd, _) => Console.WriteLine(i.name + " selected"))
+    };
+
+    var config = App.Current.Cache?.Config;
+    if (config?.WDMenuStates != null)
+    {
+        foreach (var item in items)
+        {
+            var saved = config.WDMenuStates.FirstOrDefault(c => c.Nombre == item.name);
+            if (saved != null)
+            {
+                item.isActive = saved.IsActive;
+            }
+        }
+
+        var personalizados = config.WDMenuStates.Where(c => !string.IsNullOrEmpty(c.ExecutablePath));
+        foreach (var custom in personalizados)
+        {
+            if (items.Any(m => m.name == custom.Nombre)) continue;
+
+            var nuevoItem = new ContextMenuItem<DirItem>(
+                name: custom.Nombre,
+                itemAction: (i, wd, _) => {
+                    if (wd == null) return;
+
+                    if (custom.RequiresUserInput)
+                    {
+                        var input = TextInputPopUp.getInstance();
+                        input.Show((argumentos, _) => {
+                            ScriptRunner.ExecuteWithFileAndString(
+                                custom.ExecutablePath, 
+                                wd.GetPath(), 
+                                argumentos
+                            );
+                        }, _title: $"Argumentos para {custom.Nombre}");
+                    }
+                    else
+                    {
+                        ScriptRunner.ExecuteWithFile(
+                            custom.ExecutablePath, 
+                            wd.GetPath()
+                        );
+                    }
+                }
+            ) { isActive = custom.IsActive };
+
+            items.Add(nuevoItem);
+        }
+    }
+
+    return new ContextMenu<DirItem>(items);
+}
 }

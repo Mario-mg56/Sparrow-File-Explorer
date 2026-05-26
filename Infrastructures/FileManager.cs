@@ -71,10 +71,19 @@ public class FileManager
                 files.Add(new DirItem(new Models.Path(path)));
 
             foreach (var path in Directory.GetFiles(WorkingDir.GetPath())
-            .Where(IsNotHidden)
-            .OrderBy(GetFileName,
-            StringComparer.CurrentCultureIgnoreCase))
-            files.Add(new File(new Models.Path(path)));
+                .Where(f => 
+                {
+                    if (AppArguments.IsUse(AppUse.CreateContextMenu))
+                    {
+                        return GetExtension(f).Equals(".sh", StringComparison.OrdinalIgnoreCase);
+                    }
+                    
+                    return IsNotHidden(f);
+                })
+                .OrderBy(GetFileName, StringComparer.CurrentCultureIgnoreCase))
+            {
+                files.Add(new File(new Models.Path(path)));
+            }
         } else
         {
             searchManager.GetResults().ToList().ForEach(files.Add);

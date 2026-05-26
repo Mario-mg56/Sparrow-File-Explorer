@@ -46,5 +46,58 @@
       ],
       "DesktopApp": "/usr/share/applications/nvim.desktop"
     }
+  ],
+  "FileMenuStates": [
+    {
+      "Nombre": "Open",
+      "IsActive": false,
+      "ExecutablePath": "",
+      "RequiresUserInput": false
+    },
+    {
+      "Nombre": "Delete",
+      "IsActive": true,
+      "ExecutablePath": "",
+      "RequiresUserInput": false
+    },
+    {
+      "Nombre": "Rename",
+      "IsActive": true,
+      "ExecutablePath": "",
+      "RequiresUserInput": false
+    },
+    {
+      "Nombre": "Open with",
+      "IsActive": true,
+      "ExecutablePath": "",
+      "RequiresUserInput": false
+    },
+    {
+      "Nombre": "Copy path",
+      "IsActive": true,
+      "ExecutablePath": "",
+      "RequiresUserInput": false
+    },
+    {
+      "Nombre": "Set icon",
+      "IsActive": true,
+      "ExecutablePath": "",
+      "RequiresUserInput": false
+    },
+    {
+      "Nombre": "Set as background image",
+      "IsActive": true,
+      "ExecutablePath": "",
+      "RequiresUserInput": false
+    },
+    {
+      "Nombre": "Enviar a Servidor Git Remoto",
+      "IsActive": true,
+      "ExecutablePath": "/home/diego/scripts/git_push_custom.sh",
+      "RequiresUserInput": true
+    }
+  ],
+  "WDMenuStates": [
+    
   ]
 }

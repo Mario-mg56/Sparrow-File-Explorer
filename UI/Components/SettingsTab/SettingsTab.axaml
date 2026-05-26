@@ -3,7 +3,7 @@
              xmlns:components="clr-namespace:DynamicFileExplorer.UI.Components"
              x:Class="DynamicFileExplorer.UI.Components.SettingsTab">
     
-    <Grid ColumnDefinitions="250, 4, *">
+    <Grid ColumnDefinitions="120, 4, *">
         
         <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <ListBox Name="CategoriesList" Background="Transparent" BorderThickness="0" 
@@ -11,6 +11,7 @@
                 <ListBoxItem Content="General" IsSelected="True" Padding="15,10"/>
                 <ListBoxItem Content="Appearance" Padding="15,10"/>
                 <ListBoxItem Content="Themes" Padding="15,10"/>
+                <ListBoxItem Content="ContextMenu" Padding="15,10"/>
             </ListBox>
         </ScrollViewer>
 

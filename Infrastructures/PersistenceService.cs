@@ -45,6 +45,7 @@ public class PersistenceService : JsonStorageService
 
     public static void Save(Persistence data)
     {
+        System.Console.WriteLine(data.Config.WDMenuStates.Count);
         EnsureDirectories();
 
         Save(CachePath, data.Cache);

@@ -78,6 +78,7 @@ public class ContextMenu : FlexLayout
     
     public virtual void Show() {
         Children.Clear();
+        System.Console.WriteLine("oliii");
         items.Where(i=>i.Render()).ToList().ForEach(i => Children.Add(new ContextMenuItemView(i)));
         IsVisible = true;
         blurBackgroundEffect.RefreshBlur();

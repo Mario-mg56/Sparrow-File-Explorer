@@ -20,6 +20,7 @@ public partial class App : Application
     public static new App Current => (Application.Current as App)!;
     public MainWindow MainWindow { get; private set; } = null!;
     public Persistence Cache { get; set; } = PersistenceService.Load();
+
     internal TabManager tabManager = null!;
     internal UIManager UIManager = null!;
 
@@ -47,6 +48,8 @@ public partial class App : Application
         UIManager = UIManager.Init();
 
         // DesktopLauncher.OpenWithDesktop("/usr/share/applications/vim.desktop","/home/diego/proyectos/interfaces/DynamicFileExplorer/Program.cs");
+
+        Cache.Config.WDMenuStates.ForEach(s=>System.Console.WriteLine(s.Nombre));
 
         AvaloniaXamlLoader.Load(this);
     }
