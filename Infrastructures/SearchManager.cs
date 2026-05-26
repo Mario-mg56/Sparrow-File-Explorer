@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DynamicFileExplorer.Models;
 
-namespace DynamicFileExplorer.Infrastructures;
+namespace DynamicFileExplorer.Helpers;
 public class SearchManager(FileManager fm)
 {
     public List<FileSystemItem> searchWorkingDir{get;} = [];

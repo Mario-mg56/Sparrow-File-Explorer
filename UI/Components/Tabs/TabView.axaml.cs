@@ -3,7 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
-using DynamicFileExplorer.UI.Config;
+using DynamicFileExplorer.UI.Persistence;
 
 namespace DynamicFileExplorer.UI.Components;
 
@@ -28,11 +28,11 @@ public partial class TabView : UserControl
     }
 
     public event Action<TabView>? ClickedTab, ClosedTab;
-    public static SolidColorBrush FocusColor {get; private set;} = new(Color.Parse(Config.Theme.Current.TabFocus));
+    public static SolidColorBrush FocusColor {get; private set;} = new(Color.Parse(Persistence.Theme.Current.TabFocus!));
 
     static TabView() {
-        Config.Theme.ThemeChanged += theme => FocusColor =
-            new SolidColorBrush(Color.Parse(theme.TabFocus));
+        Persistence.Theme.ThemeChanged += theme => FocusColor =
+            new SolidColorBrush(Color.Parse(theme.TabFocus!));
     }
 
     public TabView()
@@ -59,6 +59,6 @@ public partial class TabView : UserControl
     public void FocusTab(bool focus)
     {
         Background = focus ? FocusColor
-         : new SolidColorBrush(Color.Parse(Config.Theme.Current.TabBackground));
+         : new SolidColorBrush(Color.Parse(Persistence.Theme.Current.TabBackground!));
     }
 }

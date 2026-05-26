@@ -5,7 +5,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Styling;
-using DynamicFileExplorer.UI.Config;
+using DynamicFileExplorer.UI.Persistence;
 
 namespace DynamicFileExplorer.UI.Components;
 
@@ -49,20 +49,20 @@ public class CustomScrollBarViewer : ScrollViewer
         Styles.Add(hideArrowsStyle);
 
         //No funciona cambiar estos estilos desde App.axaml, por lo que lo hago aquí
-        Config.Theme.ThemeChanged += ApplyScrollTheme;
-        ApplyScrollTheme(Config.Theme.Current);
+        Persistence.Theme.ThemeChanged += ApplyScrollTheme;
+        ApplyScrollTheme(Persistence.Theme.Current);
 
         UpdateColorStyles();
     }
 
     private void ApplyScrollTheme(CustomTheme theme)
     {
-        RestColor = new SolidColorBrush(Color.Parse(theme.ScrollThumb));
-        HoverColor = new SolidColorBrush(Color.Parse(theme.ScrollThumbHover));
-        PressedColor = new SolidColorBrush(Color.Parse(theme.ScrollThumbPressed));
-        TrackRestColor = new SolidColorBrush(Color.Parse(theme.ScrollTrack));
-        TrackHoverColor = new SolidColorBrush(Color.Parse(theme.ScrollTrackHover));
-        TrackPressedColor = new SolidColorBrush(Color.Parse(theme.ScrollTrackPressed));
+        RestColor = new SolidColorBrush(Color.Parse(theme.ScrollThumb!));
+        HoverColor = new SolidColorBrush(Color.Parse(theme.ScrollThumbHover!));
+        PressedColor = new SolidColorBrush(Color.Parse(theme.ScrollThumbPressed!));
+        TrackRestColor = new SolidColorBrush(Color.Parse(theme.ScrollTrack!));
+        TrackHoverColor = new SolidColorBrush(Color.Parse(theme.ScrollTrackHover!));
+        TrackPressedColor = new SolidColorBrush(Color.Parse(theme.ScrollTrackPressed!));
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)

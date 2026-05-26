@@ -10,17 +10,20 @@
     <FluentTheme />
 
         <Style Selector="TextBlock">
-            <Setter Property="FontFamily" Value="{x:Static helpers:AppResources.Font}"/>
-            <Setter Property="Foreground" Value="{DynamicResource TextForeground}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource AppFont}"/>
+        <Setter Property="FontSize" Value="{DynamicResource AppFontSize}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextForeground}"/>
         </Style>
 
         <Style Selector="Button">
-            <Setter Property="FontFamily" Value="{x:Static helpers:AppResources.Font}" />
+            <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
+            <Setter Property="FontSize" Value="{DynamicResource AppFontSize}"/>
             <Setter Property="Foreground" Value="{DynamicResource TextForeground}"/>
         </Style>
 
         <Style Selector="TextBox">
-            <Setter Property="FontFamily" Value="{x:Static helpers:AppResources.Font}" />
+            <Setter Property="FontFamily" Value="{DynamicResource AppFont}" />
+            <Setter Property="FontSize" Value="{DynamicResource AppFontSize}"/>
             <Setter Property="Foreground" Value="{DynamicResource TextForeground}"/>
         </Style>
 

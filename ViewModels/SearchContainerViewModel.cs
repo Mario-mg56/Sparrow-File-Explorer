@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Windows.Input;
-using DynamicFileExplorer.Infrastructures;
+using DynamicFileExplorer.Helpers;
 using DynamicFileExplorer.Models;
 
 namespace DynamicFileExplorer.ViewModels

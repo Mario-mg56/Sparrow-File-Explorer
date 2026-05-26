@@ -9,7 +9,7 @@ using DynamicFileExplorer.UI.Components.Inspector;
 using DynamicFileExplorer.UI.Views.MainWindow;
 using DynamicFileExplorer.ViewModels;
 
-namespace DynamicFileExplorer.Infrastructures;
+namespace DynamicFileExplorer.Helpers;
 
 class UIManager
 {

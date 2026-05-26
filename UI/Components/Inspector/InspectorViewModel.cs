@@ -106,7 +106,7 @@ public class InspectorViewModel : INotifyPropertyChanged
             if (value?.Count == 0) return;
 
 
-            if(value.Count == 1)
+            if(value?.Count == 1)
             {
                 var file = value[0];
                 fileName = file.path.name;
@@ -140,6 +140,7 @@ public class InspectorViewModel : INotifyPropertyChanged
                 string finalNames = "";
                 long finalSize = 0;
                 int[] cantidad = [0,0];
+                if (files == null) return;
                 foreach(var file in files)
                 {
                     finalNames+=file.path.name+",";

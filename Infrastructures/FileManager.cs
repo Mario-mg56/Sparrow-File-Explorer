@@ -1,4 +1,4 @@
-namespace DynamicFileExplorer.Infrastructures;
+namespace DynamicFileExplorer.Helpers;
 
 using System;
 using System.IO;
@@ -11,13 +11,14 @@ using System.Threading.Tasks;
 using File = Models.File;
 using System.Diagnostics;
 using DynamicFileExplorer.Infrastructures.Helpers;
+using DynamicFileExplorer.Infrastructures;
 
 public class FileManager
 {
     public DirItem WorkingDir;
     public ObservableCollection<FileSystemItem> files = [];
     public List<FileSystemItem> SelectedItems {get; private set;} = [];
-    private static bool ShowHiddenItems {get => App.Config.DefaultIsHideItems;}
+    private static bool ShowHiddenItems {get => App.Current.Cache.Config.DefaultIsHideItems;}
 
     private HistoryManager historyManager = new();
     public event Action<DirItem>? WorkingDirChanged;
@@ -263,7 +264,7 @@ public class FileManager
     public void ChangeHideItems(bool? state)
     {
         if (!state.HasValue)  return;
-        App.Config.DefaultIsHideItems = state.Value;
+        App.Current.Cache.Config.DefaultIsHideItems = state.Value;
         CastWorkingDirChanged();
     }
 

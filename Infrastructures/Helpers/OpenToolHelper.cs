@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using DynamicFileExplorer.Models;
 using DynamicFileExplorer.Infrastructures;
+using DynamicFileExplorer.Helpers;
+using DynamicFileExplorer.UI.Persistence;
 
 namespace DynamicFileExplorer.Infrastructures.Helpers;
 
@@ -15,13 +17,13 @@ public static class OpenToolHelper
         else
             SetToolForExtension(file, desktopPath);
 
-        App.Settings.SaveConfig();
+        PersistenceService.Save(App.Current.Cache);
     }
 
     public static void SetToolForPath(FileSystemItem file, string desktopPath)
     {
         var fullPath = file.GetPath();
-        var tools = App.Config.OpenTools;
+        var tools = App.Current.Cache.Config.OpenTools;
 
         OpenToolData? target = null;
 
@@ -55,7 +57,7 @@ public static class OpenToolHelper
         var ext = file is File f ? f.extension : null;
         if (string.IsNullOrEmpty(ext)) return;
 
-        var tools = App.Config.OpenTools;
+        var tools = App.Current.Cache.Config.OpenTools;
 
         OpenToolData? target = null;
 
@@ -86,7 +88,7 @@ public static class OpenToolHelper
     {
         var path = file.GetPath();
 
-        var byPath = App.Config.OpenTools
+        var byPath = App.Current.Cache.Config.OpenTools
             .FirstOrDefault(t => t.Uri.Contains(path));
 
         if (byPath != null)
@@ -96,7 +98,7 @@ public static class OpenToolHelper
 
         if (!string.IsNullOrEmpty(ext))
         {
-            var byExt = App.Config.OpenTools
+            var byExt = App.Current.Cache.Config.OpenTools
                 .FirstOrDefault(t => t.Extensiones.Contains(ext));
 
             if (byExt != null)

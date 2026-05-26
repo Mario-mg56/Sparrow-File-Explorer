@@ -2,29 +2,47 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:helpers="clr-namespace:DynamicFileExplorer.UI.Helpers"
              xmlns:components="clr-namespace:DynamicFileExplorer.UI.Components"
+    xmlns:config="clr-namespace:DynamicFileExplorer.UI.Persistence"
              x:Class="DynamicFileExplorer.UI.Components.HeaderContainer">
     <Grid HorizontalAlignment="Stretch"
       Margin="10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="{Binding Source={x:Static helpers:AppResources.widthLeftHeader}}" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-        <Grid.Styles>
+          <Grid.Styles>
 
             <Style Selector="Border.TransparentBorder">
                 <Setter Property="Background" Value="Transparent"/>
-                <Setter Property="BorderBrush" Value="Black"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Secondary}"/>
                 <Setter Property="BorderThickness" Value="2"/>
                 <Setter Property="CornerRadius" Value="15"/>
             </Style>
             <Style Selector="Border.BlackBackground">
-                <Setter Property="Background" Value="#80000000"/>
+                <Setter Property="Background" Value="{DynamicResource NavBackground}"/>
                 <Setter Property="CornerRadius" Value="15"/>
             </Style>
 
         </Grid.Styles>
-        <Border Grid.Column="0" Classes="Transparent" ></Border>
+    <Grid  ColumnDefinitions="Auto,*,Auto" HorizontalAlignment="Stretch"
+        Margin="10">
+        
+        <Grid Grid.Column="0" VerticalAlignment="Stretch" Width="{Binding $self.Bounds.Height}">
+            <Border Classes="BlackBackground" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <components:SVGIcon
+                    Name="SettingsIcon"
+                    IconPath="{x:Static config:Icons.SETTINGS_SVG_PATH}"
+                    HoverBackground="{DynamicResource IconHover}"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    CornerRadius="15"
+                    IconSize="18"
+                    Width="32"
+                    Height="32"
+                />
+            </Border>
+        </Grid>
         <Border Grid.Column="1"  Classes="TransparentBorder" HorizontalAlignment="Center"  Width="200"><components:SearchContainerView/></Border>
         <Border Grid.Column="2"  Classes="BlackBackground" HorizontalAlignment="Right">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
@@ -44,7 +62,6 @@
                     </Button>
                     <Button Name="BackButton"  Background="Transparent">
                         <Button.Content>
-                                <!-- texto real -->
                                 <TextBlock Text="Back"
                                         Foreground="White"/>
                         </Button.Content>
@@ -54,6 +71,6 @@
             </StackPanel>
         </Border>
     </Grid>
-    
+</Grid>
 
 </UserControl>

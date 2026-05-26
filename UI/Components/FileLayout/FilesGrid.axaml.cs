@@ -13,13 +13,12 @@ public class FilesGrid : Grid, IFileLayout
 {
     public List<FileView> Items {get; private set;} = [];
     public readonly FileLayoutController fileLayoutController;
-    public int IconSize {get; set;}
+    public int IconSize {get => FileView.ICON_SIZE;}
     public int Cols {get; private set;}
     public int Rows {get; private set;}
 
     public FilesGrid()
     {
-        IconSize = FileView.ICON_SIZE;
         Background = new SolidColorBrush(Colors.Transparent); //Para que reciba eventos de mouse aunque no tenga fondo
         fileLayoutController = new FileLayoutController(this);
 

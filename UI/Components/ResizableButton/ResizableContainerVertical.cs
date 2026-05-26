@@ -9,8 +9,6 @@ public class ResizableContainerVertical : ResizableContainer
 {
     private RowDefinition topDefinition;
 
-    private Styles Styles = App.Styles;
-
     public ResizableContainerVertical(
         Border top,
         RowDefinition topDefinition,

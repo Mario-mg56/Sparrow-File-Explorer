@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Avalonia.Controls;
 using Avalonia.Media;
-using DynamicFileExplorer.Infrastructures;
+using DynamicFileExplorer.Helpers;
 using DynamicFileExplorer.Models;
 
 namespace DynamicFileExplorer.ViewModels;

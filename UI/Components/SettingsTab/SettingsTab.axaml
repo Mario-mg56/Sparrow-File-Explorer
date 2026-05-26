@@ -1,0 +1,24 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:components="clr-namespace:DynamicFileExplorer.UI.Components"
+             x:Class="DynamicFileExplorer.UI.Components.SettingsTab">
+    
+    <Grid ColumnDefinitions="250, 4, *">
+        
+        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ListBox Name="CategoriesList" Background="Transparent" BorderThickness="0" 
+                     SelectionChanged="OnCategoryChanged">
+                <ListBoxItem Content="General" IsSelected="True" Padding="15,10"/>
+                <ListBoxItem Content="Appearance" Padding="15,10"/>
+                <ListBoxItem Content="Themes" Padding="15,10"/>
+            </ListBox>
+        </ScrollViewer>
+
+        <GridSplitter Grid.Column="1" Background="Transparent" ResizeDirection="Columns"/>
+
+        <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ContentControl Name="FormContainer" Margin="30,20"/>
+        </ScrollViewer>
+        
+    </Grid>
+</UserControl>

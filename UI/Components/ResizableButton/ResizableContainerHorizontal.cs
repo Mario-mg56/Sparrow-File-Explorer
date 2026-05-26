@@ -9,7 +9,6 @@ public class ResizableContainerHorizontal:ResizableContainer
 {
 
     private ColumnDefinition topDefinition;
-    private Styles Styles = App.Styles;
     public ResizableContainerHorizontal(Border top,ColumnDefinition topDefinition, Border thisBorder):base(top,thisBorder)
     {
         this.topDefinition = topDefinition;

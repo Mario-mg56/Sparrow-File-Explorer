@@ -11,7 +11,6 @@ public class ContextMenuItemView : StackPanel
     public readonly static int ICON_SIZE = 16, GAP = 5, MARGIN_TOP = 5, MARGIN_X = 15;
     public readonly static IBrush
         background = Brushes.Transparent,
-        foreground = Brushes.Black,
         hoverBackground = Brushes.LightGray;
     
     public ContextMenuItemView(ContextMenuItem item) {
