@@ -1,14 +1,12 @@
 using System;
 using Avalonia.Media;
+using Avalonia.Media.Immutable;
 
 namespace DynamicFileExplorer.Models;
-
 public abstract class FileSystemItem
 {
-    public SolidColorBrush icon;
-
+    public IBrush icon;
     public Path path;
-
     protected FileSystemItem(Path path)
     {
         this.path = path;
@@ -22,16 +20,15 @@ public abstract class FileSystemItem
     }
 
     public abstract string GetPath();
-
     public override string ToString()
     {
         return GetPath();
     }
 
-    private static SolidColorBrush GenerateIconPlaceholder()
+    private static IBrush GenerateIconPlaceholder()
     {   
         var rnd = new Random();
-        return new SolidColorBrush(Color.FromRgb
+        return new ImmutableSolidColorBrush(Color.FromRgb
             ((byte)rnd.Next(0, 256), (byte)rnd.Next(0, 256), (byte)rnd.Next(0, 256)));
     }
 
@@ -44,5 +41,4 @@ public abstract class FileSystemItem
     {
         return System.IO.Path.Exists(GetPath());
     }
-    
 }

@@ -42,6 +42,17 @@ public static class ThemeGenerator
             nameof(CustomTheme.NavBackground) => Glassify(Resolve(theme, nameof(CustomTheme.Secondary)), 0.5f),
             nameof(CustomTheme.SecondaryTransparent) => Glassify(Resolve(theme, nameof(CustomTheme.Secondary)), 0.1f),
 
+            nameof(CustomTheme.PopUpBackground) => Glassify(Resolve(theme, nameof(CustomTheme.Secondary)), 0.90f),
+            nameof(CustomTheme.PopUpBorder) => Glassify(Resolve(theme, nameof(CustomTheme.Foreground)), 0.15f),
+
+            nameof(CustomTheme.TextBoxBackground) => Glassify(Resolve(theme, nameof(CustomTheme.Secondary)), 0.6f),
+            nameof(CustomTheme.TextBoxHover) => Glassify(Resolve(theme, nameof(CustomTheme.Secondary)), 0.4f),
+            nameof(CustomTheme.TextBoxBorder) => Glassify(Resolve(theme, nameof(CustomTheme.Foreground)), 0.3f),
+            nameof(CustomTheme.SubTextForeground) => Glassify(Resolve(theme, nameof(CustomTheme.Foreground)), 0.6f),
+            nameof(CustomTheme.Separator) => Glassify(Resolve(theme, nameof(CustomTheme.Foreground)), 0.2f),
+            nameof(CustomTheme.ContextHover) => Glassify(Resolve(theme, nameof(CustomTheme.Primary)), 0.4f),
+            nameof(CustomTheme.FilterBackground) => Glassify(Resolve(theme, nameof(CustomTheme.Secondary)), 0.8f),
+
             //Fallback
             nameof(CustomTheme.Primary) => "#1994aa",
             nameof(CustomTheme.Destructive) => "#ff0000",

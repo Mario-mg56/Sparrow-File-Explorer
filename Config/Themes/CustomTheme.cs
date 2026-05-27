@@ -37,4 +37,15 @@ public class CustomTheme
 
     public string? SecondaryTransparent { get; set; }
     public string? NavBackground { get; set; }
+
+    public string? PopUpBackground { get; set; }
+    public string? PopUpBorder { get; set; }
+
+    public string? TextBoxBackground { get; set; }
+    public string? TextBoxHover { get; set; }
+    public string? TextBoxBorder { get; set; }
+    public string? SubTextForeground { get; set; }
+    public string? Separator { get; set; }
+    public string? ContextHover { get; set; }
+    public string? FilterBackground { get; set; }
 }

@@ -74,9 +74,12 @@ public class FileLayoutController
     private Action<DirItem>? WDChangedBuffer;
     public void SetFileManager(FileManager? newFileManager)
     {
-        if(FileManager != null && WDChangedBuffer != null)
-            FileManager.WorkingDirChanged -= WDChangedBuffer;
-
+        if(FileManager != null)
+        {
+            if (WDChangedBuffer != null) FileManager.WorkingDirChanged -= WDChangedBuffer;
+            FileManager.files.CollectionChanged -= ReloadFiles; // Desuscribir
+        }
+        
         _fm = newFileManager;
 
         if (FileManager == null)
@@ -90,26 +93,43 @@ public class FileLayoutController
 
         contextMenu = MakeWDContextMenu(FileManager);
         
-        WDChangedBuffer = _ => ReloadFiles(FileManager);
+        // Al cambiar de directorio, limpiamos todo y preparamos para los nuevos datos
+        WDChangedBuffer = _ => {
+            fileViews.Clear();
+            attachements.Clear();
+            selectedFiles.Clear();
+            contextMenuFile = FileView.MakeFileContextMenu(FileManager);
+            contextMenu!.SetAttachements([new ContextMenu<DirItem>.ContextAttachement(fileLayout, FileManager.WorkingDir)]);
+            (fileLayout as IFileLayout)!.SetFileViews(fileViews);
+        };
+        
         FileManager.WorkingDirChanged += WDChangedBuffer;
-        ReloadFiles(FileManager);
+        FileManager.files.CollectionChanged += ReloadFiles; // Escuchar el streaming
+        
+        // Carga Inicial
+        WDChangedBuffer(FileManager.WorkingDir);
     }
 
-    private void ReloadFiles(FileManager fm)
+    private void ReloadFiles(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
-        fileViews.Clear();
-        attachements.Clear();
-        selectedFiles.Clear();
-        contextMenuFile = FileView.MakeFileContextMenu(fm);
-        foreach(var f in fm.files)
+        if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add && e.NewItems != null)
         {
-            var fv = new FileView(f);
-            SetUpFileView(fv);
-            fileViews.Add(fv);
+            foreach(FileSystemItem f in e.NewItems)
+            {
+                var fv = new FileView(f);
+                SetUpFileView(fv);
+                fileViews.Add(fv);
+            }
+            (fileLayout as IFileLayout)!.SetFileViews(fileViews);
+            contextMenuFile?.SetAttachements(attachements);
         }
-        (fileLayout as IFileLayout)!.SetFileViews(fileViews);
-        contextMenuFile.SetAttachements(attachements);
-        contextMenu!.SetAttachements([new ContextMenu<DirItem>.ContextAttachement(fileLayout, fm.WorkingDir)]);
+        else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
+        {
+            fileViews.Clear();
+            attachements.Clear();
+            selectedFiles.Clear();
+            (fileLayout as IFileLayout)!.SetFileViews(fileViews);
+        }
     }
 
     private void SetUpFileView(FileView fv)

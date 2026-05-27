@@ -7,14 +7,14 @@
             
             <Grid ColumnDefinitions="*, Auto" Margin="0,0,0,10">
                 <StackPanel Grid.Column="0" Spacing="5" Margin="0,0,15,0">
-                    <TextBlock Text="Theme Name" FontSize="12" Foreground="Gray"/>
+                    <TextBlock Text="Theme Name" FontSize="12" Foreground="{DynamicResource SubTextForeground}"/>
                     <TextBox Name="ThemeNameTextBox" Watermark="Enter unique theme name..."/>
                 </StackPanel>
                 <Button Name="ActivateThemeBtn" Grid.Column="1" Content="Activate Theme" 
                         VerticalAlignment="Bottom" Padding="15,8" Background="{DynamicResource SecondaryTransparent}" Foreground="{DynamicResource Foreground}"/>
             </Grid>
             
-            <Border Height="1" Background="#20000000" Margin="0,5,0,10"/>
+            <Border Height="1" Background="{DynamicResource Separator}" Margin="0,5,0,10"/>
             
             <TextBlock Text="Edit Colors" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,5"/>
             <StackPanel Name="ColorsContainer" Spacing="12">

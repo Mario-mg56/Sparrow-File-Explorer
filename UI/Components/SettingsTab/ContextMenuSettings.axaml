@@ -31,7 +31,7 @@
                                       
                             <Button Grid.Column="4" 
                                     Content="-" 
-                                    Background="#E53935" 
+                                    Background="{DynamicResource Destructive}"
                                     Foreground="White"
                                     FontWeight="Bold"
                                     Width="30" Height="30"
@@ -54,7 +54,7 @@
                     Command="{Binding CrearCustomFileItemCommand}"/>
         </StackPanel>
 
-        <Separator Height="1" Background="Gray" Opacity="0.3"/>
+        <Separator Height="1" Background="{DynamicResource Separator}" Opacity="0.3"/>
 
         <StackPanel Spacing="5">
             <TextBlock Text="Lista de WorkingDirs" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,5"/>
@@ -79,7 +79,7 @@
                                       
                             <Button Grid.Column="4" 
                                     Content="-" 
-                                    Background="#E53935" 
+                                    Background="{DynamicResource Destructive}"
                                     Foreground="White"
                                     FontWeight="Bold"
                                     Width="30" Height="30"

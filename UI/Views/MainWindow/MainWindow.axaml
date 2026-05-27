@@ -35,7 +35,7 @@
             <components:TabsPanel BorderThickness="0,0,0,5" BorderBrush="{DynamicResource Secondary}" MinHeight="36"
                  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Background="Transparent" Name="Tabs" IsVisible="{Binding TopBarIsVisible}"/>
 
-            <components:ResizableBorder Grid.Row="3" Grid.Column="0" Background="Transparent"
+            <components:ResizableBorder Grid.Row="3" Grid.Column="0" Background="Transparent" BorderBrush="{DynamicResource Secondary}"
                 Name="HierarchyContainer" EndResizing="True">
                 
                 <Grid RowDefinitions="8*, 2*">

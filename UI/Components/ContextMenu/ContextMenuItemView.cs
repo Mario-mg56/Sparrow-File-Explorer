@@ -9,12 +9,15 @@ public class ContextMenuItemView : StackPanel
 {
     public readonly ContextMenuItem item;
     public readonly static int ICON_SIZE = 16, GAP = 5, MARGIN_TOP = 5, MARGIN_X = 15;
-    public readonly static IBrush
-        background = Brushes.Transparent,
-        hoverBackground = Brushes.LightGray;
+    public readonly static IBrush background = Brushes.Transparent;
+    public static IBrush hoverBackground = new SolidColorBrush(Color.Parse(Persistence.Theme.Current.ContextHover!));
     
     public ContextMenuItemView(ContextMenuItem item) {
         this.item = item;
+
+        Persistence.Theme.ThemeChanged += theme => {
+            hoverBackground = new SolidColorBrush(Color.Parse(theme.ContextHover!));
+        };
 
         Orientation = Avalonia.Layout.Orientation.Horizontal;
         Background = background;

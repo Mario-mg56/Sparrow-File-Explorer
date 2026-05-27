@@ -6,7 +6,7 @@
              x:Class="DynamicFileExplorer.UI.Components.FilterView"
              x:DataType="vm:FilterViewModel"
              Name="FlexLayout"
-             Background="rgba(255,255,255,0.2)"
+             Background="{DynamicResource FilterBackground}"
              CornerRadius="10">
 
     <Grid>
@@ -58,7 +58,7 @@
                 </StackPanel>
 
                 <!-- Separador -->
-                <Border Background="White" Grid.Column="1"/>
+                <Border Background="{DynamicResource Separator}" Grid.Column="1"/>
 
                 <!-- Columna derecha -->
                 <StackPanel Grid.Column="2" Orientation="Vertical">

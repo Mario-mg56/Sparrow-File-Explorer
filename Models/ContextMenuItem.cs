@@ -1,12 +1,13 @@
 using System;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Media.Immutable;
 
 namespace DynamicFileExplorer.Models;
-public class ContextMenuItem(SolidColorBrush? icon = null, string? name = null, Action<ContextMenuItem, Control?>? itemAction = null)
+public class ContextMenuItem(IBrush? icon = null, string? name = null, Action<ContextMenuItem, Control?>? itemAction = null)
 {
     public Control? AttachedLayout { get; internal set; }
-    public readonly SolidColorBrush? icon = icon ?? GenerateIconPlaceholder();
+    public readonly IBrush? icon = icon ?? GenerateIconPlaceholder();
     public readonly string name = name ?? "";
     public Action<ContextMenuItem, Control?>? itemAction = itemAction;
 
@@ -15,20 +16,20 @@ public class ContextMenuItem(SolidColorBrush? icon = null, string? name = null, 
     public virtual void Execute() => itemAction?.Invoke(this, AttachedLayout);
     
 
-    private static SolidColorBrush GenerateIconPlaceholder()
+    private static IBrush GenerateIconPlaceholder()
     {   
         var rnd = new Random();
-        return new SolidColorBrush(Color.FromRgb
+        return new ImmutableSolidColorBrush(Color.FromRgb
             ((byte)rnd.Next(0, 256), (byte)rnd.Next(0, 256), (byte)rnd.Next(0, 256)));
     }
     public virtual bool Render()
     {
-        System.Console.WriteLine("Deberia estar " + isActive);
+        Console.WriteLine("Deberia estar " + isActive);
         return isActive;
     }
 }
 
-public class ContextMenuItem<T> (SolidColorBrush? icon = null, string? name = null, Action<ContextMenuItem<T>, T?, Control?>? itemAction = null, Predicate<T>? whenAppears = null)
+public class ContextMenuItem<T> (IBrush? icon = null, string? name = null, Action<ContextMenuItem<T>, T?, Control?>? itemAction = null, Predicate<T>? whenAppears = null)
  : ContextMenuItem(icon, name, null)
 {
     public T? AttachedItem { get; internal set; }

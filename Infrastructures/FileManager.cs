@@ -12,6 +12,7 @@ using File = Models.File;
 using System.Diagnostics;
 using DynamicFileExplorer.Infrastructures.Helpers;
 using DynamicFileExplorer.Infrastructures;
+using Avalonia.Threading;
 
 public class FileManager
 {
@@ -27,7 +28,6 @@ public class FileManager
     public FileManager(DirItem currentPath)
     {
         searchManager = new(this);
-        WorkingDirChanged += (_) => LoadFiles();
         if (!ChangeDirectory(currentPath)) throw new ArgumentException("Invalid directory");
         WorkingDir = currentPath;
         
@@ -47,10 +47,62 @@ public class FileManager
         return searchManager.SearchWorkingDir(word);
     }
 
-    private void LoadFiles()
+    public async Task LoadFiles()
     {
         files.Clear();
-        ListAll().ForEach(files.Add);
+        
+        if (!searchManager.IsEmpty())
+        {
+            searchManager.GetResults().ToList().ForEach(files.Add);
+            return;
+        }
+
+        var currentPath = WorkingDir.GetPath();
+        bool showHidden = ShowHiddenItems;
+        bool createContextMenuUse = AppArguments.IsUse(AppUse.CreateContextMenu);
+
+        await Task.Run(async () =>
+        {
+            var batch = new List<FileSystemItem>();
+            const int BATCH_SIZE = 50;
+
+            try {
+                foreach (var path in Directory.EnumerateDirectories(currentPath))
+                {
+                    if (!IsNotHidden(path)) continue;
+                    batch.Add(new DirItem(new Models.Path(path)));
+
+                    if (batch.Count >= BATCH_SIZE)
+                    {
+                        var copy = batch.ToList();
+                        batch.Clear();
+                        await Dispatcher.UIThread.InvokeAsync(() => copy.ForEach(files.Add));
+                    }
+                }
+                
+                foreach (var path in Directory.EnumerateFiles(currentPath))
+                {
+                    if (createContextMenuUse && !GetExtension(path).Equals(".sh", StringComparison.OrdinalIgnoreCase)) continue;
+                    if (!IsNotHidden(path)) continue;
+
+                    batch.Add(new File(new Models.Path(path)));
+
+                    if (batch.Count >= BATCH_SIZE)
+                    {
+                        var copy = batch.ToList();
+                        batch.Clear();
+                        await Dispatcher.UIThread.InvokeAsync(() => copy.ForEach(files.Add));
+                    }
+                }
+
+                if (batch.Count > 0)
+                {
+                    var copy = batch.ToList();
+                    await Dispatcher.UIThread.InvokeAsync(() => copy.ForEach(files.Add));
+                }
+            } 
+            catch (UnauthorizedAccessException) {}
+        });
     }
 
     public static DirItem? GetRoot()
@@ -263,11 +315,12 @@ public class FileManager
         return this;
     }
     
-    public void CastWorkingDirChanged()
+    public async void CastWorkingDirChanged()
     {
-        // Console.WriteLine("WD changed to " + WorkingDir.GetPath());
-        LoadFiles();
-        WorkingDirChanged?.Invoke(WorkingDir);
+        WorkingDirChanged?.Invoke(WorkingDir); 
+        await LoadFiles(); 
+        App.Current.Cache.Cache.LastDir = WorkingDir.GetPath();
+        PersistenceService.Save(App.Current.Cache);
     }
    
     public void ChangeHideItems(bool? state)

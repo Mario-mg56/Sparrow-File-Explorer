@@ -10,7 +10,7 @@
                     <DataTemplate>
                         <Grid ColumnDefinitions="*, Auto">
                             <TextBlock Grid.Column="0" Text="{Binding}" VerticalAlignment="Center"/>
-                            <Button Grid.Column="1" Content="✕" Background="Transparent" Foreground="Red" Padding="5,2" Name="DeleteThemeBtn" Click="OnDeleteThemeClick"/>
+                            <Button Grid.Column="1" Content="✕" Background="Transparent" Foreground="{DynamicResource Destructive}" Padding="5,2" Name="DeleteThemeBtn" Click="OnDeleteThemeClick"/>
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

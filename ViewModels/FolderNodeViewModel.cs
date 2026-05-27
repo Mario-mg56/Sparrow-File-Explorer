@@ -16,7 +16,7 @@ public class FolderNodeViewModel : INotifyPropertyChanged
     
     private readonly DirItem Node;
 
-    public SolidColorBrush Icon => Node.icon;
+    public IBrush Icon => Node.icon;
     public string Name => Node.GetPath().Equals(FileManager.GetRoot()?.GetPath())? "root":Node.path.name;
 
     private bool _isExpanded;
